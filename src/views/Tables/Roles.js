@@ -1,11 +1,11 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles";
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
 import Create from "@material-ui/icons/Create";
@@ -23,238 +23,339 @@ import CardHeader from "components/Card/CardHeader.js";
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
-import { dataTable } from "variables/general.js";
+import {dataTable} from "variables/general.js";
 
-import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
+import {cardTitle} from "assets/jss/material-dashboard-pro-react.js";
 
 const styles = {
-  cardIconTitle: {
-    ...cardTitle,
-    marginTop: "15px",
-    marginBottom: "0px"
-  }
+	cardIconTitle: {
+		...cardTitle,
+		marginTop: "15px",
+		marginBottom: "0px"
+	}
 };
 
 const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
 
 export default function Roles() {
-  const [alerta, setAlerta] = React.useState(null);
-  const inputAlert = () => {
-    setAlerta(
-      <SweetAlert
-        input
-        showCancel
-        style={{ display: "block", marginTop: "-100px" }}
-        confirmBtnText="Guardar"
-        cancelBtnText="Cancelar"
-        title="Nombre del rol"
-        required
-        validationMsg="Debe digitar el nombre del rol"
-        onConfirm={e => {
-          inputConfirmAlertNext(e);
-        }}
-        onCancel={() => hideAlert()}
-        confirmBtnCssClass={classesAlerts.button + " " + classesAlerts.default}
-        cancelBtnCssClass={classesAlerts.button + " " + classesAlerts.danger}
-      />
-    );
-  };
-  const inputConfirmAlertNext = e => {
-    setAlerta(e);
-    setTimeout(() => {
-      setAlerta(
-        <SweetAlert
-          style={{ display: "block", marginTop: "-100px" }}
-          onConfirm={() => hideAlert()}
-          onCancel={() => hideAlert()}
-          confirmBtnCssClass={
-            classesAlerts.button + " " + classesAlerts.default
-          }
-          title={
-            <p>
-              Nombre del rol: <b>{e}</b>
-            </p>
-          }
-        />
-      );
-    }, 200);
-  };
-  const hideAlert = () => {
-    setAlerta(null);
-  };
+	const [alerta, setAlerta] = React.useState(null);
+	const inputAlert = () => {
+		setAlerta(
+			<SweetAlert
+				input
+				showCancel
+				style={{display: "block", marginTop: "-100px"}}
+				confirmBtnText="Guardar"
+				cancelBtnText="Cancelar"
+				title="Nombre del rol"
+				required
+				validationMsg="Debe digitar el nombre del rol"
+				onConfirm={e => {
+					inputConfirmAlertNext(e);
+				}}
+				onCancel={() => hideAlert()}
+				confirmBtnCssClass={classesAlerts.button + " " + classesAlerts.default}
+				cancelBtnCssClass={classesAlerts.button + " " + classesAlerts.danger}
+			/>
+		);
+	};
+	const inputConfirmAlertNext = e => {
+		setAlerta(e);
+		setTimeout(() => {
+			setAlerta(
+				<SweetAlert
+					style={{display: "block", marginTop: "-100px"}}
+					onConfirm={() => hideAlert()}
+					onCancel={() => hideAlert()}
+					confirmBtnCssClass={
+						classesAlerts.button + " " + classesAlerts.default
+					}
+					title={
+						<p>
+							Nombre del rol: <b>{e}</b>
+						</p>
+					}
+				/>
+			);
+		}, 200);
+	};
+	const hideAlert = () => {
+		setAlerta(null);
+	};
 
-  let deleteRol = () => {
-    const url = `pendiente`;
-    axios
-      .delete(url)
-      .then(result => {
-        console.log(result.response.data);
-      })
-      .catch(err => {
-        console.log(err.response.data);
-      });
-  };
+	let deleteRol = () => {
+		const url = `pendiente`;
+		axios
+			.delete(url)
+			.then(result => {
+				console.log(result.response.data);
+			})
+			.catch(err => {
+				console.log(err.response.data);
+			});
+	};
 
-  let addRol = () => {
-    const url = `pendiente`;
-    const requestBody = this.state.body;
-    axios
-      .post(url, requestBody)
-      .then(result => {
-        alert("Exito en la creación del rol");
-        console.log(result.response.data);
-      })
-      .catch(err => {
-        console.log(err.response.data);
-      });
-  };
+	let addRol = () => {
+		const url = `pendiente`;
+		const requestBody = this.state.body;
+		axios
+			.post(url, requestBody)
+			.then(result => {
+				alert("Exito en la creación del rol");
+				console.log(result.response.data);
+			})
+			.catch(err => {
+				console.log(err.response.data);
+			});
+	};
 
-  const [data, setData] = React.useState(
-    dataTable.dataRows.map((prop, key) => {
-      return {
-        id: key,
-        name: prop[0],
-        position: prop[1],
-        office: prop[2],
-        age: prop[3],
-        actions: (
-          // we've added some custom button actions
-          <div className="actions-right">
-            {/* use this button to add a like kind of action */}
-            <Button
-              justIcon
-              round
-              simple
-              onClick={() => {
-                let obj = data.find(o => o.id === key);
-                alert(
-                  "You've clicked LIKE button on \n{ \nName: " +
-                    obj.name +
-                    ", \nposition: " +
-                    obj.position +
-                    ", \noffice: " +
-                    obj.office +
-                    ", \nage: " +
-                    obj.age +
-                    "\n}."
-                );
-              }}
-              color="info"
-              className="like"
-            >
-              <RemoveRedEye />
-            </Button>{" "}
-            {/* use this button to add a edit kind of action */}
-            <Button
-              justIcon
-              round
-              simple
-              onClick={() => {
-                let obj = data.find(o => o.id === key);
-                alert(
-                  "You've clicked EDIT button on \n{ \nName: " +
-                    obj.name +
-                    ", \nposition: " +
-                    obj.position +
-                    ", \noffice: " +
-                    obj.office +
-                    ", \nage: " +
-                    obj.age +
-                    "\n}."
-                );
-              }}
-              color="warning"
-              className="edit"
-            >
-              <Create />
-            </Button>{" "}
-            {/* use this button to remove the data row */}
-            <Button
-              justIcon
-              round
-              simple
-              onClick={() => {
-                var newData = data;
-                newData.find((o, i) => {
-                  if (o.id === key) {
-                    // here you should add some custom code so you can delete the data
-                    // from this component and from your server as well
-                    newData.splice(i, 1);
-                    return true;
-                  }
-                  return false;
-                });
-                setData([...newData]);
-              }}
-              color="danger"
-              className="remove"
-            >
-              <Close />
-            </Button>{" "}
-          </div>
-        )
-      };
-    })
-  );
-  const classesAlerts = useStylesAlerts();
-  const classes = useStyles();
-  return (
-    <div>
-      {alerta}
-      <GridContainer>
-        <GridItem xs={12}>
-          <Card>
-            <CardHeader color="danger" icon>
-              <CardIcon color="danger">
-                <SettingsApplications />
-              </CardIcon>
-              <h4 className={classes.cardIconTitle}>Roles</h4>
-              <br />
-              <Button onClick={inputAlert}>
-                <Add
-                  style={{
-                    marginTop: 0 + "px",
-                    marginLeft: 0 + "px",
-                    marginRight: 7 + "px",
-                    marginBottom: 2 + "px"
-                  }}
-                />
-                Agregar Rol
-              </Button>
-            </CardHeader>
-            <CardBody>
-              <ReactTable
-                data={data}
-                filterable
-                columns={[
-                  {
-                    Header: "Nombre",
-                    accessor: "name"
-                  },
-                  {
-                    Header: "",
-                    accessor: "actions",
-                    sortable: false,
-                    filterable: false
-                  }
-                ]}
-                defaultPageSize={10}
-                showPaginationTop
-                previousText="Anterior"
-                nextText="Siguiente"
-                loadingText="Cargando..."
-                noDataText="No se encontraron filas"
-                pageText="Página"
-                ofText="de"
-                rowsText="filas"
-                showPaginationBottom={false}
-                className="-striped -highlight"
-              />
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-    </div>
-  );
+	const [data, setData] = React.useState(
+		dataTable.dataRows.map((prop, key) => {
+			return {
+				id: key,
+				roleName: prop[0],
+				actions: (
+					// we've added some custom button actions
+					<div className="actions-right">
+						{/* use this button to add a like kind of action */}
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => {
+								let obj = data.find(o => o.id === key);
+								alert(
+									"You've clicked LIKE button on \n{ \nName: " +
+										obj.name +
+										", \nposition: " +
+										obj.position +
+										", \noffice: " +
+										obj.office +
+										", \nage: " +
+										obj.age +
+										"\n}."
+								);
+							}}
+							color="info"
+							className="like"
+						>
+							<RemoveRedEye />
+						</Button>{" "}
+						{/* use this button to add a edit kind of action */}
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => {
+								let obj = data.find(o => o.id === key);
+								alert(
+									"You've clicked EDIT button on \n{ \nName: " +
+										obj.name +
+										", \nposition: " +
+										obj.position +
+										", \noffice: " +
+										obj.office +
+										", \nage: " +
+										obj.age +
+										"\n}."
+								);
+							}}
+							color="warning"
+							className="edit"
+						>
+							<Create />
+						</Button>{" "}
+						{/* use this button to remove the data row */}
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => {
+								var newData = data;
+								newData.find((o, i) => {
+									if (o.id === key) {
+										// here you should add some custom code so you can delete the data
+										// from this component and from your server as well
+										newData.splice(i, 1);
+										return true;
+									}
+									return false;
+								});
+								setData([...newData]);
+							}}
+							color="danger"
+							className="remove"
+						>
+							<Close />
+						</Button>{" "}
+					</div>
+				)
+			};
+		})
+	);
+
+	let auth = localStorage.getItem("auth");
+
+	useEffect(() => {
+		const URL =
+			"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+		axios
+			.get(URL, {
+				headers: {
+					Authorization: "Bearer " + auth
+				}
+			})
+			.then(function(response) {
+				setData(
+					response.data.data.map((prop, key) => {
+						return {
+							id: key,
+							roleName: prop.roleName,
+							actions: (
+								// we've added some custom button actions
+								<div className="actions-right">
+									{/* use this button to add a like kind of action */}
+									<Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+											let obj = response.data.data.find(o => o.id - 1 === key);
+											alert(
+												"You've clicked LIKE button on \n{ \nName: " +
+													obj.name +
+													", \nposition: " +
+													obj.position +
+													", \noffice: " +
+													obj.office +
+													", \nage: " +
+													obj.age +
+													"\n}."
+											);
+										}}
+										color="info"
+										className="like"
+									>
+										<RemoveRedEye />
+									</Button>{" "}
+									{/* use this button to add a edit kind of action */}
+									<Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+											let obj = response.data.data.find(o => o.id - 1 === key);
+											alert(
+												"You've clicked EDIT button on \n{ \nName: " +
+													obj.name +
+													", \nposition: " +
+													obj.position +
+													", \noffice: " +
+													obj.office +
+													", \nage: " +
+													obj.age +
+													"\n}."
+											);
+										}}
+										color="warning"
+										className="edit"
+									>
+										<Create />
+									</Button>{" "}
+									{/* use this button to remove the data row */}
+									<Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+											var newData = response.data.data;
+											newData.find((o, i) => {
+												if (o.id === key) {
+													// here you should add some custom code so you can delete the data
+													// from this component and from your server as well
+													newData.splice(i, 1);
+													return true;
+												}
+												return false;
+											});
+											setData([...newData]);
+										}}
+										color="danger"
+										className="remove"
+									>
+										<Close />
+									</Button>{" "}
+								</div>
+							)
+						};
+					})
+				);
+				console.log(response.data.data);
+			})
+			.catch(function(error) {
+				console.log(error);
+			});
+	}, []);
+
+	const classesAlerts = useStylesAlerts();
+	const classes = useStyles();
+	return (
+		<div>
+			{alerta}
+			<GridContainer>
+				<GridItem xs={12}>
+					<Card>
+						<CardHeader color="danger" icon>
+							<CardIcon color="danger">
+								<SettingsApplications />
+							</CardIcon>
+							<h4 className={classes.cardIconTitle}>Roles</h4>
+							<br />
+							<Button onClick={inputAlert}>
+								<Add
+									style={{
+										marginTop: 0 + "px",
+										marginLeft: 0 + "px",
+										marginRight: 7 + "px",
+										marginBottom: 2 + "px"
+									}}
+								/>
+								Agregar Rol
+							</Button>
+						</CardHeader>
+						<CardBody>
+							<ReactTable
+								data={data}
+								filterable
+								columns={[
+									{
+										Header: "Nombre",
+										accessor: "roleName"
+									},
+									{
+										Header: "",
+										accessor: "actions",
+										sortable: false,
+										filterable: false
+									}
+								]}
+								defaultPageSize={10}
+								showPaginationTop
+								previousText="Anterior"
+								nextText="Siguiente"
+								loadingText="Cargando..."
+								noDataText="No se encontraron filas"
+								pageText="Página"
+								ofText="de"
+								rowsText="filas"
+								showPaginationBottom={false}
+								className="-striped -highlight"
+							/>
+						</CardBody>
+					</Card>
+				</GridItem>
+			</GridContainer>
+		</div>
+	);
 }
