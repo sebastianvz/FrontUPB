@@ -522,7 +522,7 @@ export default function ValidationForms() {
             <Button color="danger" onClick={typeClick}>
               Guardar
             </Button>
-            <Button color="Primary" onClick={typeClick}>
+            <Button color="primary" onClick={}>
               Cancelar
             </Button>
           </CardFooter>

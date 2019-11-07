@@ -20,6 +20,7 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
+import roleModel from "../../models/roles.js";
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
@@ -52,7 +53,25 @@ export default function Roles() {
 				required
 				validationMsg="Debe digitar el nombre del rol"
 				onConfirm={e => {
-					inputConfirmAlertNext(e);
+					const URL_ROLE_POST =
+						"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+					let newRole = new roleModel(e);
+					newRole = JSON.stringify(newRole);
+					axios
+						.post(URL_ROLE_POST, newRole, {
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: "Bearer " + auth
+							}
+						})
+						.then(function(response) {
+							console.log(response);
+							inputConfirmAlertNext(e);
+						})
+						.catch(function(error) {
+							console.log(error);
+							return;
+						});
 				}}
 				onCancel={() => hideAlert()}
 				confirmBtnCssClass={classesAlerts.button + " " + classesAlerts.default}
