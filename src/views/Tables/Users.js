@@ -194,7 +194,39 @@ export default function Users() {
   };
   
 	const handleOpen = () => {
-		setOpen(true);
+    setOpen(true);
+    const URL_GetDocuments = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Master/GetDocuments"
+    const URL_GetPrograms = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Master/GetPrograms"
+    const URL_GetRole = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role"
+
+    const requestOne = axios.get(URL_GetDocuments, {
+      headers: {
+        Authorization: "Bearer " + auth
+      }
+    });
+    const requestTwo = axios.get(URL_GetPrograms, {
+      headers: {
+        Authorization: "Bearer " + auth
+      }
+    });
+    const requestThree = axios.get(URL_GetRole, {
+      headers: {
+        Authorization: "Bearer " + auth
+      }
+    });
+
+    axios.all([requestOne, requestTwo, requestThree]).then(axios.spread((...responses) => {
+      const responseOne = responses[0]
+      const responseTwo = responses[1]
+      const responesThree = responses[2]
+      console.log(responseOne);
+      console.log(responseTwo);
+      console.log(responesThree);
+
+      // use/access the results 
+    })).catch(errors => {
+      // react on errors.
+    })
 	};
 
 	const handleClose = () => {
@@ -286,7 +318,9 @@ export default function Users() {
 		})
 	);
 
-	let auth = localStorage.getItem("auth");
+  let auth = localStorage.getItem("auth");
+  let liableID = JSON.parse(localStorage.getItem("id"));
+
 
 	useEffect(() => {
 		const URL =

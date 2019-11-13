@@ -1,5 +1,6 @@
 import React from "react";
 import cx from "classnames";
+import axios from "axios";
 import { Switch, Route, Redirect } from "react-router-dom";
 // creates a beautiful scrollbar
 import PerfectScrollbar from "perfect-scrollbar";
@@ -112,6 +113,41 @@ export default function Dashboard(props) {
     }
     return activeRoute;
   };
+
+  let auth = localStorage.getItem("auth");
+
+  const URL =
+    "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Master/GetDocuments";
+  axios
+    .get(URL, {
+      headers: {
+        Authorization: "Bearer " + auth
+      }
+    })
+    .then(function(response) {})
+    .catch(function(error) {
+      props.history.replace("/auth");
+    });
+
+  if (localStorage.getItem("auth") === null) {
+    props.history.replace("/auth");
+  }
+
+  let userPermmision = localStorage.getItem("arrayPermmision");
+  let arrayUserPermmision = userPermmision.split(",");
+  const clonedRoutes = routes.map(item => ({ ...item }));
+
+  let newRoutes = [];
+  for (let i = 0; i < arrayUserPermmision.length; i++) {
+    for (let j = 0; j < routes[0].views.length; j++) {
+      if (arrayUserPermmision[i] === routes[0].views[j].name) {
+        newRoutes.push(routes[0].views[j]);
+      }
+    }
+  }
+
+  clonedRoutes[0].views = newRoutes;
+
   const getRoutes = routes => {
     return routes.map((prop, key) => {
       if (prop.collapse) {
@@ -142,7 +178,7 @@ export default function Dashboard(props) {
   return (
     <div className={classes.wrapper}>
       <Sidebar
-        routes={routes}
+        routes={clonedRoutes}
         logoText={"SisLab"}
         logo={logo}
         image={image}

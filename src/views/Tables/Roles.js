@@ -44,20 +44,21 @@ const useStyles = makeStyles(styles);
 
 export default function Roles() {
 	const [alerta, setAlerta] = React.useState(null);
-	const [checkboxState, setCheckboxState] = useState({});
+	const [checkboxState, setCheckboxState] = useState([]);
 	let arrayIdPermits = [];
 
 	const handleChange = name => event => {
-		console.log(name);
-		console.log(arrayIdPermits);
-		debugger;
-
-		arrayIdPermits.push({id: event.target.value});
 
 		if (event.target.checked === false) {
-			
+			for(let i = 0; i < arrayIdPermits.length; i++){
+				if(arrayIdPermits[i].id === event.target.value){
+					arrayIdPermits.splice(i, 1); 
+				}
+			}		
+		}else{
+			arrayIdPermits.push({id: event.target.value});
 		}
-		setCheckboxState({...checkboxState, [name]: event.target.value});
+		setCheckboxState([...checkboxState, arrayIdPermits]);
 	};
 
 	const inputAlert = () => {
@@ -85,7 +86,7 @@ export default function Roles() {
 						onConfirm={e => {
 							const URL_ROLE_POST =
 								"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
-							let newRole = new roleModel(e);
+							let newRole = new roleModel(e, arrayIdPermits);
 							newRole = JSON.stringify(newRole);
 							axios
 								.post(URL_ROLE_POST, newRole, {
@@ -95,6 +96,7 @@ export default function Roles() {
 									}
 								})
 								.then(function(response) {
+									debugger;
 									console.log(response);
 									console.log(newRole);
 									inputConfirmAlertNext(e);
@@ -137,6 +139,7 @@ export default function Roles() {
 			});
 	};
 	const inputConfirmAlertNext = e => {
+		arrayIdPermits = [];
 		setAlerta(e);
 		setTimeout(() => {
 			setAlerta(
@@ -157,6 +160,7 @@ export default function Roles() {
 		}, 200);
 	};
 	const hideAlert = () => {
+		arrayIdPermits = [];
 		setAlerta(null);
 	};
 
