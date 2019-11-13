@@ -6,6 +6,9 @@ import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
 import {makeStyles} from "@material-ui/core/styles";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
 import Create from "@material-ui/icons/Create";
@@ -41,43 +44,97 @@ const useStyles = makeStyles(styles);
 
 export default function Roles() {
 	const [alerta, setAlerta] = React.useState(null);
+	const [checkboxState, setCheckboxState] = useState({});
+	let arrayIdPermits = [];
+
+	const handleChange = name => event => {
+		console.log(name);
+		console.log(arrayIdPermits);
+		debugger;
+
+		arrayIdPermits.push({id: event.target.value});
+
+		if (event.target.checked === false) {
+			
+		}
+		setCheckboxState({...checkboxState, [name]: event.target.value});
+	};
+
 	const inputAlert = () => {
-		setAlerta(
-			<SweetAlert
-				input
-				showCancel
-				style={{display: "block", marginTop: "-100px"}}
-				confirmBtnText="Guardar"
-				cancelBtnText="Cancelar"
-				title="Nombre del rol"
-				required
-				validationMsg="Debe digitar el nombre del rol"
-				onConfirm={e => {
-					const URL_ROLE_POST =
-						"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
-					let newRole = new roleModel(e);
-					newRole = JSON.stringify(newRole);
-					axios
-						.post(URL_ROLE_POST, newRole, {
-							headers: {
-								"Content-Type": "application/json",
-								Authorization: "Bearer " + auth
-							}
-						})
-						.then(function(response) {
-							console.log(response);
-							inputConfirmAlertNext(e);
-						})
-						.catch(function(error) {
-							console.log(error);
-							return;
-						});
-				}}
-				onCancel={() => hideAlert()}
-				confirmBtnCssClass={classesAlerts.button + " " + classesAlerts.default}
-				cancelBtnCssClass={classesAlerts.button + " " + classesAlerts.danger}
-			/>
-		);
+		const URL =
+			"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Permission";
+		axios
+			.get(URL, {
+				headers: {
+					Authorization: "Bearer " + auth
+				}
+			})
+			.then(function(response) {
+				console.log(response);
+				console.log(checkboxState);
+				setAlerta(
+					<SweetAlert
+						input
+						showCancel
+						style={{display: "block", marginTop: "-100px"}}
+						confirmBtnText="Guardar"
+						cancelBtnText="Cancelar"
+						title="Ingrese el nombre del rol"
+						required
+						validationMsg="Debe digitar el nombre del rol"
+						onConfirm={e => {
+							const URL_ROLE_POST =
+								"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+							let newRole = new roleModel(e);
+							newRole = JSON.stringify(newRole);
+							axios
+								.post(URL_ROLE_POST, newRole, {
+									headers: {
+										"Content-Type": "application/json",
+										Authorization: "Bearer " + auth
+									}
+								})
+								.then(function(response) {
+									console.log(response);
+									console.log(newRole);
+									inputConfirmAlertNext(e);
+								})
+								.catch(function(error) {
+									console.log(error);
+									return;
+								});
+						}}
+						onCancel={() => hideAlert()}
+						confirmBtnCssClass={
+							classesAlerts.button + " " + classesAlerts.default
+						}
+						cancelBtnCssClass={
+							classesAlerts.button + " " + classesAlerts.danger
+						}
+					>
+						<b>Seleccione los permisos</b>
+						<br />
+						<br />
+						{response.data.data.map(x => (
+							<FormControlLabel
+								key={x.id}
+								control={
+									<Checkbox
+										onChange={handleChange(x.permmisionName)}
+										value={x.id}
+									/>
+								}
+								label={x.permmisionName}
+							/>
+						))}
+						<br />
+						<br />
+					</SweetAlert>
+				);
+			})
+			.catch(function(error) {
+				console.log(error);
+			});
 	};
 	const inputConfirmAlertNext = e => {
 		setAlerta(e);
@@ -108,20 +165,6 @@ export default function Roles() {
 		axios
 			.delete(url)
 			.then(result => {
-				console.log(result.response.data);
-			})
-			.catch(err => {
-				console.log(err.response.data);
-			});
-	};
-
-	let addRol = () => {
-		const url = `pendiente`;
-		const requestBody = this.state.body;
-		axios
-			.post(url, requestBody)
-			.then(result => {
-				alert("Exito en la creación del rol");
 				console.log(result.response.data);
 			})
 			.catch(err => {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect} from "react";
 import axios from "axios";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
@@ -28,6 +28,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import CardFooter from "components/Card/CardFooter.js";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import userModel from "../../models/user.js";
 
 
 import {dataTable} from "variables/general.js";
@@ -57,10 +58,28 @@ const useStyles = makeStyles(styles);
 
 export default function Users() {
 	const [modalStyle] = React.useState(getModalStyle);
-	const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+
+  const [dataState, setDataState] = React.useState(
+    {
+      id_type: "",
+      id_number: 0,
+      name: "",
+      last_name: "",
+      email: "",
+      email_UPB: "",
+      phone: "",
+      idUPB: "",
+      job:"",
+      programs:[],
+      other_job:"",
+      user:"",
+      password:""     
+    }
+    );
+
 	const [required, setrequired] = React.useState("");
   const [requiredState, setrequiredState] = React.useState("");
-  const [typeEmail, settypeEmail] = React.useState("");
   const [typeEmailState, settypeEmailState] = React.useState("");
   const [number, setnumber] = React.useState("");
   const [numberState, setnumberState] = React.useState("");
@@ -92,6 +111,7 @@ export default function Users() {
     }
     return false;
   };
+
   const typeClick = () => {
     if (requiredState === "") {
       setrequiredState("error");
@@ -117,28 +137,71 @@ export default function Users() {
 			.catch(err => {
 				console.log(err.response.data);
 			});
-	};
+  };
 
-	let addUser = () => {
-		const url = `pendiente`;
-		const requestBody = this.state.body;
-		axios
-			.post(url, requestBody)
-			.then(result => {
-				alert("Exito en la creación del usuario");
-				console.log(result.response.data);
-			})
-			.catch(err => {
-				console.log(err.response.data);
-			});
-	};
+	let addUser = (
+    username,
+		contrasena,
+		idTipoIdentificacion,
+		numeroIdentificacion,
+		nombreCompleto,
+		apellidos,
+		emailUpb,
+		idUserSender,
+		arrayRoles,
+		arrayProgramas,
+		celular = null,
+		otrosTrabajos = null,
+		idUpb = null,
+		emailPersonal = null,
+    profesion = null
+    ) => {
+		const URL_USER_POST =
+      "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
+    let newUser = new userModel(
+      username,
+      contrasena,
+      idTipoIdentificacion,
+      numeroIdentificacion,
+      nombreCompleto,
+      apellidos,
+      emailUpb,
+      idUserSender,
+      arrayRoles,
+      arrayProgramas,
+      celular,
+      otrosTrabajos,
+      idUpb,
+      emailPersonal,
+      profesion
+      );
+    newUser = JSON.stringify(newUser);
+    axios
+      .post(URL_USER_POST, newUser, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth
+        }
+      })
+      .then(function(response) {
+        console.log(response);
+        console.log(newUser);
+      })
+      .catch(function(error) {
+        console.log(error);
+        return;
+      });
+  };
+  
 	const handleOpen = () => {
 		setOpen(true);
 	};
 
 	const handleClose = () => {
+    console.log(dataState);
 		setOpen(false);
-	};
+  };
+  
 	const [data, setData] = React.useState(
 		dataTable.dataRows.map((prop, key) => {
 			return {
@@ -359,7 +422,7 @@ export default function Users() {
           <h4>Datos personales</h4>
             <form>
               <GridContainer>
-              <GridItem xs={4} sm={2}>
+              <GridItem xs={1} sm={1}>
                   <FormLabel className={classes.labelHorizontal}>
                     Tipo de identificacíon
                   </FormLabel>
@@ -381,7 +444,7 @@ export default function Users() {
                 </GridItem>
                 <GridItem xs={1} sm={1}>
                   <FormLabel className={classes.labelHorizontal}>
-                    Número de identificacíon
+                    ID
                   </FormLabel>
                 </GridItem>
                 <GridItem xs={6} sm={4}>
@@ -399,7 +462,7 @@ export default function Users() {
                         } else {
                           setnumberState("error");
                         }
-                        setnumber(event.target.value);
+                        setDataState({...dataState, id_number: event.target.value})
                       },
                       type: "number",
                       endAdornment:
@@ -417,7 +480,7 @@ export default function Users() {
               <GridContainer>
                 <GridItem xs={12} sm={2}>
                   <FormLabel className={classes.labelHorizontal}>
-                    Nombre completo
+                    Nombre
                   </FormLabel>
                 </GridItem>
                 <GridItem xs={12} sm={7}>
@@ -435,7 +498,7 @@ export default function Users() {
                         } else {
                           setrequiredState("error");
                         }
-                        setrequired(event.target.value);
+                        setDataState({...dataState, name: event.target.value})
                       },
                       type: "text",
                       endAdornment:
@@ -471,7 +534,7 @@ export default function Users() {
                         } else {
                           settypeEmailState("error");
                         }
-                        settypeEmail(event.target.value);
+                        setDataState({...dataState, email: event.target.value})
                       },
                       type: "email",
                     }}
@@ -502,7 +565,7 @@ export default function Users() {
                         } else {
                           settypeEmailState("error");
                         }
-                        settypeEmail(event.target.value);
+                        setDataState({...dataState, email_UPB: event.target.value})
                       },
                       type: "email",
                       endAdornment:
@@ -538,7 +601,7 @@ export default function Users() {
                         } else {
                           setnumberState("error");
                         }
-                        setnumber(event.target.value);
+                        setDataState({...dataState, phone: event.target.value})
                       },
                       type: "number",
                       endAdornment:
@@ -572,7 +635,7 @@ export default function Users() {
                         } else {
                           setnumberState("error");
                         }
-                        setnumber(event.target.value);
+                        setDataState({...dataState, idUPB: event.target.value})
                       },
                       type: "number",
                     }}
@@ -605,7 +668,7 @@ export default function Users() {
                         } else {
                           setrequiredState("error");
                         }
-                        setrequired(event.target.value);
+                        setDataState({...dataState, job: event.target.value})
                       },
                       type: "text",
                     }}
@@ -638,7 +701,7 @@ export default function Users() {
                         } else {
                           setrequiredState("error");
                         }
-                        setrequired(event.target.value);
+                        setDataState({...dataState, programs: event.target.value})
                       },
                       type: "text",
                     }}
@@ -671,7 +734,7 @@ export default function Users() {
                         } else {
                           setrequiredState("error");
                         }
-                        setrequired(event.target.value);
+                        setDataState({...dataState, other_job: event.target.value})
                       },
                       type: "text",
                     }}
@@ -705,7 +768,7 @@ export default function Users() {
                         } else {
                           setrequiredState("error");
                         }
-                        setrequired(event.target.value);
+                        setDataState({...dataState, user: event.target.value})
                       },
                       type: "text",
                       endAdornment:
@@ -768,7 +831,7 @@ export default function Users() {
                         } else {
                           setequalToState("error");
                         }
-                        setwhichEqualTo(event.target.value);
+                        setDataState({...dataState, password: event.target.value});
                       },
                       type: "password",
                       endAdornment:
@@ -786,7 +849,7 @@ export default function Users() {
             </form>
           </CardBody>
           <CardFooter className={classes.justifyContentCenter}>
-            <Button color="danger" onClick={typeClick}>
+            <Button color="danger" onClick={handleClose}>
               Guardar
             </Button>
             <Button color="primary" onClick={handleClose}>
