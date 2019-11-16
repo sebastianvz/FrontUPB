@@ -7,14 +7,14 @@ export default class userModel {
 		nombreCompleto,
 		apellidos,
 		emailUpb,
-		idUserSender,
 		arrayRoles,
 		arrayProgramas,
 		celular = null,
 		otrosTrabajos = null,
 		idUpb = null,
 		emailPersonal = null,
-		profesion = null
+		profesion = null,
+		idUserSender = null
 	) {
 		{
 			this.username = username;

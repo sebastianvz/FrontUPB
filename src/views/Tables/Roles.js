@@ -48,14 +48,13 @@ export default function Roles() {
 	let arrayIdPermits = [];
 
 	const handleChange = name => event => {
-
 		if (event.target.checked === false) {
-			for(let i = 0; i < arrayIdPermits.length; i++){
-				if(arrayIdPermits[i].id === event.target.value){
-					arrayIdPermits.splice(i, 1); 
+			for (let i = 0; i < arrayIdPermits.length; i++) {
+				if (arrayIdPermits[i].id === event.target.value) {
+					arrayIdPermits.splice(i, 1);
 				}
-			}		
-		}else{
+			}
+		} else {
 			arrayIdPermits.push({id: event.target.value});
 		}
 		setCheckboxState([...checkboxState, arrayIdPermits]);
@@ -96,7 +95,6 @@ export default function Roles() {
 									}
 								})
 								.then(function(response) {
-									debugger;
 									console.log(response);
 									console.log(newRole);
 									inputConfirmAlertNext(e);
@@ -180,83 +178,83 @@ export default function Roles() {
 		dataTable.dataRows.map((prop, key) => {
 			return {
 				id: key,
-				roleName: prop[0],
-				actions: (
-					// we've added some custom button actions
-					<div className="actions-right">
-						{/* use this button to add a like kind of action */}
-						<Button
-							justIcon
-							round
-							simple
-							onClick={() => {
-								let obj = data.find(o => o.id === key);
-								alert(
-									"You've clicked LIKE button on \n{ \nName: " +
-										obj.name +
-										", \nposition: " +
-										obj.position +
-										", \noffice: " +
-										obj.office +
-										", \nage: " +
-										obj.age +
-										"\n}."
-								);
-							}}
-							color="info"
-							className="like"
-						>
-							<RemoveRedEye />
-						</Button>{" "}
-						{/* use this button to add a edit kind of action */}
-						<Button
-							justIcon
-							round
-							simple
-							onClick={() => {
-								let obj = data.find(o => o.id === key);
-								alert(
-									"You've clicked EDIT button on \n{ \nName: " +
-										obj.name +
-										", \nposition: " +
-										obj.position +
-										", \noffice: " +
-										obj.office +
-										", \nage: " +
-										obj.age +
-										"\n}."
-								);
-							}}
-							color="warning"
-							className="edit"
-						>
-							<Create />
-						</Button>{" "}
-						{/* use this button to remove the data row */}
-						<Button
-							justIcon
-							round
-							simple
-							onClick={() => {
-								var newData = data;
-								newData.find((o, i) => {
-									if (o.id === key) {
-										// here you should add some custom code so you can delete the data
-										// from this component and from your server as well
-										newData.splice(i, 1);
-										return true;
-									}
-									return false;
-								});
-								setData([...newData]);
-							}}
-							color="danger"
-							className="remove"
-						>
-							<Close />
-						</Button>{" "}
-					</div>
-				)
+				roleName: prop[0]
+				// actions: (
+				// 	// we've added some custom button actions
+				// 	<div className="actions-right">
+				// 		{/* use this button to add a like kind of action */}
+				// 		<Button
+				// 			justIcon
+				// 			round
+				// 			simple
+				// 			onClick={() => {
+				// 				let obj = data.find(o => o.id === key);
+				// 				alert(
+				// 					"You've clicked LIKE button on \n{ \nName: " +
+				// 						obj.name +
+				// 						", \nposition: " +
+				// 						obj.position +
+				// 						", \noffice: " +
+				// 						obj.office +
+				// 						", \nage: " +
+				// 						obj.age +
+				// 						"\n}."
+				// 				);
+				// 			}}
+				// 			color="info"
+				// 			className="like"
+				// 		>
+				// 			<RemoveRedEye />
+				// 		</Button>{" "}
+				// 		{/* use this button to add a edit kind of action */}
+				// 		<Button
+				// 			justIcon
+				// 			round
+				// 			simple
+				// 			onClick={() => {
+				// 				let obj = data.find(o => o.id === key);
+				// 				alert(
+				// 					"You've clicked EDIT button on \n{ \nName: " +
+				// 						obj.name +
+				// 						", \nposition: " +
+				// 						obj.position +
+				// 						", \noffice: " +
+				// 						obj.office +
+				// 						", \nage: " +
+				// 						obj.age +
+				// 						"\n}."
+				// 				);
+				// 			}}
+				// 			color="warning"
+				// 			className="edit"
+				// 		>
+				// 			<Create />
+				// 		</Button>{" "}
+				// 		{/* use this button to remove the data row */}
+				// 		<Button
+				// 			justIcon
+				// 			round
+				// 			simple
+				// 			onClick={() => {
+				// 				var newData = data;
+				// 				newData.find((o, i) => {
+				// 					if (o.id === key) {
+				// 						// here you should add some custom code so you can delete the data
+				// 						// from this component and from your server as well
+				// 						newData.splice(i, 1);
+				// 						return true;
+				// 					}
+				// 					return false;
+				// 				});
+				// 				setData([...newData]);
+				// 			}}
+				// 			color="danger"
+				// 			className="remove"
+				// 		>
+				// 			<Close />
+				// 		</Button>{" "}
+				// 	</div>
+				// )
 			};
 		})
 	);
@@ -277,83 +275,83 @@ export default function Roles() {
 					response.data.data.map((prop, key) => {
 						return {
 							id: key,
-							roleName: prop.roleName,
-							actions: (
-								// we've added some custom button actions
-								<div className="actions-right">
-									{/* use this button to add a like kind of action */}
-									<Button
-										justIcon
-										round
-										simple
-										onClick={() => {
-											let obj = response.data.data.find(o => o.id - 1 === key);
-											alert(
-												"You've clicked LIKE button on \n{ \nName: " +
-													obj.name +
-													", \nposition: " +
-													obj.position +
-													", \noffice: " +
-													obj.office +
-													", \nage: " +
-													obj.age +
-													"\n}."
-											);
-										}}
-										color="info"
-										className="like"
-									>
-										<RemoveRedEye />
-									</Button>{" "}
-									{/* use this button to add a edit kind of action */}
-									<Button
-										justIcon
-										round
-										simple
-										onClick={() => {
-											let obj = response.data.data.find(o => o.id - 1 === key);
-											alert(
-												"You've clicked EDIT button on \n{ \nName: " +
-													obj.name +
-													", \nposition: " +
-													obj.position +
-													", \noffice: " +
-													obj.office +
-													", \nage: " +
-													obj.age +
-													"\n}."
-											);
-										}}
-										color="warning"
-										className="edit"
-									>
-										<Create />
-									</Button>{" "}
-									{/* use this button to remove the data row */}
-									<Button
-										justIcon
-										round
-										simple
-										onClick={() => {
-											var newData = response.data.data;
-											newData.find((o, i) => {
-												if (o.id === key) {
-													// here you should add some custom code so you can delete the data
-													// from this component and from your server as well
-													newData.splice(i, 1);
-													return true;
-												}
-												return false;
-											});
-											setData([...newData]);
-										}}
-										color="danger"
-										className="remove"
-									>
-										<Close />
-									</Button>{" "}
-								</div>
-							)
+							roleName: prop.roleName
+							// actions: (
+							// 	// we've added some custom button actions
+							// 	<div className="actions-right">
+							// 		{/* use this button to add a like kind of action */}
+							// 		<Button
+							// 			justIcon
+							// 			round
+							// 			simple
+							// 			onClick={() => {
+							// 				let obj = response.data.data.find(o => o.id - 1 === key);
+							// 				alert(
+							// 					"You've clicked LIKE button on \n{ \nName: " +
+							// 						obj.name +
+							// 						", \nposition: " +
+							// 						obj.position +
+							// 						", \noffice: " +
+							// 						obj.office +
+							// 						", \nage: " +
+							// 						obj.age +
+							// 						"\n}."
+							// 				);
+							// 			}}
+							// 			color="info"
+							// 			className="like"
+							// 		>
+							// 			<RemoveRedEye />
+							// 		</Button>{" "}
+							// 		{/* use this button to add a edit kind of action */}
+							// 		<Button
+							// 			justIcon
+							// 			round
+							// 			simple
+							// 			onClick={() => {
+							// 				let obj = response.data.data.find(o => o.id - 1 === key);
+							// 				alert(
+							// 					"You've clicked EDIT button on \n{ \nName: " +
+							// 						obj.name +
+							// 						", \nposition: " +
+							// 						obj.position +
+							// 						", \noffice: " +
+							// 						obj.office +
+							// 						", \nage: " +
+							// 						obj.age +
+							// 						"\n}."
+							// 				);
+							// 			}}
+							// 			color="warning"
+							// 			className="edit"
+							// 		>
+							// 			<Create />
+							// 		</Button>{" "}
+							// 		{/* use this button to remove the data row */}
+							// 		<Button
+							// 			justIcon
+							// 			round
+							// 			simple
+							// 			onClick={() => {
+							// 				var newData = response.data.data;
+							// 				newData.find((o, i) => {
+							// 					if (o.id === key) {
+							// 						// here you should add some custom code so you can delete the data
+							// 						// from this component and from your server as well
+							// 						newData.splice(i, 1);
+							// 						return true;
+							// 					}
+							// 					return false;
+							// 				});
+							// 				setData([...newData]);
+							// 			}}
+							// 			color="danger"
+							// 			className="remove"
+							// 		>
+							// 			<Close />
+							// 		</Button>{" "}
+							// 	</div>
+							// )
 						};
 					})
 				);
