@@ -12,7 +12,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
 import Create from "@material-ui/icons/Create";
-import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 import Close from "@material-ui/icons/Close";
 import Add from "@material-ui/icons/Add";
 // core components
@@ -162,103 +161,68 @@ export default function Roles() {
 		setAlerta(null);
 	};
 
-	let deleteRol = () => {
-		const url = `pendiente`;
-		axios
-			.delete(url)
-			.then(result => {
-				console.log(result.response.data);
-			})
-			.catch(err => {
-				console.log(err.response.data);
-			});
-	};
-
 	const [data, setData] = React.useState(
 		dataTable.dataRows.map((prop, key) => {
 			return {
 				id: key,
-				roleName: prop[0]
-				// actions: (
-				// 	// we've added some custom button actions
-				// 	<div className="actions-right">
-				// 		{/* use this button to add a like kind of action */}
-				// 		<Button
-				// 			justIcon
-				// 			round
-				// 			simple
-				// 			onClick={() => {
-				// 				let obj = data.find(o => o.id === key);
-				// 				alert(
-				// 					"You've clicked LIKE button on \n{ \nName: " +
-				// 						obj.name +
-				// 						", \nposition: " +
-				// 						obj.position +
-				// 						", \noffice: " +
-				// 						obj.office +
-				// 						", \nage: " +
-				// 						obj.age +
-				// 						"\n}."
-				// 				);
-				// 			}}
-				// 			color="info"
-				// 			className="like"
-				// 		>
-				// 			<RemoveRedEye />
-				// 		</Button>{" "}
-				// 		{/* use this button to add a edit kind of action */}
-				// 		<Button
-				// 			justIcon
-				// 			round
-				// 			simple
-				// 			onClick={() => {
-				// 				let obj = data.find(o => o.id === key);
-				// 				alert(
-				// 					"You've clicked EDIT button on \n{ \nName: " +
-				// 						obj.name +
-				// 						", \nposition: " +
-				// 						obj.position +
-				// 						", \noffice: " +
-				// 						obj.office +
-				// 						", \nage: " +
-				// 						obj.age +
-				// 						"\n}."
-				// 				);
-				// 			}}
-				// 			color="warning"
-				// 			className="edit"
-				// 		>
-				// 			<Create />
-				// 		</Button>{" "}
-				// 		{/* use this button to remove the data row */}
-				// 		<Button
-				// 			justIcon
-				// 			round
-				// 			simple
-				// 			onClick={() => {
-				// 				var newData = data;
-				// 				newData.find((o, i) => {
-				// 					if (o.id === key) {
-				// 						// here you should add some custom code so you can delete the data
-				// 						// from this component and from your server as well
-				// 						newData.splice(i, 1);
-				// 						return true;
-				// 					}
-				// 					return false;
-				// 				});
-				// 				setData([...newData]);
-				// 			}}
-				// 			color="danger"
-				// 			className="remove"
-				// 		>
-				// 			<Close />
-				// 		</Button>{" "}
-				// 	</div>
-				// )
+				roleName: prop[0],
+				actions: (
+					// we've added some custom button actions
+					<div className="actions-right">
+						{/* use this button to add a edit kind of action */}
+						{/* <Button
+							justIcon
+							round
+							simple
+							onClick={() => {
+								let obj = data.find(o => o.id === key);
+								alert(
+									"You've clicked EDIT button on \n{ \nName: " +
+										obj.name +
+										", \nposition: " +
+										obj.position +
+										", \noffice: " +
+										obj.office +
+										", \nage: " +
+										obj.age +
+										"\n}."
+								);
+							}}
+							color="warning"
+							className="edit"
+						>
+							<Create />
+						</Button>{" "} */}
+						{/* use this button to remove the data row */}
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => {
+								var newData = data;
+								newData.find((o, i) => {
+									if (o.id === key) {
+										// here you should add some custom code so you can delete the data
+										// from this component and from your server as well
+										newData.splice(i, 1);
+										return true;
+									}
+									return false;
+								});
+								setData([...newData]);
+							}}
+							color="danger"
+							className="remove"
+						>
+							<Close />
+						</Button>{" "}
+					</div>
+				)
 			};
 		})
 	);
 
+	let liableID = JSON.parse(localStorage.getItem("id"));
 	let auth = localStorage.getItem("auth");
 
 	useEffect(() => {
@@ -271,87 +235,76 @@ export default function Roles() {
 				}
 			})
 			.then(function(response) {
+				const resultActive = response.data.data.filter(x => x.activo === true);
 				setData(
-					response.data.data.map((prop, key) => {
+					resultActive.map((prop, key) => {
 						return {
 							id: key,
-							roleName: prop.roleName
-							// actions: (
-							// 	// we've added some custom button actions
-							// 	<div className="actions-right">
-							// 		{/* use this button to add a like kind of action */}
-							// 		<Button
-							// 			justIcon
-							// 			round
-							// 			simple
-							// 			onClick={() => {
-							// 				let obj = response.data.data.find(o => o.id - 1 === key);
-							// 				alert(
-							// 					"You've clicked LIKE button on \n{ \nName: " +
-							// 						obj.name +
-							// 						", \nposition: " +
-							// 						obj.position +
-							// 						", \noffice: " +
-							// 						obj.office +
-							// 						", \nage: " +
-							// 						obj.age +
-							// 						"\n}."
-							// 				);
-							// 			}}
-							// 			color="info"
-							// 			className="like"
-							// 		>
-							// 			<RemoveRedEye />
-							// 		</Button>{" "}
-							// 		{/* use this button to add a edit kind of action */}
-							// 		<Button
-							// 			justIcon
-							// 			round
-							// 			simple
-							// 			onClick={() => {
-							// 				let obj = response.data.data.find(o => o.id - 1 === key);
-							// 				alert(
-							// 					"You've clicked EDIT button on \n{ \nName: " +
-							// 						obj.name +
-							// 						", \nposition: " +
-							// 						obj.position +
-							// 						", \noffice: " +
-							// 						obj.office +
-							// 						", \nage: " +
-							// 						obj.age +
-							// 						"\n}."
-							// 				);
-							// 			}}
-							// 			color="warning"
-							// 			className="edit"
-							// 		>
-							// 			<Create />
-							// 		</Button>{" "}
-							// 		{/* use this button to remove the data row */}
-							// 		<Button
-							// 			justIcon
-							// 			round
-							// 			simple
-							// 			onClick={() => {
-							// 				var newData = response.data.data;
-							// 				newData.find((o, i) => {
-							// 					if (o.id === key) {
-							// 						// here you should add some custom code so you can delete the data
-							// 						// from this component and from your server as well
-							// 						newData.splice(i, 1);
-							// 						return true;
-							// 					}
-							// 					return false;
-							// 				});
-							// 				setData([...newData]);
-							// 			}}
-							// 			color="danger"
-							// 			className="remove"
-							// 		>
-							// 			<Close />
-							// 		</Button>{" "}
-							// 	</div>
-							// )
+							roleName: prop.roleName,
+							actions: (
+								// we've added some custom button actions
+								<div className="actions-right">
+									{/* use this button to add a edit kind of action */}
+									{/* <Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+											console.log(resultActive);
+											let obj = resultActive.find(
+												o => o.roleName === prop.roleName
+											);
+											alert("You've clicked EDIT button");
+										}}
+										color="warning"
+										className="edit"
+									>
+										<Create />
+									</Button>{" "} */}
+									{/* use this button to remove the data row */}
+									<Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+											let obj = resultActive.find(
+												o => o.roleName === prop.roleName
+											);
+											const URL_DeleteUser =
+												"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+											obj = {
+												id: obj.id,
+												roleName: obj.roleName,
+												activo: false,
+												idUserSender: liableID
+											};
+											axios
+												.delete(URL_DeleteUser, {
+													headers: {
+														"Content-Type": "application/json",
+														Authorization: "Bearer " + auth
+													},
+													data: obj
+												})
+												.then(response => {
+													console.log(response);
+													alert("Rol eliminado con exito");
+												})
+												.catch(function(error) {
+													console.log(error);
+													alert(
+														"Error al eliminar el rol, vuelva a intentarlo"
+													);
+													return;
+												});
+										}}
+										color="danger"
+										className="remove"
+									>
+										<Close />
+									</Button>{" "}
+								</div>
+							)
 						};
 					})
 				);

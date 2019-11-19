@@ -151,34 +151,26 @@ export default function Users() {
   let auth = localStorage.getItem("auth");
   let liableID = JSON.parse(localStorage.getItem("id"));
 
-	let deleteUser = () => {
-		const url = `pendiente`;
-		axios
-			.delete(url)
-			.then(result => {
-				console.log(result.response.data);
-			})
-			.catch(err => {
-				console.log(err.response.data);
-			});
-  };
-
   const addUser = (username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
       
-    if (requiredState === "") {
+    if (requiredState === "" || requiredState === "error") {
       setrequiredState("error");
+      alert("Faltan campos por llenar");
       return;
     }
-    if (typeEmailState === "") {
+    if (typeEmailState === "" || typeEmailState === "error") {
       settypeEmailState("error");
+      alert("Ingrese un email valido");
       return;
     }
-    if (numberState === "") {
+    if (numberState === "" || numberState === "error") {
       setnumberState("error");
+      alert("Algunos campos no tienen datos correctos");
       return;
     }
-    if (equalToState === "") {
+    if (equalToState === "" || equalToState === "error") {
       setequalToState("error");
+      alert("Las contraseñas no coinciden");
       return;
     }
     const URL_USER_POST = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
@@ -241,57 +233,57 @@ export default function Users() {
 				username: prop[0],
 				typeAndNumberId: prop[0],
 				nombreCompleto: prop[0],
-				// actions: (
-				// 	// we've added some custom button actions
-				// 	<div className="actions-right">
-				// 		{/* use this button to add a edit kind of action */}
-				// 		<Button
-				// 			justIcon
-				// 			round
-				// 			simple
-				// 			onClick={() => {
-				// 				let obj = data.find(o => o.id === key);
-				// 				console.log(data);
-				// 				alert(
-				// 					"You've clicked EDIT button on \n{ \nusername: " +
-				// 						obj.username +
-				// 						", \nusername: " +
-				// 						obj.typeAndNumberIdn +
-				// 						", \ntypeAndNumberIdn: " +
-				// 						obj.nombreCompleto +
-				// 						", \nnombreCompletoe: "
-				// 				);
-				// 			}}
-				// 			color="warning"
-				// 			className="edit"
-				// 		>
-				// 			<Create />
-				// 		</Button>{" "}
-				// 		{/* use this button to remove the data row */}
-				// 		<Button
-				// 			justIcon
-				// 			round
-				// 			simple
-				// 			onClick={() => {
-				// 				var newData = data;
-				// 				newData.find((o, i) => {
-				// 					if (o.id === key) {
-				// 						// here you should add some custom code so you can delete the data
-				// 						// from this component and from your server as well
-				// 						newData.splice(i, 1);
-				// 						return true;
-				// 					}
-				// 					return false;
-				// 				});
-				// 				setData([...newData]);
-				// 			}}
-				// 			color="danger"
-				// 			className="remove"
-				// 		>
-				// 			<Close />
-				// 		</Button>{" "}
-				// 	</div>
-				// )
+				actions: (
+					// we've added some custom button actions
+					<div className="actions-right">
+						{/* use this button to add a edit kind of action */}
+						{/* <Button
+							justIcon
+							round
+							simple
+							onClick={() => {
+								let obj = data.find(o => o.id === key);
+								console.log(data);
+								alert(
+									"You've clicked EDIT button on \n{ \nusername: " +
+										obj.username +
+										", \nusername: " +
+										obj.id +
+										", \ntypeAndNumberIdn: " +
+										obj.nombreCompleto +
+										", \nnombreCompletoe: "
+								);
+							}}
+							color="warning"
+							className="edit"
+						>
+							<Create />
+						</Button>{" "} */}
+						{/* use this button to remove the data row */}
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => {
+								var newData = data;
+								newData.find((o, i) => {
+									if (o.id === key) {
+										// here you should add some custom code so you can delete the data
+										// from this component and from your server as well
+										newData.splice(i, 1);
+										return true;
+									}
+									return false;
+								});
+								setData([...newData]);
+							}}
+							color="danger"
+							className="remove"
+						>
+							<Close />
+						</Button>{" "}
+					</div>
+				)
 			};
 		})
 	);
@@ -353,63 +345,74 @@ export default function Users() {
         setIdType(idTypeArrayAxios)
         setProgramsArray(programsArrayAxios)
         setRolesPerUser(rolesArrayAxios)
+        const resultActive = responseGetUser.data.data.filter(x => x.activo === true);
         
         setData(
-					responseGetUser.data.data.map((prop, key) => {
+					resultActive.map((prop, key) => {
 						return {
 							id: key,
 							username: prop.username,
 							typeAndNumberId: `${prop.nameTipoIdentificacion} ${prop.numeroIdentificacion}`,
 							nombreCompleto: prop.nombreCompleto,
-							// actions: (
-							// 	// we've added some custom button actions
-							// 	<div className="actions-right">
-							// 		{/* use this button to add a edit kind of action */}
-							// 		<Button
-							// 			justIcon
-							// 			round
-							// 			simple
-							// 			onClick={() => {
-							// 				let obj = responseGetUser.data.data.find(o => o.id - 1 === key);
-							// 				console.log(obj);
-							// 				alert(
-							// 					"You've clicked EDIT button on \n{ \nusername: " +
-							// 						obj.username +
-							// 						", \nnombreCompletoe: " +
-							// 						obj.nombreCompleto
-							// 				);
-							// 			}}
-							// 			color="warning"
-							// 			className="edit"
-							// 		>
-							// 			<Create />
-							// 		</Button>{" "}
-							// 		{/* use this button to remove the data row */}
-							// 		<Button
-							// 			justIcon
-							// 			round
-							// 			simple
-							// 			onClick={() => {
-              //         debugger;
-							// 				var newData = responseGetUser.data.data;
-							// 				newData.find((o, i) => {
-							// 					if (o.id - 1 === key) {
-							// 						// here you should add some custom code so you can delete the data
-							// 						// from this component and from your server as well
-							// 						newData.splice(i, 1);
-							// 						return true;
-							// 					}
-							// 					return false;
-							// 				});
-							// 				setData([...newData]);
-							// 			}}
-							// 			color="danger"
-							// 			className="remove"
-							// 		>
-							// 			<Close />
-							// 		</Button>{" "}
-							// 	</div>
-							// )
+							actions: (
+								// we've added some custom button actions
+								<div className="actions-right">
+									{/* use this button to add a edit kind of action */}
+									{/* <Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+                      let obj = resultActive.find(o => o.username === prop.username);
+											alert(
+												"You've clicked EDIT button on \n{ \nusername: " +
+										obj.username +
+										", \nID: " +
+										obj.id +
+										", \ntypeAndNumberIdn: " +
+										obj.nombreCompleto +
+										", \nnombreCompletoe: "
+											);
+										}}
+										color="warning"
+										className="edit"
+									>
+										<Create />
+									</Button>{" "} */}
+									{/* use this button to remove the data row */}
+									<Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+                      let obj = resultActive.find(o => o.username === prop.username);
+                      const URL_DeleteUser = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
+                      obj = {
+                        id:obj.id,
+                        username:obj.username,
+                        activo:false,
+                        idUserSender:liableID
+                      }
+                      axios.delete(URL_DeleteUser, {headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + auth
+                      }, data:obj}).then(response => {
+                        console.log(response);
+                        alert("Usuario eliminado con exito")
+                      })
+                      .catch(function(error) {
+                        console.log(error);
+                        alert("Error al eliminar el usuario, vuelva a intentarlo");
+                        return;
+                      })
+										}}
+										color="danger"
+										className="remove"
+									>
+										<Close />
+									</Button>{" "}
+								</div>
+							)
 						};
 					})
 				);
