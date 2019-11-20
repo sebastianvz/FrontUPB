@@ -9,7 +9,6 @@ import {Modal} from "@material-ui/core";
 // @material-ui/icons
 import AccountBox from "@material-ui/icons/AccountBox";
 import Create from "@material-ui/icons/Create";
-import Assignment from "@material-ui/icons/Assignment";
 import Close from "@material-ui/icons/Close";
 import Add from "@material-ui/icons/Add";
 // core components
@@ -42,6 +41,11 @@ const useStyles = makeStyles(theme => ({
   noLabel: {
     marginTop: theme.spacing(3),
   },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
+  },
 }));
 
 function getStyles(name, personName, theme) {
@@ -67,8 +71,9 @@ function getModalStyle() {
 export default function Users() {
 	const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
+  const [openModified, setOpenModified] = React.useState(false);
 
-  
+
   const handleChangeMultiSelect = event => {
     setDataState({...dataState, programs: event.target.value});
     console.log(dataState)
@@ -99,7 +104,7 @@ export default function Users() {
       other_job:null,
       user:"",
       password:"",
-      roles:[]     
+      roles:[]
     }
     );
 
@@ -111,7 +116,7 @@ export default function Users() {
   const [programsArray, setProgramsArray] = React.useState([]);
   const [idType, setIdType] = React.useState([]);
   const [rolesPerUser, setRolesPerUser] = React.useState([]);
-	
+
 	const verifyEmail = value => {
     var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (emailRex.test(value)) {
@@ -152,7 +157,7 @@ export default function Users() {
   let liableID = JSON.parse(localStorage.getItem("id"));
 
   const addUser = (username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
-      
+
     if (requiredState === "" || requiredState === "error") {
       setrequiredState("error");
       alert("Faltan campos por llenar");
@@ -176,7 +181,7 @@ export default function Users() {
     const URL_USER_POST = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
     let programsArrayObject = arrayProgramas.map(x => {return({id:x})})
     let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
-    
+
     let newUser = new userModel(username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, rolesArrayObject,programsArrayObject, celular, otrosTrabajos,idUpb, emailPersonal, profesion, idUserSender);
 
     newUser = JSON.stringify(newUser);
@@ -187,7 +192,7 @@ export default function Users() {
           Authorization: "Bearer " + auth
         }
       })
-      .then(function(response) { 
+      .then(function(response) {
         console.log(response);
         console.log(newUser);
         setDataState({
@@ -204,7 +209,7 @@ export default function Users() {
           other_job:null,
           user:"",
           password:"",
-          roles:[]     
+          roles:[]
         })
         alert("Usuario creado con exito")
         setOpen(false)
@@ -216,74 +221,79 @@ export default function Users() {
         return;
       });
   };
-  
+
+  const changeDataUser = (idDataBase, username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
+
+    const URL_USER_PUT = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
+    let programsArrayObject = arrayProgramas.map(x => {return({id:x})})
+    let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
+
+    let newUser = new userModel(username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, rolesArrayObject,programsArrayObject, celular, otrosTrabajos,idUpb, emailPersonal, profesion, idUserSender);
+    debugger;
+    newUser.id = dataState.id
+    newUser = JSON.stringify(newUser);
+    axios
+      .put(URL_USER_PUT, newUser, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth
+        }
+      })
+      .then(function(response) {
+        console.log(response);
+        console.log(newUser);
+        setDataState({
+          id_type: "",
+          id_number: 0,
+          name: "",
+          last_name: "",
+          email: null,
+          email_UPB: "",
+          phone: null,
+          idUPB: null,
+          job:null,
+          programs:[],
+          other_job:null,
+          user:"",
+          password:"",
+          roles:[]
+        })
+        alert("Usuario modificado con exito")
+        setOpenModified(false)
+      })
+      .catch(function(error) {
+        console.log(error);
+        console.log(newUser);
+        alert("No se pudo modificar los datos del usuario, vuelva a intentarlo");
+        setOpenModified(false);
+        return;
+      });
+  };
+
 	const handleOpen = () => {
     setOpen(true);
-	};
+  };
+
+  const handleOpenModified = () => {
+    setOpenModified(true);
+  };
+  const handleCloseModified = () => {
+    console.log(dataState);
+		setOpenModified(false);
+  };
 
 	const handleClose = () => {
     console.log(dataState);
 		setOpen(false);
   };
-  
+
 	const [data, setData] = React.useState(
 		dataTable.dataRows.map((prop, key) => {
 			return {
 				id: key,
 				username: prop[0],
 				typeAndNumberId: prop[0],
-				nombreCompleto: prop[0],
-				actions: (
-					// we've added some custom button actions
-					<div className="actions-right">
-						{/* use this button to add a edit kind of action */}
-						{/* <Button
-							justIcon
-							round
-							simple
-							onClick={() => {
-								let obj = data.find(o => o.id === key);
-								console.log(data);
-								alert(
-									"You've clicked EDIT button on \n{ \nusername: " +
-										obj.username +
-										", \nusername: " +
-										obj.id +
-										", \ntypeAndNumberIdn: " +
-										obj.nombreCompleto +
-										", \nnombreCompletoe: "
-								);
-							}}
-							color="warning"
-							className="edit"
-						>
-							<Create />
-						</Button>{" "} */}
-						{/* use this button to remove the data row */}
-						<Button
-							justIcon
-							round
-							simple
-							onClick={() => {
-								var newData = data;
-								newData.find((o, i) => {
-									if (o.id === key) {
-										// here you should add some custom code so you can delete the data
-										// from this component and from your server as well
-										newData.splice(i, 1);
-										return true;
-									}
-									return false;
-								});
-								setData([...newData]);
-							}}
-							color="danger"
-							className="remove"
-						>
-							<Close />
-						</Button>{" "}
-					</div>
-				)
+				nombreCompleto: prop[0]
 			};
 		})
 	);
@@ -346,39 +356,41 @@ export default function Users() {
         setProgramsArray(programsArrayAxios)
         setRolesPerUser(rolesArrayAxios)
         const resultActive = responseGetUser.data.data.filter(x => x.activo === true);
-        
+
         setData(
 					resultActive.map((prop, key) => {
 						return {
 							id: key,
 							username: prop.username,
 							typeAndNumberId: `${prop.nameTipoIdentificacion} ${prop.numeroIdentificacion}`,
-							nombreCompleto: prop.nombreCompleto,
+              nombreCompleto: `${prop.nombreCompleto} ${prop.apellidos}`,
 							actions: (
 								// we've added some custom button actions
 								<div className="actions-right">
 									{/* use this button to add a edit kind of action */}
-									{/* <Button
+									<Button
 										justIcon
 										round
 										simple
 										onClick={() => {
                       let obj = resultActive.find(o => o.username === prop.username);
-											alert(
-												"You've clicked EDIT button on \n{ \nusername: " +
-										obj.username +
-										", \nID: " +
-										obj.id +
-										", \ntypeAndNumberIdn: " +
-										obj.nombreCompleto +
-										", \nnombreCompletoe: "
-											);
+                      console.log(obj)
+                      const arrayInPutRoles = obj.role.map(x => {return(x.id)})
+                      //const arrayInPutPrograms = obj.programa.map(x => {return({id:x})})
+                      console.log(arrayInPutRoles)
+
+                      setDataState({...dataState, name: obj.nombreCompleto, job:obj.profesion, last_name: obj.apellidos, email: obj.emailPersonal,
+                        other_job: obj.otrosTrabajos, phone: obj.celular, id_number: obj.numeroIdentificacion, email_UPB: obj.emailUpb,
+                        user: obj.username, password: obj.contrasena, id_type:obj.idTipoIdentificacion, id: obj.id, idUPB: obj.idUpb, roles: arrayInPutRoles,
+                        
+                      })
+                      handleOpenModified();
 										}}
 										color="warning"
 										className="edit"
 									>
 										<Create />
-									</Button>{" "} */}
+									</Button>{" "}
 									{/* use this button to remove the data row */}
 									<Button
 										justIcon
@@ -416,7 +428,7 @@ export default function Users() {
 						};
 					})
 				);
-        // use/access the results 
+        // use/access the results
       })).catch(errors => {
         // react on errors.
       })
@@ -443,6 +455,230 @@ export default function Users() {
 							/>
 							Agregar Usuario
 						</Button>
+            <Modal
+							aria-labelledby="simple-modal-title"
+							aria-describedby="simple-modal-description"
+							open={openModified}
+							onClose={handleCloseModified}
+						>
+              <GridContainer>
+                <GridItem xs={12} sm={12} md={12}>
+                  <Card>
+                    <CardHeader color="danger" text>
+                      <CardText color="danger">
+                        <h4 className={classes.cardTitle}>Modificar usuario</h4>
+                      </CardText>
+                    </CardHeader>
+                    <CardBody>
+                    <h4 style={{margin: "25px 0px"}}><b>Datos personales</b></h4>
+                      <form>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Nombre
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={8}>
+                            <CustomInput
+                              success={requiredState === "success"}
+                              error={requiredState === "error"}
+                              id="required"
+                              defaultValue="Default Value"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyLength(event.target.value, 0)) {
+                                    setrequiredState("success");
+                                  } else {
+                                    setrequiredState("error");
+                                  }
+                                  setDataState({...dataState, name: event.target.value})
+                                },
+                                type: "text",
+                                defaultValue:dataState.name,
+                                endAdornment:
+                                  requiredState === "error" ? (
+                                    <InputAdornment position="end">
+                                      <Close className={classes.danger} />
+                                    </InputAdornment>
+                                  ) : (
+                                    undefined
+                                  )
+                              }}
+                            />
+                          </GridItem>
+                          </GridContainer>
+                          <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Apellidos
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={8}>
+                            <CustomInput
+                              success={requiredState === "success"}
+                              error={requiredState === "error"}
+                              id="required"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyLength(event.target.value, 0)) {
+                                    setrequiredState("success");
+                                  } else {
+                                    setrequiredState("error");
+                                  }
+                                  setDataState({...dataState, last_name: event.target.value})
+                                },
+                                type: "text",
+                                defaultValue:dataState.last_name,
+                                endAdornment:
+                                  requiredState === "error" ? (
+                                    <InputAdornment position="end">
+                                      <Close className={classes.danger} />
+                                    </InputAdornment>
+                                  ) : (
+                                    undefined
+                                  )
+                              }}
+                            />
+                          </GridItem>
+                          </GridContainer>
+                          <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Roles
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={8}>
+                            <FormControl className={classes.formControl}>
+                              <Select
+                                id="demo-mutiple-role"
+                                multiple
+                                value={dataState.roles}
+                                onChange={handleChangeMultiSelectRoles}
+                                input={<Input />}
+                                MenuProps={MenuProps}
+                              >
+                                {rolesPerUser.map(n => (
+                                  <MenuItem key={n.id} value={n.id} style={getStyles(n, dataState.roles, theme)}>
+                                    {n.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </GridItem>
+                          </GridContainer>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Email Personal
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={8}>
+                            <CustomInput
+                              success={typeEmailState === "success"}
+                              error={typeEmailState === "error"}
+                              id="typeemail"
+
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyEmail(event.target.value)) {
+                                    settypeEmailState("success");
+                                  } else {
+                                    settypeEmailState("error");
+                                  }
+                                  setDataState({...dataState, email: event.target.value})
+                                },
+                                type: "email",
+                                defaultValue:dataState.email
+                              }}
+                            />
+                          </GridItem>
+                        </GridContainer>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Celular
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={8}>
+                            <CustomInput
+                              success={numberState === "success"}
+                              error={numberState === "error"}
+                              id="number"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyNumber(event.target.value)) {
+                                    setnumberState("success");
+                                  } else {
+                                    setnumberState("error");
+                                  }
+                                  setDataState({...dataState, phone: event.target.value})
+                                },
+                                type: "number",
+                                defaultValue:dataState.phone,
+                                endAdornment:
+                                  numberState === "error" ? (
+                                    <InputAdornment position="end">
+                                      <Close className={classes.danger} />
+                                    </InputAdornment>
+                                  ) : (
+                                    undefined
+                                  )
+                              }}
+                            />
+                          </GridItem>
+                        </GridContainer>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Programas
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={8}>
+                            <FormControl className={classes.formControl}>
+                              <Select
+                                id="demo-mutiple-name"
+                                multiple
+                                value={dataState.programs}
+                                onChange={handleChangeMultiSelect}
+                                input={<Input />}
+                                MenuProps={MenuProps}
+                              >
+                                {programsArray.map(n => (
+                                  <MenuItem key={n.id} value={n.id} style={getStyles(n, dataState.programs, theme)}>
+                                    {n.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </GridItem>
+                        </GridContainer>
+                      </form>
+                    </CardBody>
+                    <CardFooter className={classes.justifyContentCenter}>
+                      <Button color="primary" onClick={handleCloseModified}>
+                        Cancelar
+                      </Button>
+                      <Button color="danger" onClick={()=>changeDataUser(data.idDataBase, dataState.user, dataState.password, dataState.id_type, dataState.id_number, dataState.name, dataState.last_name, dataState.email_UPB, dataState.roles, dataState.programs, dataState.phone, dataState.other_job, dataState.idUPB, dataState.email,dataState.job)}>
+                        Modificar
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </GridItem>
+              </GridContainer>
+
+            </Modal>
 						<Modal
 							aria-labelledby="simple-modal-title"
 							aria-describedby="simple-modal-description"
@@ -465,7 +701,7 @@ export default function Users() {
                             <FormLabel className={classes.labelHorizontal}>
                               Tipo de identificacíon
                             </FormLabel>
-                          </GridItem>             
+                          </GridItem>
                           <GridItem xs={12} sm={2}>
                           <FormControl className={classes.formControl}>
                             <Select
@@ -799,7 +1035,7 @@ export default function Users() {
                                 ))}
                               </Select>
                             </FormControl>
-                          </GridItem>   
+                          </GridItem>
                           <GridItem xs={12} sm={1}>
                             <FormLabel className={classes.labelHorizontal}>
                               Otros trabajos
@@ -899,7 +1135,7 @@ export default function Users() {
                           </GridItem>
                           <GridItem xs={1} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
-                              Confirmar 
+                              Confirmar
                             </FormLabel>
                           </GridItem>
                           <GridItem xs={12} sm={2}>
@@ -934,7 +1170,7 @@ export default function Users() {
                         </GridContainer>
                       </form>
                     </CardBody>
-                    <CardFooter className={classes.justifyContentCenter}> 
+                    <CardFooter className={classes.justifyContentCenter}>
                       <Button color="primary" onClick={handleClose}>
                         Cancelar
                       </Button>

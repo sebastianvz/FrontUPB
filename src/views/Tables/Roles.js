@@ -85,6 +85,8 @@ export default function Roles() {
 							const URL_ROLE_POST =
 								"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
 							let newRole = new roleModel(e, arrayIdPermits);
+							newRole.activo = true;
+							newRole.idUserSender = liableID;
 							newRole = JSON.stringify(newRole);
 							axios
 								.post(URL_ROLE_POST, newRole, {
@@ -245,7 +247,7 @@ export default function Roles() {
 								// we've added some custom button actions
 								<div className="actions-right">
 									{/* use this button to add a edit kind of action */}
-									{/* <Button
+									<Button
 										justIcon
 										round
 										simple
@@ -254,13 +256,113 @@ export default function Roles() {
 											let obj = resultActive.find(
 												o => o.roleName === prop.roleName
 											);
-											alert("You've clicked EDIT button");
+											const URL_getSpecificRole = `http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role/${obj.id}`;
+											const URL_getPermmision =
+												"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Permission";
+
+											axios
+												.all([
+													axios.get(URL_getSpecificRole, {
+														headers: {
+															Authorization: "Bearer " + auth
+														}
+													}),
+													axios.get(URL_getPermmision, {
+														headers: {
+															Authorization: "Bearer " + auth
+														}
+													})
+												])
+												.then(responseArr => {
+													//this will be executed only when all requests are complete
+													console.log(
+														"Date created: ",
+														responseArr[0].data.data
+													);
+													console.log(
+														"Date created: ",
+														responseArr[1].data.data
+													);
+													setAlerta(
+														<SweetAlert
+															input
+															showCancel
+															style={{
+																display: "block",
+																marginTop: "-100px"
+															}}
+															confirmBtnText="Modificar"
+															cancelBtnText="Cancelar"
+															title="Cambie el nombre del rol y los permisos"
+															required
+															validationMsg="Debe digitar el nombre del rol"
+															onConfirm={e => {
+																const URL_ROLE_PUT =
+																	"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+																let newRole = new roleModel(e, arrayIdPermits);
+																newRole.idUserSender = liableID;
+																newRole.id = obj.id;
+																newRole.activo = true;
+																newRole = JSON.stringify(newRole);
+																axios
+																	.put(URL_ROLE_PUT, newRole, {
+																		headers: {
+																			"Content-Type": "application/json",
+																			Authorization: "Bearer " + auth
+																		}
+																	})
+																	.then(function(response) {
+																		alert("Exito al modificar el rol");
+																		hideAlert();
+																	})
+																	.catch(function(error) {
+																		alert("Error al modificar el rol");
+																		console.log(error);
+																		return;
+																	});
+															}}
+															onCancel={() => hideAlert()}
+															confirmBtnCssClass={
+																classesAlerts.button +
+																" " +
+																classesAlerts.default
+															}
+															cancelBtnCssClass={
+																classesAlerts.button +
+																" " +
+																classesAlerts.danger
+															}
+														>
+															<b>Seleccione los permisos</b>
+															<br />
+															<br />
+															{responseArr[1].data.data.map(x => (
+																<FormControlLabel
+																	key={x.id}
+																	control={
+																		<Checkbox
+																			onChange={handleChange(x.permmisionName)}
+																			value={x.id}
+																		/>
+																	}
+																	label={x.permmisionName}
+																/>
+															))}
+															<br />
+															<br />
+														</SweetAlert>
+													);
+												})
+												.catch(function(error) {
+													console.log(error[0]);
+													console.log(error[1]);
+												});
 										}}
 										color="warning"
 										className="edit"
 									>
 										<Create />
-									</Button>{" "} */}
+									</Button>{" "}
 									{/* use this button to remove the data row */}
 									<Button
 										justIcon
