@@ -158,6 +158,29 @@ export default function Roles() {
 			);
 		}, 200);
 	};
+
+	const responseConfirmAlertNext = e => {
+		arrayIdPermits = [];
+		setAlerta(e);
+		setTimeout(() => {
+			setAlerta(
+				<SweetAlert
+					style={{display: "block", marginTop: "-100px"}}
+					onConfirm={() => hideAlert()}
+					onCancel={() => hideAlert()}
+					confirmBtnCssClass={
+						classesAlerts.button + " " + classesAlerts.default
+					}
+					title={
+						<p>
+							<b>{e}</b>
+						</p>
+					}
+				/>
+			);
+		}, 200);
+	};
+
 	const hideAlert = () => {
 		arrayIdPermits = [];
 		setAlerta(null);
@@ -312,12 +335,17 @@ export default function Roles() {
 																		}
 																	})
 																	.then(function(response) {
-																		alert("Exito al modificar el rol");
+																		responseConfirmAlertNext(
+																			response.data.data.error.message
+																		);
 																		hideAlert();
 																	})
 																	.catch(function(error) {
-																		alert("Error al modificar el rol");
 																		console.log(error);
+																		responseConfirmAlertNext(
+																			error.data.data.error.message
+																		);
+																		hideAlert();
 																		return;
 																	});
 															}}
@@ -390,13 +418,17 @@ export default function Roles() {
 												})
 												.then(response => {
 													console.log(response);
-													alert("Rol eliminado con exito");
+													responseConfirmAlertNext(
+														response.data.data.error.message
+													);
+													hideAlert();
 												})
 												.catch(function(error) {
 													console.log(error);
-													alert(
-														"Error al eliminar el rol, vuelva a intentarlo"
+													responseConfirmAlertNext(
+														error.data.data.error.message
 													);
+													hideAlert();
 													return;
 												});
 										}}

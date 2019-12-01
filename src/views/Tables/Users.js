@@ -2,8 +2,10 @@ import React, {useEffect} from "react";
 import axios from "axios";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
+import FormControl from '@material-ui/core/FormControl';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {Modal} from "@material-ui/core";
 // @material-ui/icons
@@ -23,29 +25,28 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardText from "components/Card/CardText.js";
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
+
 import FormLabel from "@material-ui/core/FormLabel";
 import CardFooter from "components/Card/CardFooter.js";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import userModel from "../../models/user.js";
 import Select from '@material-ui/core/Select';
 import {dataTable} from "variables/general.js";
+import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
+import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 
 
-const useStyles = makeStyles(theme => ({
+const useStylesAlerts = makeStyles(stylesForAlerts);
+
+const useStyles = makeStyles(styles);
+
+const useStylesDrop = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 100,
-    maxWidth: 3000
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
-  },
+    marginTop: "26px",
+    minWidth: 230,
+    maxWidth: 3000,
+  }
 }));
 
 function getStyles(name, personName, theme) {
@@ -71,6 +72,7 @@ function getModalStyle() {
 export default function Users() {
 	const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
+  const [alerta, setAlerta] = React.useState(null);
   const [openModified, setOpenModified] = React.useState(false);
 
 
@@ -117,6 +119,10 @@ export default function Users() {
   const [idType, setIdType] = React.useState([]);
   const [rolesPerUser, setRolesPerUser] = React.useState([]);
 
+
+  const hideAlert = () => {
+		setAlerta(null);
+	};
 	const verifyEmail = value => {
     var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (emailRex.test(value)) {
@@ -155,6 +161,27 @@ export default function Users() {
 
   let auth = localStorage.getItem("auth");
   let liableID = JSON.parse(localStorage.getItem("id"));
+
+  const responseConfirmAlertNext = e => {
+		setAlerta(e);
+		setTimeout(() => {
+			setAlerta(
+				<SweetAlert
+					style={{display: "block", marginTop: "-100px"}}
+					onConfirm={() => hideAlert()}
+					onCancel={() => hideAlert()}
+					confirmBtnCssClass={
+						classesAlerts.button + " " + classesAlerts.default
+					}
+					title={
+						<p>
+							<b>{e}</b>
+						</p>
+					}
+				/>
+			);
+		}, 200);
+	};
 
   const addUser = (username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
 
@@ -211,16 +238,22 @@ export default function Users() {
           password:"",
           roles:[]
         })
-        alert("Usuario creado con exito")
+        responseConfirmAlertNext(
+          response.data.data.error.message
+        );
         setOpen(false)
       })
       .catch(function(error) {
         console.log(error);
-        alert("Error en la creación del usuario, vuelva a intentarlo");
+        responseConfirmAlertNext(
+          error.data.data.error.message
+        );
         setOpen(false);
         return;
       });
   };
+
+  
 
   const changeDataUser = (idDataBase, username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
 
@@ -229,7 +262,6 @@ export default function Users() {
     let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
 
     let newUser = new userModel(username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, rolesArrayObject,programsArrayObject, celular, otrosTrabajos,idUpb, emailPersonal, profesion, idUserSender);
-    debugger;
     newUser.id = dataState.id
     newUser = JSON.stringify(newUser);
     axios
@@ -258,13 +290,17 @@ export default function Users() {
           password:"",
           roles:[]
         })
-        alert("Usuario modificado con exito")
+        responseConfirmAlertNext(
+          response.data.data.error.message
+        );
         setOpenModified(false)
       })
       .catch(function(error) {
         console.log(error);
         console.log(newUser);
-        alert("No se pudo modificar los datos del usuario, vuelva a intentarlo");
+        responseConfirmAlertNext(
+          error.data.data.error.message
+        );
         setOpenModified(false);
         return;
       });
@@ -296,7 +332,7 @@ export default function Users() {
 				nombreCompleto: prop[0]
 			};
 		})
-	);
+  );
 
 	useEffect(() => {
 		const URL_GetUser = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
@@ -410,7 +446,9 @@ export default function Users() {
                         Authorization: "Bearer " + auth
                       }, data:obj}).then(response => {
                         console.log(response);
-                        alert("Usuario eliminado con exito")
+                        responseConfirmAlertNext(
+                          response.data.data.error.message
+                        );
                       })
                       .catch(function(error) {
                         console.log(error);
@@ -434,8 +472,13 @@ export default function Users() {
       })
 	}, []);
 
-	const classes = useStyles();
-	return (<GridContainer>
+  const classesAlerts = useStylesAlerts();
+  const classes = useStyles();
+  const classesDrop = useStylesDrop();
+	return (
+    <div>
+    {alerta}
+  <GridContainer>
 			<GridItem xs={12}>
 				<Card>
 					<CardHeader color="danger" icon>
@@ -554,7 +597,7 @@ export default function Users() {
                             </FormLabel>
                           </GridItem>
                           <GridItem xs={12} sm={8}>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classesDrop.formControl}>
                               <Select
                                 id="demo-mutiple-role"
                                 multiple
@@ -646,7 +689,7 @@ export default function Users() {
                             </FormLabel>
                           </GridItem>
                           <GridItem xs={12} sm={8}>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classesDrop.formControl}>
                               <Select
                                 id="demo-mutiple-name"
                                 multiple
@@ -703,7 +746,7 @@ export default function Users() {
                             </FormLabel>
                           </GridItem>
                           <GridItem xs={12} sm={2}>
-                          <FormControl className={classes.formControl}>
+                          <FormControl className={classesDrop.formControl}>
                             <Select
                               id="demo-simple-select"
                               value={dataState.id_type}
@@ -827,7 +870,7 @@ export default function Users() {
                             </FormLabel>
                           </GridItem>
                           <GridItem xs={12} sm={1}>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classesDrop.formControl}>
                               <Select
                                 id="demo-mutiple-role"
                                 multiple
@@ -1019,7 +1062,7 @@ export default function Users() {
                             </FormLabel>
                           </GridItem>
                           <GridItem xs={12} sm={4}>
-                            <FormControl className={classes.formControl}>
+                            <FormControl className={classesDrop.formControl}>
                               <Select
                                 id="demo-mutiple-name"
                                 multiple
@@ -1223,5 +1266,6 @@ export default function Users() {
 				</Card>
 			</GridItem>
 		</GridContainer>
+    </div>
 	);
 }

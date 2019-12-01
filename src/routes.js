@@ -6,34 +6,34 @@ import Roles from "views/Tables/Roles.js";
 import Lock from "@material-ui/icons/Lock";
 
 let dashRoutes = [
-  {
-    collapse: true,
-    name: "Seguridad",
-    icon: Lock,
-    state: "pageCollapse",
-    views: [
-      {
-        path: "/permisos",
-        name: "Permisos",
-        mini: "◦",
-        component: Permissions,
-        layout: "/admin"
-      },
-      {
-        path: "/roles",
-        name: "Roles",
-        mini: "◦",
-        component: Roles,
-        layout: "/admin"
-      },
-      {
-        path: "/usuarios",
-        name: "Usuarios",
-        mini: "◦",
-        component: Users,
-        layout: "/admin"
-      }
-    ]
-  }
+	{
+		collapse: true,
+		name: "Seguridad",
+		icon: Lock,
+		state: "pageCollapse",
+		views: [
+			{
+				path: "/permisos",
+				name: "Permisos",
+				mini: "◦",
+				component: Permissions,
+				layout: "/admin"
+			},
+			{
+				path: "/roles",
+				name: "Roles",
+				mini: "◦",
+				component: Roles,
+				layout: "/admin"
+			},
+			{
+				path: "/usuarios",
+				name: "Usuarios",
+				mini: "◦",
+				component: Users,
+				layout: "/admin"
+			}
+		]
+	}
 ];
 export default dashRoutes;
