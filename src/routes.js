@@ -1,9 +1,11 @@
-import Users from "views/Tables/Users.js";
-import Permissions from "views/Tables/Permissions.js";
-import Roles from "views/Tables/Roles.js";
+import Users from "views/Pages/Security/Users.js";
+import Permissions from "views/Pages/Security/Permissions.js";
+import Roles from "views/Pages/Security/Roles.js";
+import Practices from "views/Pages/Practices/Practices.js";
 
 // @material-ui/icons
 import Lock from "@material-ui/icons/Lock";
+import LibraryBooks from '@material-ui/icons/LibraryBooks';
 
 let dashRoutes = [
 	{
@@ -31,6 +33,27 @@ let dashRoutes = [
 				name: "Usuarios",
 				mini: "◦",
 				component: Users,
+				layout: "/admin"
+			},
+			{
+				path: "/practicas", //Extension URL
+				name: "Practicas", //Nombre
+				mini: "◦",
+				component: Practices, 
+				layout: "/admin"
+			}
+		]
+	},{
+		collapse: true,
+		name: "Practices",
+		icon: LibraryBooks,
+		state: "pageCollapse",
+		views: [
+			{
+				path: "/practicas", //Extension URL
+				name: "Practicas", //Nombre
+				mini: "◦",
+				component: Practices, 
 				layout: "/admin"
 			}
 		]

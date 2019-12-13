@@ -18,6 +18,11 @@ import routes from "routes.js";
 
 import styles from "assets/jss/material-dashboard-pro-react/layouts/adminStyle.js";
 
+import GlobalVariables from "../variables/globalVariables.js";
+
+const variables = new GlobalVariables();
+const baseUrl = variables.Url;
+
 var ps;
 
 const useStyles = makeStyles(styles);
@@ -116,8 +121,7 @@ export default function Dashboard(props) {
 
   let auth = localStorage.getItem("auth");
 
-  const URL =
-    "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Master/GetDocuments";
+  const URL =baseUrl+"Master/GetDocuments";
   axios
     .get(URL, {
       headers: {
@@ -136,7 +140,7 @@ export default function Dashboard(props) {
   let userPermmision = localStorage.getItem("arrayPermmision");
   let arrayUserPermmision = userPermmision.split(",");
   const clonedRoutes = routes.map(item => ({ ...item }));
-
+  debugger;
   let newRoutes = [];
   for (let i = 0; i < arrayUserPermmision.length; i++) {
     for (let j = 0; j < routes[0].views.length; j++) {
@@ -145,6 +149,8 @@ export default function Dashboard(props) {
       }
     }
   }
+
+// poner dropdown dinamicos
 
   clonedRoutes[0].views = newRoutes;
 

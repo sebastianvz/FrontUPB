@@ -20,6 +20,11 @@ import {dataTable} from "variables/general.js";
 
 import {cardTitle} from "assets/jss/material-dashboard-pro-react.js";
 
+import GlobalVariables from "../../../variables/globalVariables.js";
+
+const variables = new GlobalVariables();
+const baseUrl = variables.Url;
+
 const styles = {
 	cardIconTitle: {
 		...cardTitle,
@@ -48,8 +53,7 @@ export default function Permissions() {
 	let auth = localStorage.getItem("auth");
 
 	useEffect(() => {
-		const URL =
-			"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Permission";
+		const URL =baseUrl+"Permission";
 		axios
 			.get(URL, {
 				headers: {

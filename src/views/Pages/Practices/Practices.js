@@ -29,12 +29,16 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormLabel from "@material-ui/core/FormLabel";
 import CardFooter from "components/Card/CardFooter.js";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import userModel from "../../models/user.js";
+import userModel from "../../../models/user.js";
 import Select from '@material-ui/core/Select';
 import {dataTable} from "variables/general.js";
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 
+import GlobalVariables from "../../../variables/globalVariables.js";
+
+const variables = new GlobalVariables();
+const baseUrl = variables.Url;
 
 const useStylesAlerts = makeStyles(stylesForAlerts);
 
@@ -205,7 +209,7 @@ export default function Users() {
       alert("Las contraseñas no coinciden");
       return;
     }
-    const URL_USER_POST = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
+    const URL_USER_POST = baseUrl+"User";
     let programsArrayObject = arrayProgramas.map(x => {return({id:x})})
     let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
 
@@ -257,7 +261,7 @@ export default function Users() {
 
   const changeDataUser = (idDataBase, username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
 
-    const URL_USER_PUT = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
+    const URL_USER_PUT = baseUrl+"User";
     let programsArrayObject = arrayProgramas.map(x => {return({id:x})})
     let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
 
@@ -335,10 +339,11 @@ export default function Users() {
   );
 
 	useEffect(() => {
-		const URL_GetUser = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
-    const URL_GetDocuments = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Master/GetDocuments"
-    const URL_GetPrograms = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Master/GetPrograms"
-    const URL_GetRole = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role"
+    debugger;
+		const URL_GetUser = baseUrl+"User";
+    const URL_GetDocuments = baseUrl+"Master/GetDocuments"
+    const URL_GetPrograms = baseUrl+"Master/GetPrograms"
+    const URL_GetRole = baseUrl+"Role"
 
       const requestGetUser = axios.get(URL_GetUser, {
         headers: {
@@ -434,7 +439,7 @@ export default function Users() {
 										simple
 										onClick={() => {
                       let obj = resultActive.find(o => o.username === prop.username);
-                      const URL_DeleteUser = "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/User";
+                      const URL_DeleteUser = baseUrl+"User";
                       obj = {
                         id:obj.id,
                         username:obj.username,

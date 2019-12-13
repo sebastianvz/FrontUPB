@@ -22,13 +22,18 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
-import roleModel from "../../models/roles.js";
+import roleModel from "../../../models/roles.js";
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
 import {dataTable} from "variables/general.js";
 
 import {cardTitle} from "assets/jss/material-dashboard-pro-react.js";
+
+import GlobalVariables from "../../../variables/globalVariables.js";
+
+const variables = new GlobalVariables();
+const baseUrl = variables.Url;
 
 const styles = {
 	cardIconTitle: {
@@ -60,8 +65,7 @@ export default function Roles() {
 	};
 
 	const inputAlert = () => {
-		const URL =
-			"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Permission";
+		const URL =baseUrl+"Permission";
 		axios
 			.get(URL, {
 				headers: {
@@ -82,8 +86,7 @@ export default function Roles() {
 						required
 						validationMsg="Debe digitar el nombre del rol"
 						onConfirm={e => {
-							const URL_ROLE_POST =
-								"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+							const URL_ROLE_POST = baseUrl+"Role";
 							let newRole = new roleModel(e, arrayIdPermits);
 							newRole.activo = true;
 							newRole.idUserSender = liableID;
@@ -251,8 +254,7 @@ export default function Roles() {
 	let auth = localStorage.getItem("auth");
 
 	useEffect(() => {
-		const URL =
-			"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+		const URL =baseUrl+"Role";
 		axios
 			.get(URL, {
 				headers: {
@@ -279,9 +281,8 @@ export default function Roles() {
 											let obj = resultActive.find(
 												o => o.roleName === prop.roleName
 											);
-											const URL_getSpecificRole = `http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role/${obj.id}`;
-											const URL_getPermmision =
-												"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Permission";
+											const URL_getSpecificRole = `${baseUrl}Role/${obj.id}`;
+											const URL_getPermmision =baseUrl+"Permission";
 
 											axios
 												.all([
@@ -320,8 +321,7 @@ export default function Roles() {
 															required
 															validationMsg="Debe digitar el nombre del rol"
 															onConfirm={e => {
-																const URL_ROLE_PUT =
-																	"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+																const URL_ROLE_PUT =baseUrl+"Role";
 																let newRole = new roleModel(e, arrayIdPermits);
 																newRole.idUserSender = liableID;
 																newRole.id = obj.id;
@@ -400,8 +400,7 @@ export default function Roles() {
 											let obj = resultActive.find(
 												o => o.roleName === prop.roleName
 											);
-											const URL_DeleteUser =
-												"http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/Role";
+											const URL_DeleteUser =baseUrl+"Role";
 											obj = {
 												id: obj.id,
 												roleName: obj.roleName,

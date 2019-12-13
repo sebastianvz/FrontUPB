@@ -22,6 +22,8 @@ import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweet
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import Logo from "assets/img/upb-logo-1422010671195.png";
 
+import GlobalVariables from "../../variables/globalVariables.js";
+
 const useStyles = makeStyles(styles);
 const useStylesAlerts = makeStyles(stylesForAlerts);
 
@@ -35,6 +37,10 @@ function LoginPage(props) {
   const [alert, setAlert] = React.useState(null);
 
   // function that verifies if a string has a given length or not
+
+  const variables = new GlobalVariables();
+  const url = variables.Url+"LoginAuth/Authenticate";
+
   const verifyLength = (value, length) => {
     if (value.length >= length) {
       return true;
@@ -84,10 +90,8 @@ function LoginPage(props) {
       return;
     }
 
-    const URL =
-      "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/LoginAuth/Authenticate";
     axios
-      .post(URL, {
+      .post(url, {
         username: required,
         contrasena: loginPassword
       })
