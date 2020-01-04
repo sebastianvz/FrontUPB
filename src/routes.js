@@ -12,7 +12,7 @@ let dashRoutes = [
 		collapse: true,
 		name: "Seguridad",
 		icon: Lock,
-		state: "pageCollapse",
+		state: "securityCollapse",
 		views: [
 			{
 				path: "/permisos",
@@ -34,20 +34,14 @@ let dashRoutes = [
 				mini: "◦",
 				component: Users,
 				layout: "/admin"
-			},
-			{
-				path: "/practicas", //Extension URL
-				name: "Practicas", //Nombre
-				mini: "◦",
-				component: Practices, 
-				layout: "/admin"
 			}
 		]
-	},{
+	},
+	{
 		collapse: true,
-		name: "Practices",
+		name: "Practicas",
 		icon: LibraryBooks,
-		state: "pageCollapse",
+		state: "praticesCollapse",
 		views: [
 			{
 				path: "/practicas", //Extension URL

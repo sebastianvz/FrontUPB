@@ -138,21 +138,41 @@ export default function Dashboard(props) {
   }
 
   let userPermmision = localStorage.getItem("arrayPermmision");
+  let userControllers = localStorage.getItem("arrayControllers");
   let arrayUserPermmision = userPermmision.split(",");
-  const clonedRoutes = routes.map(item => ({ ...item }));
-  debugger;
+  let arrayuserControllers = userControllers.split(",");
+  let clonedRoutes = routes.filter(x => arrayuserControllers.includes(x.name));
+  let viewsJoin = []
+  let sizes = []
+  for(let i = 0; i < clonedRoutes.length; i++){
+    viewsJoin.push(...clonedRoutes[i].views)
+    sizes.push(clonedRoutes[i].views.length)
+  }
+  console.log(viewsJoin)
   let newRoutes = [];
+
   for (let i = 0; i < arrayUserPermmision.length; i++) {
-    for (let j = 0; j < routes[0].views.length; j++) {
-      if (arrayUserPermmision[i] === routes[0].views[j].name) {
-        newRoutes.push(routes[0].views[j]);
+    for (let j = 0; j < viewsJoin.length; j++) {
+      if (arrayUserPermmision[i] === viewsJoin[j].name) {
+        newRoutes.push(viewsJoin[j]);
       }
     }
   }
 
-// poner dropdown dinamicos
+  console.log(newRoutes, sizes)
 
-  clonedRoutes[0].views = newRoutes;
+  let arraysNew = []
+  for(let i = 1; i < newRoutes.length; i++){
+    arraysNew.push(newRoutes.slice(sizes[i-1],sizes[i]))
+  }
+  console.log(arraysNew)
+  // for(let i = 0; i < clonedRoutes.length; i++){
+  //   if(newRoutes[i] === undefined){
+  //     continue
+  //   }  
+  //   clonedRoutes[i].views = newRoutes[i];
+  // }
+  // clonedRoutes[0].views = newRoutes;
 
   const getRoutes = routes => {
     return routes.map((prop, key) => {

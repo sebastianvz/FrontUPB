@@ -99,6 +99,8 @@ function LoginPage(props) {
         localStorage.setItem("auth", response.data.data.token);
         localStorage.setItem("id", response.data.data.id);
         let arrayPermmisionNames = [];
+        let arrayControllers = [];
+        console.log(response)
 
         if (response.data.data.role !== null) {
           for (let i = 0; i < response.data.data.role.length; i++) {
@@ -109,15 +111,23 @@ function LoginPage(props) {
             ) {
               arrayPermmisionNames.push(
                 response.data.data.role[i].permmisionRole[j].permmisionName
+                
               );
+              arrayControllers.push(
+                response.data.data.role[i].permmisionRole[j].controller
+              );
+              
             }
           }
         }
 
         let uniqueArrayPermmisionNames = new Set(arrayPermmisionNames);
+        let uniqueArrayControllers = new Set(arrayControllers);
         let arrayAgainPermmisionNames = [...uniqueArrayPermmisionNames];
+        let arrayAgainControllers = [...uniqueArrayControllers];
 
         localStorage.setItem("arrayPermmision", arrayAgainPermmisionNames);
+        localStorage.setItem("arrayControllers", arrayAgainControllers);
 
         console.log(localStorage.getItem("auth"));
 

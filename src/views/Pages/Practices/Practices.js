@@ -339,7 +339,6 @@ export default function Users() {
   );
 
 	useEffect(() => {
-    debugger;
 		const URL_GetUser = baseUrl+"User";
     const URL_GetDocuments = baseUrl+"Master/GetDocuments"
     const URL_GetPrograms = baseUrl+"Master/GetPrograms"
