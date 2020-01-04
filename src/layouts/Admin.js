@@ -142,37 +142,11 @@ export default function Dashboard(props) {
   let arrayUserPermmision = userPermmision.split(",");
   let arrayuserControllers = userControllers.split(",");
   let clonedRoutes = routes.filter(x => arrayuserControllers.includes(x.name));
-  let viewsJoin = []
-  let sizes = []
+  let PermmisionRoutes = clonedRoutes.map(x => x.views.filter(y => arrayUserPermmision.includes(y.name)))
+
   for(let i = 0; i < clonedRoutes.length; i++){
-    viewsJoin.push(...clonedRoutes[i].views)
-    sizes.push(clonedRoutes[i].views.length)
+    clonedRoutes[i].views = [...PermmisionRoutes[i]];
   }
-  console.log(viewsJoin)
-  let newRoutes = [];
-
-  for (let i = 0; i < arrayUserPermmision.length; i++) {
-    for (let j = 0; j < viewsJoin.length; j++) {
-      if (arrayUserPermmision[i] === viewsJoin[j].name) {
-        newRoutes.push(viewsJoin[j]);
-      }
-    }
-  }
-
-  console.log(newRoutes, sizes)
-
-  let arraysNew = []
-  for(let i = 1; i < newRoutes.length; i++){
-    arraysNew.push(newRoutes.slice(sizes[i-1],sizes[i]))
-  }
-  console.log(arraysNew)
-  // for(let i = 0; i < clonedRoutes.length; i++){
-  //   if(newRoutes[i] === undefined){
-  //     continue
-  //   }  
-  //   clonedRoutes[i].views = newRoutes[i];
-  // }
-  // clonedRoutes[0].views = newRoutes;
 
   const getRoutes = routes => {
     return routes.map((prop, key) => {
@@ -228,16 +202,16 @@ export default function Dashboard(props) {
           <div className={classes.content}>
             <div className={classes.container}>
               <Switch>
-                {getRoutes(routes)}
-                <Redirect from="/admin" to="/admin/permisos" />
+                {getRoutes(clonedRoutes)}
+                <Redirect from="/admin" to={`/admin/${arrayUserPermmision[0].toLowerCase()}`} />
               </Switch>
             </div>
           </div>
         ) : (
           <div className={classes.map}>
             <Switch>
-              {getRoutes(routes)}
-              <Redirect from="/admin" to="/admin/permisos" />
+              {getRoutes(clonedRoutes)}
+              <Redirect from="/admin" to={`/admin/${arrayUserPermmision[0].toLowerCase()}`} />
             </Switch>
           </div>
         )}

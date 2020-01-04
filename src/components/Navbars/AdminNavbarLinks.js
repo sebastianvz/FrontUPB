@@ -35,6 +35,7 @@ function HeaderLinks(props) {
 	const handleCloseProfile = () => {
 		localStorage.clear();
 		props.history.replace("/auth");
+		window.location.reload(true) 
 		setOpenProfile(null);
 	};
 	const classes = useStyles();

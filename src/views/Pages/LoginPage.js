@@ -100,7 +100,6 @@ function LoginPage(props) {
         localStorage.setItem("id", response.data.data.id);
         let arrayPermmisionNames = [];
         let arrayControllers = [];
-        console.log(response)
 
         if (response.data.data.role !== null) {
           for (let i = 0; i < response.data.data.role.length; i++) {
@@ -128,8 +127,6 @@ function LoginPage(props) {
 
         localStorage.setItem("arrayPermmision", arrayAgainPermmisionNames);
         localStorage.setItem("arrayControllers", arrayAgainControllers);
-
-        console.log(localStorage.getItem("auth"));
 
         if (response.data.data.token === null) {
           auth = JSON.parse(localStorage.getItem("auth"));
