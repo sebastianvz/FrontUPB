@@ -15,14 +15,14 @@ import Create from "@material-ui/icons/Create";
 import Close from "@material-ui/icons/Close";
 import Add from "@material-ui/icons/Add";
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardIcon from "components/Card/CardIcon.js";
-import CardHeader from "components/Card/CardHeader.js";
-import roleModel from "../../../models/roles.js";
+import GridContainer from "components/core/Grid/GridContainer.js";
+import GridItem from "components/core/Grid/GridItem.js";
+import Button from "components/core/CustomButtons/Button.js";
+import Card from "components/core/Card/Card.js";
+import CardBody from "components/core/Card/CardBody.js";
+import CardIcon from "components/core/Card/CardIcon.js";
+import CardHeader from "components/core/Card/CardHeader.js";
+import roleModel from "../../../dto/roles.js";
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 

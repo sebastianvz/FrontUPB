@@ -17,7 +17,7 @@ import Collapse from "@material-ui/core/Collapse";
 import Icon from "@material-ui/core/Icon";
 
 // core components
-import AdminNavbarLinks from "components/Navbars/AdminNavbarLinks.js";
+import AdminNavbarLinks from "../Navbars/AdminNavbarLinks.js";
 
 import sidebarStyle from "assets/jss/material-dashboard-pro-react/components/sidebarStyle.js";
 

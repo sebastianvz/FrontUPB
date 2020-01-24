@@ -1,4 +1,4 @@
-import errorModel from "models/error.js";
+import errorModel from "./error.js";
 
 export default class permmisionModel {
 	constructor() {

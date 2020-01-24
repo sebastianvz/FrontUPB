@@ -17,7 +17,7 @@ import Popper from "@material-ui/core/Popper";
 import Person from "@material-ui/icons/Person";
 
 // core components
-import Button from "components/CustomButtons/Button.js";
+import Button from "../CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-pro-react/components/adminNavbarLinksStyle.js";
 

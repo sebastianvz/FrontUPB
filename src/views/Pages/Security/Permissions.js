@@ -9,12 +9,12 @@ import {makeStyles} from "@material-ui/core/styles";
 import Assignment from "@material-ui/icons/Assignment";
 
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardIcon from "components/Card/CardIcon.js";
-import CardHeader from "components/Card/CardHeader.js";
+import GridContainer from "components/core/Grid/GridContainer.js";
+import GridItem from "components/core/Grid/GridItem.js";
+import Card from "components/core/Card/Card.js";
+import CardBody from "components/core/Card/CardBody.js";
+import CardIcon from "components/core/Card/CardIcon.js";
+import CardHeader from "components/core/Card/CardHeader.js";
 
 import {dataTable} from "variables/general.js";
 
