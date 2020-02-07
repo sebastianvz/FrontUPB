@@ -24,17 +24,22 @@ import Sidebar from "../components/core/Sidebar/Sidebar.js";
 import FixedPlugin from "../components/core/FixedPlugin/FixedPlugin.js";
 
 import routes from "../config/routes";
-
 import styles from "assets/jss/material-dashboard-pro-react/layouts/adminStyle.js";
-
 import GlobalVariables from "../variables/globalVariables.js";
+import { useMenu } from '../components/Layout';
+
+
+
+const getComponent = (x) => {
+  return (routes.find(e => e.path === x.path) || { component: '' }).component;
+};
+
 
 const variables = new GlobalVariables();
-const baseUrl = variables.Url;
-
-var ps;
 
 const useStyles = makeStyles(styles);
+
+var ps;
 
 const Routes = () => {
   const { isAuthenticated } = useAuthenticated();
@@ -78,6 +83,19 @@ const Dashboard = props => {
   // // const [hasImage, setHasImage] = useState(true);
   const [fixedClasses, setFixedClasses] = useState("dropdown");
   const [logo, setLogo] = useState(require("assets/img/escudo-3.png"));
+  const [menus, setMenus] = useState([]);
+  const _menus = useMenu();
+
+  useEffect(() => {
+    console.log('_menus', _menus);
+    _menus && _menus.filter(e => e.collapse).forEach(e => {
+      e.views.forEach(x => {
+        x.component = getComponent(x)
+      });
+    });
+    setMenus(_menus);
+  }, [_menus]);
+
   // // styles
   const classes = useStyles();
   const mainPanelClasses =
@@ -88,28 +106,35 @@ const Dashboard = props => {
       [classes.mainPanelWithPerfectScrollbar]:
         navigator.platform.indexOf("Win") > -1
     });
+
+    React.useEffect(() => {
+      if (navigator.platform.indexOf("Win") > -1) {
+        ps = new PerfectScrollbar(mainPanel.current, {
+          suppressScrollX: true,
+          suppressScrollY: false
+        });
+        document.body.style.overflow = "hidden";
+      }
+      window.addEventListener("resize", resizeFunction);
+    
+      // Specify how to clean up after this effect:
+      return function cleanup() {
+        if (navigator.platform.indexOf("Win") > -1) {
+          ps.destroy();
+        }
+        window.removeEventListener("resize", resizeFunction);
+      };
+    });
+
+    const resizeFunction = () => {
+      if (window.innerWidth >= 960) {
+        setMobileOpen(false);
+      }
+    };
+
   // // ref for main panel div
   const mainPanel = React.createRef();
-  // // effect instead of componentDidMount, componentDidUpdate and componentWillUnmount
-  // useEffect(() => {
-  //   if (navigator.platform.indexOf("Win") > -1) {
-  //     ps = new PerfectScrollbar(mainPanel.current, {
-  //       suppressScrollX: true,
-  //       suppressScrollY: false
-  //     });
-  //     document.body.style.overflow = "hidden";
-  //   }
-  //   window.addEventListener("resize", resizeFunction);
 
-  //   // Specify how to clean up after this effect:
-  //   return function cleanup() {
-  //     if (navigator.platform.indexOf("Win") > -1) {
-  //       ps.destroy();
-  //     }
-  //     window.removeEventListener("resize", resizeFunction);
-  //   };
-  // });
-  // // functions for changeing the states from components
   const handleImageClick = image => {
     setImage(image);
   };
@@ -137,9 +162,7 @@ const Dashboard = props => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  // const getRoute = () => {
-  //   return window.location.pathname !== "/admin/full-screen-maps";
-  // };
+
   const getActiveRoute = routes => {
     let activeRoute = "Default Brand Text";
     for (let i = 0; i < routes.length; i++) {
@@ -159,62 +182,18 @@ const Dashboard = props => {
     return activeRoute;
   };
 
-  // let auth = localStorage.getItem("auth");
 
-  // const URL = baseUrl + "Master/GetDocuments";
-  // axios
-  //   .get(URL, {
-  //     headers: {
-  //       Authorization: "Bearer " + auth
-  //     }
-  //   })
-  //   .then(function (response) { })
-  //   .catch(function (error) {
-  //     props.history.replace("/auth");
-  //   });
-
-  // if (localStorage.getItem("auth") === null) {
-  //   props.history.replace("/auth");
-  // }
-
-  // let userPermmision = localStorage.getItem("arrayPermmision");
   let userControllers = localStorage.getItem("arrayControllers");
   // let arrayUserPermmision = userPermmision.split(",");
   let arrayuserControllers = userControllers && userControllers.split(",");
   let clonedRoutes = userControllers && routes.filter(x => arrayuserControllers.includes(x.name));
-  // let PermmisionRoutes = clonedRoutes.map(x => x.views.filter(y => arrayUserPermmision.includes(y.name)))
 
-  // for (let i = 0; i < clonedRoutes.length; i++) {
-  //   clonedRoutes[i].views = [...PermmisionRoutes[i]];
-  // }
-
-  // const getRoutes = routes => {
-  //   return routes.map((prop, key) => {
-  //     if (prop.collapse) {
-  //       return getRoutes(prop.views);
-  //     }
-  //     if (prop.layout === "/admin") {
-  //       return (
-  //         <Route
-  //           path={prop.layout + prop.path}
-  //           component={prop.component}
-  //           key={key}
-  //         />
-  //       );
-  //     } else {
-  //       return null;
-  //     }
-  //   });
-  // };
   const sidebarMinimize = () => {
     setMiniActive(!miniActive);
   };
-  // const resizeFunction = () => {
-  //   if (window.innerWidth >= 960) {
-  //     setMobileOpen(false);
-  //   }
-  // };
 
+ // effect instead of componentDidMount, componentDidUpdate and componentWillUnmount
+ 
   const { isAuthenticated } = useAuthenticated();
 
   return (
@@ -222,7 +201,7 @@ const Dashboard = props => {
       {isAuthenticated ? (
         <div className={classes.wrapper}>
           <Sidebar
-            routes={routes}
+            routes={menus}
             logoText={"SisLab"}
             logo={logo}
             image={image}
@@ -241,25 +220,11 @@ const Dashboard = props => {
               handleDrawerToggle={handleDrawerToggle}
               {...rest}
             />
-            <Routes />
-            {/* On the /maps/full-screen-maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
-            {/* {getRoute() ? (
-              <div className={classes.content}>
-                <div className={classes.container}>
-                  <Switch>
-                    {getRoutes(clonedRoutes)}
-                    <Redirect from="/admin" to={`/admin/${arrayUserPermmision[0].toLowerCase()}`} />
-                  </Switch>
-                </div>
+            <div className={classes.content}>
+              <div className={classes.container}>
+                <Routes />
               </div>
-            ) : (
-                <div className={classes.map}>
-                  <Switch>
-                    {getRoutes(clonedRoutes)}
-                    <Redirect from="/admin" to={`/admin/${arrayUserPermmision[0].toLowerCase()}`} />
-                  </Switch>
-                </div>
-              )} */}
+            </div>
             <FixedPlugin
               handleImageClick={handleImageClick}
               handleColorClick={handleColorClick}

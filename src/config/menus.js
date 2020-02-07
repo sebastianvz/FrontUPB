@@ -12,14 +12,20 @@ export default menus => {
   }
 
   return [
-    ...Object.keys(items).map(key => {
+    ...Object.keys(items).map((key, i) => {
       const menu = items[key];
-      return createGroupMenu(
-        menu[0].icon,
-        key,
-        menu.map(x =>
-          createMenu(x.description, x.permmisionName, '', LOGGED),
-        ))
-      }),
+      return {
+        collapse: true,
+        name: key,
+        state: `collapse${i}`,
+        views: menu.map(x => ({
+          path: x.description,
+          name: x.permmisionName,
+          layout: "",
+          when: LOGGED,
+        })
+        )
+      }
+    }),
   ];
 };

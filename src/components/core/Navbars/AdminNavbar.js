@@ -35,7 +35,7 @@ export default function AdminNavbar(props) {
       [classes.sidebarMinimizeRTL]: rtlActive
     });
   return (
-    <AppBar className={classes.appBar + appBarClasses}>
+    <AppBar className={classes.appBar + appBarClasses} style={props.style}>
       <Toolbar className={classes.container}>
         <Hidden smDown implementation="css">
           <div className={sidebarMinimize}>

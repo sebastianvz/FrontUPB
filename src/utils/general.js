@@ -7,6 +7,7 @@ export const createRoute = (url, component, when = null, exact = false) => ({
   component,
   when,
   exact,
+  layout: "/auth"
 });
 
 const nextMenuIndex = nextNumber();

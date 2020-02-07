@@ -19,15 +19,15 @@ const AsyncPractices = lazy(() => import('../views/Pages/Practices/Practices.js'
 
 export default [
 	//AUTH
-	createRoute('/login', AsyncLogin),
-	createRoute('/users', AsyncUsers, LOGGED),
+	createRoute('/login', AsyncLogin, GUEST),
+	createRoute('/Usuarios', AsyncUsers, LOGGED),
 
 	//Security
-	createRoute('/roles', AsyncRoles, LOGGED),
-	createRoute('/permissions', AsyncPermissions, LOGGED),
+	createRoute('/Roles', AsyncRoles, LOGGED),
+	createRoute('/Permisos', AsyncPermissions, LOGGED),
 
 	//Practices
-	createRoute('/practices', AsyncPractices, LOGGED),
+	createRoute('/Practicas', AsyncPractices, LOGGED),
 
 	//Common
 	createRoute('/abaout', AsyncAbout),
