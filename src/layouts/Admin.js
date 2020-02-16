@@ -86,6 +86,9 @@ const Dashboard = props => {
   const [menus, setMenus] = useState([]);
   const _menus = useMenu();
 
+  // // ref for main panel div
+  const mainPanel = React.createRef();
+
   useEffect(() => {
     console.log('_menus', _menus);
     _menus && _menus.filter(e => e.collapse).forEach(e => {
@@ -109,7 +112,7 @@ const Dashboard = props => {
 
     React.useEffect(() => {
       if (navigator.platform.indexOf("Win") > -1) {
-        ps = new PerfectScrollbar(mainPanel.current, {
+        ps = mainPanel.current && new PerfectScrollbar(mainPanel.current, {
           suppressScrollX: true,
           suppressScrollY: false
         });
@@ -120,7 +123,7 @@ const Dashboard = props => {
       // Specify how to clean up after this effect:
       return function cleanup() {
         if (navigator.platform.indexOf("Win") > -1) {
-          ps.destroy();
+          ps && ps.destroy();
         }
         window.removeEventListener("resize", resizeFunction);
       };
@@ -131,9 +134,6 @@ const Dashboard = props => {
         setMobileOpen(false);
       }
     };
-
-  // // ref for main panel div
-  const mainPanel = React.createRef();
 
   const handleImageClick = image => {
     setImage(image);

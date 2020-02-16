@@ -8,6 +8,7 @@ const FileUpload = ({
   id,
   defaultImage,
   multiple,
+  onRemove = () => { },
   onChange = () => { },
 }) => {
   const [nameOfFIle, setNameOfFIle] = useState('');
@@ -26,7 +27,7 @@ const FileUpload = ({
         setNameOfFIle(fileName);
 
       onChange(e.target.files[0]);
-    },
+    },   
   };
 
   return (
