@@ -25,6 +25,8 @@ import Logo from "assets/img/upb-logo-1422010671195.png";
 
 import GlobalVariables from "../../variables/globalVariables.js";
 
+import login from "assets/img/loginImageUPB.jpg";
+
 
 const useStyles = makeStyles(styles);
 const useStylesAlerts = makeStyles(stylesForAlerts);
@@ -168,7 +170,21 @@ function LoginPage({
     //   });
   };
 
+    // ref for the wrapper div
+    const wrapper = React.createRef();
+    React.useEffect(() => {
+      document.body.style.overflow = "unset";
+      // Specify how to clean up after this effect:
+      return function cleanup() {};
+    });
+
   return (
+    <div>
+    <div className={classes.wrapper} ref={wrapper}>
+    <div
+      className={classes.fullPage}
+      style={{ backgroundImage: "url(" + login + ")" }}
+    >
     <div className={classes.container}>
       {alert}
       <GridContainer justify="center">
@@ -253,7 +269,10 @@ function LoginPage({
         </GridItem>
       </GridContainer>
     </div>
-  );
+  </div>
+</div>
+</div>
+);
 }
 
 const mapState = state => ({
