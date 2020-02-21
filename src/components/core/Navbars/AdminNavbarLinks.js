@@ -34,7 +34,7 @@ function HeaderLinks(props) {
 	};
 	const handleCloseProfile = () => {
 		localStorage.clear();
-		props.history.replace("/auth");
+		props.history.replace("/Login");
 		window.location.reload(true) 
 		setOpenProfile(null);
 	};
