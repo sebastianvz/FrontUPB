@@ -1,11 +1,12 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from 'react-redux';
 import axios from "axios";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
-import {makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
@@ -26,9 +27,9 @@ import roleModel from "../../../dto/roles.js";
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
-import {dataTable} from "variables/general.js";
+import { dataTable } from "variables/general.js";
 
-import {cardTitle} from "assets/jss/material-dashboard-pro-react.js";
+import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
 
@@ -46,7 +47,7 @@ const styles = {
 const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
 
-export default function Roles() {
+const Roles = ({token}) => {
 	const [alerta, setAlerta] = React.useState(null);
 	const [checkboxState, setCheckboxState] = useState([]);
 	let arrayIdPermits = [];
@@ -59,34 +60,34 @@ export default function Roles() {
 				}
 			}
 		} else {
-			arrayIdPermits.push({id: event.target.value});
+			arrayIdPermits.push({ id: event.target.value });
 		}
 		setCheckboxState([...checkboxState, arrayIdPermits]);
 	};
 
 	const inputAlert = () => {
-		const URL =baseUrl+"Permission";
+		const URL = baseUrl + "Permission";
 		axios
 			.get(URL, {
 				headers: {
 					Authorization: "Bearer " + auth
 				}
 			})
-			.then(function(response) {
+			.then(function (response) {
 				console.log(response);
 				console.log(checkboxState);
 				setAlerta(
 					<SweetAlert
 						input
 						showCancel
-						style={{display: "block", marginTop: "-100px"}}
+						style={{ display: "block", marginTop: "-100px" }}
 						confirmBtnText="Guardar"
 						cancelBtnText="Cancelar"
 						title="Ingrese el nombre del rol"
 						required
 						validationMsg="Debe digitar el nombre del rol"
 						onConfirm={e => {
-							const URL_ROLE_POST = baseUrl+"Role";
+							const URL_ROLE_POST = baseUrl + "Role";
 							let newRole = new roleModel(e, arrayIdPermits);
 							newRole.activo = true;
 							newRole.idUserSender = liableID;
@@ -98,12 +99,12 @@ export default function Roles() {
 										Authorization: "Bearer " + auth
 									}
 								})
-								.then(function(response) {
+								.then(function (response) {
 									console.log(response);
 									console.log(newRole);
 									inputConfirmAlertNext(e);
 								})
-								.catch(function(error) {
+								.catch(function (error) {
 									console.log(error);
 									return;
 								});
@@ -136,7 +137,7 @@ export default function Roles() {
 					</SweetAlert>
 				);
 			})
-			.catch(function(error) {
+			.catch(function (error) {
 				console.log(error);
 			});
 	};
@@ -146,7 +147,7 @@ export default function Roles() {
 		setTimeout(() => {
 			setAlerta(
 				<SweetAlert
-					style={{display: "block", marginTop: "-100px"}}
+					style={{ display: "block", marginTop: "-100px" }}
 					onConfirm={() => hideAlert()}
 					onCancel={() => hideAlert()}
 					confirmBtnCssClass={
@@ -168,7 +169,7 @@ export default function Roles() {
 		setTimeout(() => {
 			setAlerta(
 				<SweetAlert
-					style={{display: "block", marginTop: "-100px"}}
+					style={{ display: "block", marginTop: "-100px" }}
 					onConfirm={() => hideAlert()}
 					onCancel={() => hideAlert()}
 					confirmBtnCssClass={
@@ -251,17 +252,17 @@ export default function Roles() {
 	);
 
 	let liableID = JSON.parse(localStorage.getItem("id"));
-	let auth = localStorage.getItem("auth");
+	let auth = token;	//localStorage.getItem("auth");
 
 	useEffect(() => {
-		const URL =baseUrl+"Role";
+		const URL = baseUrl + "Role";
 		axios
 			.get(URL, {
 				headers: {
 					Authorization: "Bearer " + auth
 				}
 			})
-			.then(function(response) {
+			.then(function (response) {
 				const resultActive = response.data.data.filter(x => x.activo === true);
 				setData(
 					resultActive.map((prop, key) => {
@@ -282,7 +283,7 @@ export default function Roles() {
 												o => o.roleName === prop.roleName
 											);
 											const URL_getSpecificRole = `${baseUrl}Role/${obj.id}`;
-											const URL_getPermmision =baseUrl+"Permission";
+											const URL_getPermmision = baseUrl + "Permission";
 
 											axios
 												.all([
@@ -321,7 +322,7 @@ export default function Roles() {
 															required
 															validationMsg="Debe digitar el nombre del rol"
 															onConfirm={e => {
-																const URL_ROLE_PUT =baseUrl+"Role";
+																const URL_ROLE_PUT = baseUrl + "Role";
 																let newRole = new roleModel(e, arrayIdPermits);
 																newRole.idUserSender = liableID;
 																newRole.id = obj.id;
@@ -334,13 +335,13 @@ export default function Roles() {
 																			Authorization: "Bearer " + auth
 																		}
 																	})
-																	.then(function(response) {
+																	.then(function (response) {
 																		responseConfirmAlertNext(
 																			response.data.data.error.message
 																		);
 																		hideAlert();
 																	})
-																	.catch(function(error) {
+																	.catch(function (error) {
 																		console.log(error);
 																		responseConfirmAlertNext(
 																			error.data.data.error.message
@@ -381,7 +382,7 @@ export default function Roles() {
 														</SweetAlert>
 													);
 												})
-												.catch(function(error) {
+												.catch(function (error) {
 													console.log(error[0]);
 													console.log(error[1]);
 												});
@@ -400,7 +401,7 @@ export default function Roles() {
 											let obj = resultActive.find(
 												o => o.roleName === prop.roleName
 											);
-											const URL_DeleteUser =baseUrl+"Role";
+											const URL_DeleteUser = baseUrl + "Role";
 											obj = {
 												id: obj.id,
 												roleName: obj.roleName,
@@ -422,7 +423,7 @@ export default function Roles() {
 													);
 													hideAlert();
 												})
-												.catch(function(error) {
+												.catch(function (error) {
 													console.log(error);
 													responseConfirmAlertNext(
 														error.data.data.error.message
@@ -443,7 +444,7 @@ export default function Roles() {
 				);
 				console.log(response.data.data);
 			})
-			.catch(function(error) {
+			.catch(function (error) {
 				console.log(error);
 			});
 	}, []);
@@ -509,3 +510,10 @@ export default function Roles() {
 		</div>
 	);
 }
+
+
+const mapState = state => ({
+	token: state.auth.token
+}), mapDispatch = dispatch => ({});
+
+export default connect(mapState, mapDispatch)(Roles);

@@ -69,6 +69,8 @@ const FormDetails = ({
 			},
 			...data
 			]);
+			setListValue('');
+			setQuantity('');
 		},
 		remove: id => {
 			setData(data.filter(x => x.id !== id));
@@ -76,7 +78,7 @@ const FormDetails = ({
 	};
 
 	return (
-		<GridItem xs={12} sm={12} md={6}>
+		<GridItem xs={12} sm={12} md={12}>
 			<Card>
 				<CardHeader color="rose" icon>
 					<CardIcon color="rose">
@@ -137,10 +139,10 @@ const FormDetails = ({
 									formControlProps={{
 										fullWidth: true
 									}}
-									onChange={handlres.changeQuantity}
-									value={quantity}
 									inputProps={{
-										type: "number"
+										onChange: handlres.changeQuantity,
+										type: "number",
+										value: quantity,
 									}}
 								/>
 							</GridItem>
@@ -159,7 +161,7 @@ const FormDetails = ({
 						{
 							data
 							&& data.length > 0
-							&& <GridItem>
+							&& <GridItem xs={12} sm={12} lg={12}>
 								<Table
 									tableHead={[
 										"#",
@@ -177,7 +179,7 @@ const FormDetails = ({
 											<Close className={classes.icon} />
 										</Button>
 									]))}
-									customCellClasses={[classes.center, classes.right, classes.right]}
+									customCellClasses={[classes.center, classes.right, classes.right, classes.left]}
 									customClassesForCells={[0, 4, 5]}
 									customHeadCellClasses={[
 										classes.center,
@@ -205,12 +207,14 @@ const Form = ({
 	suppliestList,
 	simulatorsList,
 	autorsList,
+	objetivesList,
 	history,
 }) => {
 	const [files, setFiles] = useState(null);
 	const [equipos, setEquipos] = useState([]);
 	const [simuladores, setSimuladores] = useState([]);
 	const [insumos, setInsumos] = useState([]);
+	const [objetivos, setObjetivos] = useState([]);
 	const [autors, setAutors] = useState([]);
 	const refHeaderForm = useRef();
 	const refObservationForm = useRef();
@@ -239,6 +243,7 @@ const Form = ({
 					evaluacion: null,
 					recursos: files,
 				},
+				objetivos,
 				equipos,
 				insumos,
 				simuladores,
@@ -364,7 +369,9 @@ const Form = ({
 											fullWidth: true
 										}}
 										inputProps={{
-											type: "text",
+											placeholder: "Minutos",
+											type: "number",
+											min: 0,
 										}}
 									/>
 								</GridItem>
@@ -429,11 +436,11 @@ const Form = ({
 				</Card>
 			</GridItem>
 			<FormDetails
-				title="Equipos"
-				labelList="Equipo"
-				setData={setEquipos}
-				data={equipos}
-				list={devicesList}
+				title="Objetivos"
+				labelList="Objetivos"
+				setData={setObjetivos}
+				data={objetivos}
+				list={objetivesList}
 			/>
 			<FormDetails
 				setData={setSimuladores}
@@ -443,13 +450,20 @@ const Form = ({
 				list={simulatorsList}
 			/>
 			<FormDetails
+				title="Equipos"
+				labelList="Equipo"
+				setData={setEquipos}
+				data={equipos}
+				list={devicesList}
+			/>
+			<FormDetails
 				title="Insumos"
 				labelList="Insumo"
 				setData={setInsumos}
 				data={insumos}
 				list={suppliestList}
 			/>
-			<GridItem xs={12} sm={12} md={6}>
+			<GridItem xs={12} sm={12} md={12}>
 				<Card>
 					<CardHeader color="rose" icon>
 						<CardIcon color="rose">
@@ -568,7 +582,7 @@ const Form = ({
 						<Button
 							color="rose"
 							onClick={handlres.save}
-						>Finalizar</Button>
+						>Guardar</Button>
 					</div>
 				</GridItem>
 			</GridContainer>
@@ -582,6 +596,7 @@ const mapState = state => ({
 	suppliestList: state.masters.supplies,
 	simulatorsList: state.masters.simulators,
 	autorsList: state.masters.autors,
+	objetivesList: state.masters.objetives,
 }),
 	mapDispatch = dispatch => ({
 	});

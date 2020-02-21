@@ -7,6 +7,7 @@ const masters = {
 		simulators: null,
 		devices: null,
 		autors: null,
+		objetives: null,
 	},
 	reducers: {
 		setPrograms: (state, payload) => ({
@@ -29,6 +30,10 @@ const masters = {
 			...state,
 			autors: payload.data,
 		}),
+		setObjetives:(state, payload) => ({
+			...state,
+			objetives: payload.data,
+		}),
 	},
 	effects: dispatch => ({
 		getPrograms() {
@@ -48,14 +53,14 @@ const masters = {
 		getSimulator() {
 			instance.get('Master/GetSimulators').then(e => {
 				if(e.data) {
-					this.setSupplies(e.data);
+					this.setSimulators(e.data);
 				}
 			});
 		},
 		getSupplies() {
 			instance.get('Master/GetSupplies').then(e => {
 				if(e.data) {
-					this.setSimulators(e.data);
+					this.setSupplies(e.data);
 				}
 			});
 		},
@@ -63,6 +68,13 @@ const masters = {
 			instance.get('User').then(e => {
 				if(e.data) {
 					this.setAutors(e.data);
+				}
+			});
+		},
+		getAutors() {
+			instance.get('Master/Objetives').then(e => {
+				if(e.data) {
+					this.setObjetives(e.data);
 				}
 			});
 		},
