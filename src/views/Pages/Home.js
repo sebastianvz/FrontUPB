@@ -6,7 +6,7 @@ import Button from "../../components/core/CustomButtons/Button.js";
 const Home = () => {
 	return (
 		<div>
-			<h1>HOME OE!</h1>
+			<h1>HOME</h1>
 			<Link to="abaout">
 				<Button color="primary" size="lg">
 					go to abaout

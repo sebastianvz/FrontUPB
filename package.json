@@ -5,6 +5,7 @@
 	"dependencies": {
 		"@material-ui/core": "4.3.2",
 		"@material-ui/icons": "4.2.1",
+		"@material-ui/lab": "^4.0.0-alpha.44",
 		"@rematch/core": "^1.3.0",
 		"@rematch/loading": "^1.2.1",
 		"@rematch/persist": "^1.1.6",

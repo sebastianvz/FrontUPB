@@ -40,7 +40,19 @@ import { useCRUD } from '../../../components/Practices';
 
 import styles from "../../../assets/jss/material-dashboard-pro-react/views/regularFormsStyle";
 
+import { Autocomplete } from '../../../components/Shared';
+
 const useStyles = makeStyles(styles);
+
+const top100Films = [
+	{ title: 'The Shawshank Redemption', year: 1994 },
+	{ title: 'The Godfather', year: 1972 },
+	{ title: 'The Godfather: Part II', year: 1974 },
+	{ title: 'The Dark Knight', year: 2008 },
+	{ title: '12 Angry Men', year: 1957 },
+	{ title: "Schindler's List", year: 1993 },
+	{ title: 'Pulp Fiction', year: 1994 },
+];
 
 const FormDetails = ({
 	title,
@@ -55,8 +67,8 @@ const FormDetails = ({
 	const classes = useStyles();
 
 	const handlres = {
-		changeListValue(e) {
-			setListValue(e.target.value);
+		changeListValue(value) {
+			setListValue(value);
 		},
 		changeQuantity: (e) => {
 			setQuantity(e.target.value);
@@ -100,7 +112,14 @@ const FormDetails = ({
 									>
 										{labelList}
 									</InputLabel>
-									<Select
+									{list && <Autocomplete
+										minFilter={3}
+										suggestions={list}
+										defaultValue={listValue}
+										onChange={handlres.changeListValue}
+									/>}
+
+									{/* <Select
 										MenuProps={{
 											className: classes.selectLabel
 										}}
@@ -129,7 +148,7 @@ const FormDetails = ({
 												{x.name}
 											</MenuItem>
 										))}
-									</Select>
+									</Select> */}
 								</FormControl>
 							</GridItem>
 							<GridItem xs={12} sm={5} lg={5}>

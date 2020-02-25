@@ -1,4 +1,5 @@
 import React, {useEffect} from "react";
+import { connect } from 'react-redux';
 import axios from "axios";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
@@ -73,7 +74,7 @@ function getModalStyle() {
 	};
 }
 
-export default function Users() {
+const Users = ({token}) => {
 	const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
   const [alerta, setAlerta] = React.useState(null);
@@ -163,7 +164,7 @@ export default function Users() {
     },
   };
 
-  let auth = localStorage.getItem("auth");
+  let auth = token;
   let liableID = JSON.parse(localStorage.getItem("id"));
 
   const responseConfirmAlertNext = e => {
@@ -1273,3 +1274,9 @@ export default function Users() {
     </div>
 	);
 }
+
+const mapState = state => ({
+	token: state.auth.token
+}), mapDispatch = dispatch => ({});
+
+export default connect(mapState, mapDispatch)(Users);

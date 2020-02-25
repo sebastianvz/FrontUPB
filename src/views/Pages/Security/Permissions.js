@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import { connect } from 'react-redux';
 import axios from "axios";
 // react component for creating dynamic tables
 import ReactTable from "react-table";
@@ -35,7 +36,7 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function Permissions() {
+const Permissions = ({token}) => {
 	const [data, setData] = React.useState(
 		dataTable.dataRows.map((prop, key) => {
 			return {
@@ -50,7 +51,7 @@ export default function Permissions() {
 		})
 	);
 
-	let auth = localStorage.getItem("auth");
+	let auth = token;
 
 	useEffect(() => {
 		const URL =baseUrl+"Permission";
@@ -141,3 +142,9 @@ export default function Permissions() {
 		</GridContainer>
 	);
 }
+
+const mapState = state => ({
+	token: state.auth.token
+}), mapDispatch = dispatch => ({});
+
+export default connect(mapState, mapDispatch)(Permissions);
