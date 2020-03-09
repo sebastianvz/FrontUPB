@@ -71,13 +71,6 @@ const masters = {
 				}
 			});
 		},
-		getAutors() {
-			instance.get('Master/Objetives').then(e => {
-				if(e.data) {
-					this.setObjetives(e.data);
-				}
-			});
-		},
 	}),
 };
 

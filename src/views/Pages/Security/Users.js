@@ -74,7 +74,7 @@ function getModalStyle() {
 	};
 }
 
-const Users = ({token}) => {
+const Users = ({token, userId}) => {
 	const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
   const [alerta, setAlerta] = React.useState(null);
@@ -165,7 +165,7 @@ const Users = ({token}) => {
   };
 
   let auth = token;
-  let liableID = JSON.parse(localStorage.getItem("id"));
+  let liableID = userId; //JSON.parse(localStorage.getItem("id"));
 
   const responseConfirmAlertNext = e => {
 		setAlerta(e);
@@ -1276,7 +1276,8 @@ const Users = ({token}) => {
 }
 
 const mapState = state => ({
-	token: state.auth.token
+  token: state.auth.token,
+  userId: state.auth.user.id,
 }), mapDispatch = dispatch => ({});
 
 export default connect(mapState, mapDispatch)(Users);

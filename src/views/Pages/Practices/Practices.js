@@ -1,626 +1,309 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from "react";
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import axios from "axios";
+// react component for creating dynamic tables
+import ReactTable from "react-table";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import FormLabel from "@material-ui/core/FormLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Radio from "@material-ui/core/Radio";
 import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 // @material-ui/icons
-import MailOutline from "@material-ui/icons/MailOutline";
+import SettingsApplications from "@material-ui/icons/SettingsApplications";
+import Create from "@material-ui/icons/Create";
 import Close from "@material-ui/icons/Close";
-import Plus from "@material-ui/icons/Add";
-import Check from "@material-ui/icons/Check";
-import Clear from "@material-ui/icons/Clear";
-import Contacts from "@material-ui/icons/Contacts";
-import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
+import Add from "@material-ui/icons/Add";
+
 
 // core components
-import GridContainer from "../../../components/core/Grid/GridContainer.js";
-import GridItem from "../../../components/core/Grid/GridItem.js";
-import CustomInput from "../../../components/core/CustomInput/CustomInput.js";
-import Button from "../../../components/core/CustomButtons/Button.js";
-import Card from "../../../components/core/Card/Card.js";
-import CardHeader from "../../../components/core/Card/CardHeader.js";
-import CardText from "../../../components/core/Card/CardText.js";
-import CardIcon from "../../../components/core/Card/CardIcon.js";
-import CardBody from "../../../components/core/Card/CardBody.js";
-import Table from "../../../components/core/Table/Table.js";
-import FileUpload from "../../../components/core/CustomUpload/FileUpload";
+import GridContainer from "components/core/Grid/GridContainer.js";
+import GridItem from "components/core/Grid/GridItem.js";
+import Button from "components/core/CustomButtons/Button.js";
+import Card from "components/core/Card/Card.js";
+import CardBody from "components/core/Card/CardBody.js";
+import CardIcon from "components/core/Card/CardIcon.js";
+import CardHeader from "components/core/Card/CardHeader.js";
 
-import { useCRUD } from '../../../components/Practices';
+import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
-import styles from "../../../assets/jss/material-dashboard-pro-react/views/regularFormsStyle";
+import { dataTable } from "variables/general.js";
 
-import { Autocomplete } from '../../../components/Shared';
+import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
+import GlobalVariables from "../../../variables/globalVariables.js";
+
+const variables = new GlobalVariables();
+const baseUrl = variables.Url;
+
+const styles = {
+	cardIconTitle: {
+		...cardTitle,
+		marginTop: "15px",
+		marginBottom: "0px"
+	}
+};
+
+const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
 
-const top100Films = [
-	{ title: 'The Shawshank Redemption', year: 1994 },
-	{ title: 'The Godfather', year: 1972 },
-	{ title: 'The Godfather: Part II', year: 1974 },
-	{ title: 'The Dark Knight', year: 2008 },
-	{ title: '12 Angry Men', year: 1957 },
-	{ title: "Schindler's List", year: 1993 },
-	{ title: 'Pulp Fiction', year: 1994 },
-];
-
-const FormDetails = ({
-	title,
-	labelList,
-	list,
-	setData,
-	data
+const Practices = ({ 
+	token, 
+	userId, 
+	history
 }) => {
-	const [listValue, setListValue] = useState("");
-	const [quantity, setQuantity] = useState(0);
+	const [alerta, setAlerta] = React.useState(null);
+	const [checkboxState, setCheckboxState] = useState([]);
+	let arrayIdPermits = [];
 
-	const classes = useStyles();
-
-	const handlres = {
-		changeListValue(value) {
-			setListValue(value);
-		},
-		changeQuantity: (e) => {
-			setQuantity(e.target.value);
-		},
-		add: () => {
-			setData([{
-				id: data.length,
-				label: (list.find(x => x.id === listValue) || { name: '' }).name,
-				cantidad: quantity
-			},
-			...data
-			]);
-			setListValue('');
-			setQuantity('');
-		},
-		remove: id => {
-			setData(data.filter(x => x.id !== id));
+	const handleChange = name => event => {
+		if (!event.target.checked) {
+			for (let i = 0; i < arrayIdPermits.length; i++) {
+				if (arrayIdPermits[i].id == event.target.value) {
+					arrayIdPermits.splice(i, 1);
+				}
+			}
+		} else {
+			arrayIdPermits.push({ id: event.target.value });
 		}
+		setCheckboxState([...checkboxState, arrayIdPermits]);
 	};
 
-	return (
-		<GridItem xs={12} sm={12} md={12}>
-			<Card>
-				<CardHeader color="rose" icon>
-					<CardIcon color="rose">
-						<MailOutline />
-					</CardIcon>
-					<h4 className={classes.cardIconTitle}>{title}</h4>
-				</CardHeader>
-				<CardBody>
-					<form id='form-header'>
-						<GridContainer>
-							<GridItem xs={12} sm={5} lg={5}>
-								<FormControl
-									fullWidth
-									className={classes.selectFormControl}
-								>
-									<InputLabel
-										htmlFor="multiple-select"
-										className={classes.selectLabel}
+	const inputAlert = () => {
+		history.push("/practica");
+	};
+	const inputConfirmAlertNext = e => {
+		arrayIdPermits = [];
+		setAlerta(e);
+		setTimeout(() => {
+			setAlerta(
+				<SweetAlert
+					style={{ display: "block", marginTop: "-100px" }}
+					onConfirm={() => hideAlert()}
+					onCancel={() => hideAlert()}
+					confirmBtnCssClass={
+						classesAlerts.button + " " + classesAlerts.default
+					}
+					title={
+						<p>
+							Nombre de la parctica: <b>{e}</b>
+						</p>
+					}
+				/>
+			);
+		}, 200);
+	};
+
+	const responseConfirmAlertNext = e => {
+		arrayIdPermits = [];
+		setAlerta(e);
+		setTimeout(() => {
+			setAlerta(
+				<SweetAlert
+					style={{ display: "block", marginTop: "-100px" }}
+					onConfirm={() => hideAlert()}
+					onCancel={() => hideAlert()}
+					confirmBtnCssClass={
+						classesAlerts.button + " " + classesAlerts.default
+					}
+					title={
+						<p>
+							<b>{e}</b>
+						</p>
+					}
+				/>
+			);
+		}, 200);
+	};
+
+	const hideAlert = () => {
+		arrayIdPermits = [];
+		setAlerta(null);
+	};
+
+	const [data, setData] = React.useState([]);
+
+	let liableID = userId;//JSON.parse(localStorage.getItem("id"));
+	let auth = token;	//localStorage.getItem("auth");
+
+	const loadGrid = () => {
+		const URL = baseUrl + "Practics";
+		axios
+			.get(URL, {
+				headers: {
+					Authorization: "Bearer " + auth
+				}
+			})
+			.then(function (response) {
+				const resultActive = response.data.data.filter(x => x.activo === true);
+				setData(
+					resultActive.map((prop, key) => {
+						return {
+							id: key,
+							nombrePractica: prop.nombrePractica,
+							descripcion: prop.descripcion,
+							tiempoEstimado: prop.tiempoEstimado,
+							competencia: prop.competencia,
+							criteriosCompetencia: prop.criteriosCompetencia,
+							obejtivo: prop.obejtivo,
+							actions: (
+								// we've added some custom button actions
+								<div className="actions-right">
+									{/* use this button to add a edit kind of action */}
+									<Button
+										justIcon
+										round
+										simple
+										onClick={() => {
+											history.push('/practica');
+										}}
+										color="warning"
+										className="edit"
 									>
-										{labelList}
-									</InputLabel>
-									{list && <Autocomplete
-										minFilter={3}
-										suggestions={list}
-										defaultValue={listValue}
-										onChange={handlres.changeListValue}
-									/>}
-
-									{/* <Select
-										MenuProps={{
-											className: classes.selectLabel
+										<Create />
+									</Button>{" "}
+									{/* use this button to remove the data row */}
+									<Button
+										justIcon
+										round
+										simple
+										onClick={() => {											
+											const URL_DeleteUser = baseUrl + "Practics";
+											const obj = {
+												id: prop.id,
+												idUserSender: liableID
+											};
+											axios
+												.delete(URL_DeleteUser, {
+													headers: {
+														"Content-Type": "application/json",
+														Authorization: "Bearer " + auth
+													},
+													data: obj
+												})
+												.then(response => {
+													loadGrid();
+													responseConfirmAlertNext(
+														response.data.data.error.message
+													);
+													hideAlert();
+												})
+												.catch(function (error) {
+													console.log(error);
+													responseConfirmAlertNext(
+														error.data.data.error.message
+													);
+													hideAlert();
+													return;
+												});
 										}}
-										classes={{
-											select: classes.Select
-										}}
-										value={listValue}
-										onChange={handlres.changeListValue}
-										formControlProps={{
-											fullWidth: false
-										}}
-										inputProps={{
-											name: labelList,
-											id: labelList,
-										}}
-										style={{ 'maxWidth': '100%' }}
+										color="danger"
+										className="remove"
 									>
-										{list && list.map(x => (
-											<MenuItem
-												classes={{
-													root: classes.selectMenuItem,
-													selected: classes.selectMenuItemSelected
-												}}
-												value={x.id}
-											>
-												{x.name}
-											</MenuItem>
-										))}
-									</Select> */}
-								</FormControl>
-							</GridItem>
-							<GridItem xs={12} sm={5} lg={5}>
-								<CustomInput
-									labelText="Cantidad"
-									id="Cantidad"
-									formControlProps={{
-										fullWidth: true
-									}}
-									inputProps={{
-										onChange: handlres.changeQuantity,
-										type: "number",
-										value: quantity,
-									}}
-								/>
-							</GridItem>
-							<GridItem xs={12} sm={2} lg={2}>
-								<Button
-									color="info"
-									className={classes.actionButton}
-									onClick={handlres.add}
-								>
-									<Plus className={classes.icon} />
-								</Button>
-							</GridItem>
-						</GridContainer>
-					</form>
-					<GridContainer>
-						{
-							data
-							&& data.length > 0
-							&& <GridItem xs={12} sm={12} lg={12}>
-								<Table
-									tableHead={[
-										"#",
-										labelList,
-										"Cantidad",
-										"Acciones"
-									]}
-									tableData={data.map(x => ([
-										x.id, x.label, x.cantidad,
-										<Button
-											color="danger"
-											className={classes.actionButton}
-											onClick={() => { handlres.remove(x.id) }}
-										>
-											<Close className={classes.icon} />
-										</Button>
-									]))}
-									customCellClasses={[classes.center, classes.right, classes.right, classes.left]}
-									customClassesForCells={[0, 4, 5]}
-									customHeadCellClasses={[
-										classes.center,
-										classes.right,
-										classes.right
-									]}
-									customHeadClassesForCells={[0, 4, 5]}
-								/>
-							</GridItem>
-						}
-					</GridContainer>
-				</CardBody>
-			</Card>
-		</GridItem>
-	);
-}
-
-FormDetails.propTypes = {
-	title: PropTypes.string,
-	labelList: PropTypes.string,
-}
-
-const Form = ({
-	devicesList,
-	suppliestList,
-	simulatorsList,
-	autorsList,
-	objetivesList,
-	history,
-}) => {
-	const [files, setFiles] = useState(null);
-	const [equipos, setEquipos] = useState([]);
-	const [simuladores, setSimuladores] = useState([]);
-	const [insumos, setInsumos] = useState([]);
-	const [objetivos, setObjetivos] = useState([]);
-	const [autors, setAutors] = useState([]);
-	const refHeaderForm = useRef();
-	const refObservationForm = useRef();
-	const CRUD = useCRUD();
-	const classes = useStyles();
+										<Close />
+									</Button>{" "}
+								</div>
+							)
+						};
+					})
+				);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
 
 	useEffect(() => {
-		CRUD.loadList();
-	}, [])
+		loadGrid();
+	}, []);
 
-	const handlres = {
-		save: (e) => {
-			e.preventDefault();
-			const headerForm = refHeaderForm.current;
-			const ObonForm = refObservationForm.current;
-			const data = {
-				nombrePractica: headerForm.elements.nombrePractica.value,
-				descripcion: headerForm.elements.descripcion.value,
-				tiempoEstimado: headerForm.elements.tiempoEstimado.value,
-				competencia: headerForm.elements.competencia.value,
-				criteriosCompetencia: headerForm.elements.criteriosCompetencia.value,
-				obejtivo: headerForm.elements.obejtivo.value,
-				observaciones: ObonForm.elements.observaciones.value,
-				autores: [],
-				archivos: {
-					evaluacion: null,
-					recursos: files,
-				},
-				objetivos,
-				equipos,
-				insumos,
-				simuladores,
-			};
-			CRUD.save(data, () => {
-				history.push('/');
-			});
-		},
-		changeAutors: (e) => {
-			console.log('e.target.value', e.target.value);
-			setAutors(e.target.value)
-		}
-	}
-
-	const filesHandlers = {
-		remove: uid => {
-			setFiles(files.filter(x => x.uid === uid));
-		},
-		add: (file) => {
-			setFiles([{
-				uid: files.length,
-				name: file.name,
-				extention: file.tipo,
-				url: file.url,
-			}, ...files]);
-		},
-	};
-
+	const classesAlerts = useStylesAlerts();
+	const classes = useStyles();
 	return (
-		<GridContainer>
-			<GridItem xs={12} sm={12} md={12}>
-				<Card>
-					<CardHeader color="rose" text>
-						<CardText color="rose">
-							<h4 className={classes.cardTitle}>Practicas</h4>
-						</CardText>
-					</CardHeader>
-					<CardBody>
-						<form ref={refHeaderForm}>
-							<GridContainer>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Nombre Parctica
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="nombrePractica"
-										name="nombrePractica"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										descripción
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="descripcion"
-										name="descripcion"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text",
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-							<GridContainer>
-								<GridItem xs={12} sm={6} lg={6}>
-									<FormControl
-										fullWidth
-										className={classes.selectFormControl}
-									>
-										<InputLabel
-											htmlFor="multiple-select"
-											className={classes.selectLabel}
-										>
-											Autores
-                        </InputLabel>
-										<Select
-											multiple
-											value={autors}
-											onChange={handlres.changeAutors}
-											MenuProps={{ className: classes.selectMenu }}
-											classes={{ select: classes.select }}
-											inputProps={{
-												name: "autores",
-												id: "autores"
-											}}
-										>
-											{autorsList && autorsList.map(x => (
-												<MenuItem
-													classes={{
-														root: classes.selectMenuItem,
-														selected: classes.selectMenuItemSelectedMultiple
-													}}
-													value={x.id}
-												>
-													{x.showFullName}
-												</MenuItem>
-											))}
-										</Select>
-									</FormControl>
-								</GridItem>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Tiempo Estimado
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="tiempoEstimado"
-										name="tiempoEstimado"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											placeholder: "Minutos",
-											type: "number",
-											min: 0,
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-							<GridContainer>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Competencia
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="competencia"
-										name="competencia"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Criterio de competencia
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="criteriosCompetencia"
-										name="criteriosCompetencia"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text",
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-							<GridContainer>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Objetivo
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="obejtivo"
-										name="obejtivo"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-						</form>
-					</CardBody>
-				</Card>
-			</GridItem>
-			<FormDetails
-				title="Objetivos"
-				labelList="Objetivos"
-				setData={setObjetivos}
-				data={objetivos}
-				list={objetivesList}
-			/>
-			<FormDetails
-				setData={setSimuladores}
-				title="Simuladores"
-				labelList="Simulador"
-				data={simuladores}
-				list={simulatorsList}
-			/>
-			<FormDetails
-				title="Equipos"
-				labelList="Equipo"
-				setData={setEquipos}
-				data={equipos}
-				list={devicesList}
-			/>
-			<FormDetails
-				title="Insumos"
-				labelList="Insumo"
-				setData={setInsumos}
-				data={insumos}
-				list={suppliestList}
-			/>
-			<GridItem xs={12} sm={12} md={12}>
-				<Card>
-					<CardHeader color="rose" icon>
-						<CardIcon color="rose">
-							<MailOutline />
-						</CardIcon>
-						<h4 className={classes.cardIconTitle}>Observaciones</h4>
-					</CardHeader>
-					<CardBody>
-						<form ref={refObservationForm}>
-							<GridContainer>
-								<GridItem xs={12} sm={12} lg={12}>
-									<InputLabel
-										htmlFor={'observaciones'}
-										className={classes.FormControlLabel}
-									>
-										Observaciones
-                  </InputLabel>
-									<CustomInput
-										id="observaciones"
-										name="observaciones"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-						</form>
-					</CardBody>
-				</Card>
-			</GridItem>
-			<GridItem xs={12} sm={12} md={12}>
-				<Card>
-					<CardHeader color="rose" icon>
-						<CardIcon color="rose">
-							<MailOutline />
-						</CardIcon>
-						<h4 className={classes.cardIconTitle}>Adjuntos</h4>
-					</CardHeader>
-					<CardBody>
-						<form>
-							<GridContainer>
-								<GridItem xs={12} sm={12} lg={12}>
-									<InputLabel
-										htmlFor={'evaluacionFile'}
-										className={classes.FormControlLabel}
-									>
-										Evaluación
-                  </InputLabel>
-									<FileUpload
-										defaultImage={null}
-										id={'evaluacionFile'}
-										multiple={false}
-									/>
-								</GridItem>
-							</GridContainer>
-							<hr />
-							<GridContainer>
-								<GridItem xs={12} sm={12} lg={12}>
-									<InputLabel
-										htmlFor={'recursosFile'}
-										className={classes.FormControlLabel}
-									>
-										Recursos
-                  </InputLabel>
-									<FileUpload
-										defaultImage={null}
-										id={'recursosFile'}
-										onChange={filesHandlers.add}
-										multiple
-									/>
-								</GridItem>
-							</GridContainer>
-						</form>
-						<GridContainer>
-							{
-								files
-								&& files.length > 0
-								&& <GridItem xs={12} sm={12} lg={12}>
-									<Table
-										tableHead={[
-											"Nombre del recurso",
-											"Tipo",
-											"Acciones"
-										]}
-										tableData={files.map(x => ([
-											x.name, x.extention,
-											<Button
-												color="danger"
-												className={classes.actionButton}
-												onClick={() => { filesHandlers.remove(x.uid) }}
-											>
-												<Close className={classes.icon} />
-											</Button>
-										]))}
-										customCellClasses={[classes.center, classes.right, classes.right]}
-										customClassesForCells={[0, 4, 5]}
-										customHeadCellClasses={[
-											classes.center,
-											classes.right,
-											classes.right
-										]}
-										customHeadClassesForCells={[0, 4, 5]}
-									/>
-								</GridItem>
-							}
-						</GridContainer>
-					</CardBody>
-				</Card>
-			</GridItem>
+		<div>
+			{alerta}
 			<GridContainer>
-				<GridItem xs={12} sm={12} md={12}>
-					<div style={{ 'textAlign': 'right' }}>
-						<Button
-							color="rose"
-							onClick={handlres.save}
-						>Guardar</Button>
-					</div>
+				<GridItem xs={12}>
+					<Card>
+						<CardHeader color="danger" icon>
+							<CardIcon color="danger">
+								<SettingsApplications />
+							</CardIcon>
+							<h4 className={classes.cardIconTitle}>Practicas</h4>
+							<br />
+							<Button onClick={inputAlert}>
+								<Add
+									style={{
+										marginTop: 0 + "px",
+										marginLeft: 0 + "px",
+										marginRight: 7 + "px",
+										marginBottom: 2 + "px"
+									}}
+								/>
+								Agregar Parctica
+							</Button>
+						</CardHeader>
+						<CardBody>
+							<ReactTable
+								data={data}
+								filterable
+								columns={[
+									{
+										Header: "Nombre",
+										accessor: "nombrePractica"
+									},
+									{
+										Header: "Descripción",
+										accessor: "descripcion"
+									},
+									{
+										Header: "Tiempo Estimado",
+										accessor: "tiempoEstimado"
+									},
+									{
+										Header: "Competencia",
+										accessor: "competencia"
+									},
+									{
+										Header: "Criterios de Competencia",
+										accessor: "criteriosCompetencia"
+									},
+									{
+										Header: "Objetivo",
+										accessor: "obejtivo"
+									},
+									{
+										Header: "",
+										accessor: "actions",
+										sortable: false,
+										filterable: false
+									}
+								]}
+								defaultPageSize={10}
+								showPaginationTop
+								previousText="Anterior"
+								nextText="Siguiente"
+								loadingText="Cargando..."
+								noDataText="No se encontraron filas"
+								pageText="Página"
+								ofText="de"
+								rowsText="filas"
+								showPaginationBottom={false}
+								className="-striped -highlight"
+							/>
+						</CardBody>
+					</Card>
 				</GridItem>
 			</GridContainer>
-		</GridContainer>
+		</div>
 	);
-};
+}
 
 
 const mapState = state => ({
-	devicesList: state.masters.devices,
-	suppliestList: state.masters.supplies,
-	simulatorsList: state.masters.simulators,
-	autorsList: state.masters.autors,
-	objetivesList: state.masters.objetives,
-}),
-	mapDispatch = dispatch => ({
-	});
+	token: state.auth.token,
+	userId: state.auth.user.id,
+}), mapDispatch = dispatch => ({});
 
-export default connect(
-	mapState,
-	mapDispatch,
-)(Form);
+export default connect(mapState, mapDispatch)(Practices);

@@ -6,14 +6,14 @@ import { authenticationService } from '../services/security/auth';
 // import { TYPE_MESSAGE } from '../config/constants';
 
 const showAlert = e => {
-//   showTranslate(
-//     e.type
-//       ? e
-//       : {
-//           type: TYPE_MESSAGE.Error,
-//           message: e.toString(),
-//         },
-//   );
+  //   showTranslate(
+  //     e.type
+  //       ? e
+  //       : {
+  //           type: TYPE_MESSAGE.Error,
+  //           message: e.toString(),
+  //         },
+  //   );
 };
 
 const auth = {
@@ -41,14 +41,14 @@ const auth = {
           credentials.username,
           credentials.password,
         );
-        const data = await promise.data;
 
-        const { username, nombreCompleto, apellidos, token, role } = data.data;
-        this.setAuthenticated({ user: { username, fullName: `${nombreCompleto} ${apellidos}` }, token });
+        const data = await promise.data;        
+        const { username, nombreCompleto, apellidos, token, role, id } = data.data;
+        this.setAuthenticated({ user: { id, username, fullName: `${nombreCompleto} ${apellidos}` }, token });
         instance.setToken(token);
-        if(role.length > 0) {
-          dispatch.config.loadMenu(role[0].permmisionRole);  
-        }        
+        if (role.length > 0) {
+          dispatch.config.loadMenu(role[0].permmisionRole);
+        }
       } catch (e) {
         this.setAuthenticated({ user: {}, token: null });
         showAlert(e);

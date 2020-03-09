@@ -194,7 +194,7 @@ const Dashboard = props => {
 
  // effect instead of componentDidMount, componentDidUpdate and componentWillUnmount
  
-  const { isAuthenticated } = useAuthenticated();
+  const { isAuthenticated } = useAuthenticated(); 
 
   return (
     <>

@@ -47,15 +47,15 @@ const styles = {
 const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
 
-const Roles = ({token}) => {
+const Roles = ({ token, userId }) => {
 	const [alerta, setAlerta] = React.useState(null);
 	const [checkboxState, setCheckboxState] = useState([]);
 	let arrayIdPermits = [];
 
 	const handleChange = name => event => {
-		if (event.target.checked === false) {
+		if (!event.target.checked) {
 			for (let i = 0; i < arrayIdPermits.length; i++) {
-				if (arrayIdPermits[i].id === event.target.value) {
+				if (arrayIdPermits[i].id == event.target.value) {
 					arrayIdPermits.splice(i, 1);
 				}
 			}
@@ -102,6 +102,7 @@ const Roles = ({token}) => {
 								.then(function (response) {
 									console.log(response);
 									console.log(newRole);
+									loadGrid();
 									inputConfirmAlertNext(e);
 								})
 								.catch(function (error) {
@@ -251,10 +252,10 @@ const Roles = ({token}) => {
 		})
 	);
 
-	let liableID = JSON.parse(localStorage.getItem("id"));
+	let liableID = userId;//JSON.parse(localStorage.getItem("id"));
 	let auth = token;	//localStorage.getItem("auth");
 
-	useEffect(() => {
+	const loadGrid = () => {
 		const URL = baseUrl + "Role";
 		axios
 			.get(URL, {
@@ -308,6 +309,7 @@ const Roles = ({token}) => {
 														"Date created: ",
 														responseArr[1].data.data
 													);
+													arrayIdPermits = prop.permmisionRole.map(e => ({id: e.idPermiso}));													
 													setAlerta(
 														<SweetAlert
 															input
@@ -321,13 +323,15 @@ const Roles = ({token}) => {
 															title="Cambie el nombre del rol y los permisos"
 															required
 															validationMsg="Debe digitar el nombre del rol"
+															defaultValue={prop.roleName}
 															onConfirm={e => {
 																const URL_ROLE_PUT = baseUrl + "Role";
 																let newRole = new roleModel(e, arrayIdPermits);
 																newRole.idUserSender = liableID;
 																newRole.id = obj.id;
-																newRole.activo = true;
+																newRole.activo = true;	
 																newRole = JSON.stringify(newRole);
+
 																axios
 																	.put(URL_ROLE_PUT, newRole, {
 																		headers: {
@@ -336,6 +340,7 @@ const Roles = ({token}) => {
 																		}
 																	})
 																	.then(function (response) {
+																		loadGrid();
 																		responseConfirmAlertNext(
 																			response.data.data.error.message
 																		);
@@ -372,6 +377,8 @@ const Roles = ({token}) => {
 																		<Checkbox
 																			onChange={handleChange(x.permmisionName)}
 																			value={x.id}
+																			defaultChecked={prop.permmisionRole
+																				&& prop.permmisionRole.find(e => e.idPermiso === x.id)}
 																		/>
 																	}
 																	label={x.permmisionName}
@@ -417,6 +424,7 @@ const Roles = ({token}) => {
 													data: obj
 												})
 												.then(response => {
+													loadGrid();
 													console.log(response);
 													responseConfirmAlertNext(
 														response.data.data.error.message
@@ -447,6 +455,10 @@ const Roles = ({token}) => {
 			.catch(function (error) {
 				console.log(error);
 			});
+	};
+
+	useEffect(() => {
+		loadGrid();
 	}, []);
 
 	const classesAlerts = useStylesAlerts();
@@ -513,7 +525,8 @@ const Roles = ({token}) => {
 
 
 const mapState = state => ({
-	token: state.auth.token
+	token: state.auth.token,
+	userId: state.auth.user.id,
 }), mapDispatch = dispatch => ({});
 
 export default connect(mapState, mapDispatch)(Roles);

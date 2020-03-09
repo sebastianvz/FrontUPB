@@ -22,7 +22,7 @@ class Autocomplete extends Component {
             // Whether or not the suggestion list is shown
             showSuggestions: false,
             // What the user has entered
-            userInput: ""
+            userInput: this.props.defaultValue
         };
     }
 
