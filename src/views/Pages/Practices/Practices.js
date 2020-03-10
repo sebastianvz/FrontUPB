@@ -7,8 +7,6 @@ import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
@@ -27,8 +25,6 @@ import CardIcon from "components/core/Card/CardIcon.js";
 import CardHeader from "components/core/Card/CardHeader.js";
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
-
-import { dataTable } from "variables/general.js";
 
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 

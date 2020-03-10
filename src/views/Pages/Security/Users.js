@@ -98,14 +98,14 @@ const Users = ({token, userId}) => {
 
   const [dataState, setDataState] = React.useState(
     {
-      id_type: "",
+      id_type: 0,
       id_number: 0,
       name: "",
       last_name: "",
       email: null,
       email_UPB: "",
-      phone: null,
-      idUPB: null,
+      phone: "",
+      idUPB: "",
       job:null,
       programs:[],
       other_job:null,
@@ -115,6 +115,13 @@ const Users = ({token, userId}) => {
     }
     );
 
+  const [requireName, setrequireName] = React.useState("");
+  const [requireLastName, setrequireLastName] = React.useState("");
+  const [requireIdentification, setrequireIdentification] = React.useState("");
+  const [requireEmail2, setrequireEmail2] = React.useState("");
+  const [requireCell, setrequireCell] = React.useState("");
+  const [requireIdUpb, setrequireIdUpb] = React.useState("");
+  const [requireUserName, setrequireUserName] = React.useState("");
   const [requiredState, setrequiredState] = React.useState("");
   const [typeEmailState, settypeEmailState] = React.useState("");
   const [numberState, setnumberState] = React.useState("");
@@ -188,74 +195,101 @@ const Users = ({token, userId}) => {
 		}, 200);
 	};
 
-  const addUser = (username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
+  const addUser = (username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular, otrosTrabajos = null, idUpb, emailPersonal = null, profesion = null, idUserSender = liableID) => 
+  {
+      if (idTipoIdentificacion <=0) {
+        responseConfirmAlertNext("Faltan campos por llenar Tipo identificacion");
+      }
+      if (arrayRoles.length <= 0) {
+        responseConfirmAlertNext("Faltan campos por llenar Rol");
+      }
+      if (arrayProgramas.length <= 0 ) {
+        responseConfirmAlertNext("Faltan campos por llenar programa");
+      }
+      if (requireName === "" || requireName === "error" ) {
+        setrequireName("error");
+        responseConfirmAlertNext("Faltan campos por llenar nombre");
+      }
+      if (requireLastName === "" || requireLastName === "error" ) {
+        setrequireLastName("error");
+        responseConfirmAlertNext("Faltan campos por llenar apellido");
+      }
+      if (requireIdentification === "" || requireIdentification === "error" ) {
+        setrequireIdentification("error");
+        responseConfirmAlertNext("Faltan campos por llenar identificacion");
+      }
+      if (requireEmail2 === "" || requireEmail2 === "error" ) {
+        setrequireEmail2("error");
+        responseConfirmAlertNext("Faltan campos por llenar email upb");
+      }
+      if (requireCell === "" || requireCell === "error" ) {
+        setrequireCell("error");
+        responseConfirmAlertNext("Faltan campos por llenar celular");
+      }   
+      if (requireIdUpb === "" || requireIdUpb === "error" ) {
+        setrequireIdUpb("error");
+        responseConfirmAlertNext("Faltan campos por llenar id upb");
+      }
+      if (requireUserName === "" || requireUserName === "error" ) {
+        setrequireUserName("error");
+        responseConfirmAlertNext("Faltan campos por llenar username");
+      }
+      if (equalToState === "" || equalToState === "error" ) {
+        setequalToState("error");
+        responseConfirmAlertNext("Las contraseñas no son iguales");
+      }
+debugger;
+      if(requireLastName==="success" && requireName=== "success" && requireIdentification=== "success" && requireEmail2=== "success" && requireIdUpb=== "success" && requireUserName=== "success" &&equalToState=== "success" && idTipoIdentificacion >0 && arrayRoles.length > 0 && arrayProgramas.length>0 )
+      {
+        const URL_USER_POST = baseUrl+"User";
+        let programsArrayObject = arrayProgramas.map(x => {return({id:x})})
+        let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
+    
+        let newUser = new userModel(username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, rolesArrayObject,programsArrayObject, celular, otrosTrabajos,idUpb, emailPersonal, profesion, idUserSender);
+    
+        newUser = JSON.stringify(newUser);
+        axios
+          .post(URL_USER_POST, newUser, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + auth
+            }
+          })
+          .then(function(response) {
+            console.log(response);
+            console.log(newUser);
+            setDataState({
+              id_type: "",
+              id_number: 0,
+              name: "",
+              last_name: "",
+              email: null,
+              email_UPB: "",
+              phone: null,
+              idUPB: null,
+              job:null,
+              programs:[],
+              other_job:null,
+              user:"",
+              password:"",
+              roles:[]
+            })
+            responseConfirmAlertNext(
+              response.data.data.error.message
+            );
+            setOpen(false)
+          })
+          .catch(function(error) {
+            console.log(error);
+            responseConfirmAlertNext(
+              error.data.data.error.message
+            );
+            setOpen(false);
+            return;
+          });
+      }
 
-    if (requiredState === "" || requiredState === "error") {
-      setrequiredState("error");
-      alert("Faltan campos por llenar");
-      return;
-    }
-    if (typeEmailState === "" || typeEmailState === "error") {
-      settypeEmailState("error");
-      alert("Ingrese un email valido");
-      return;
-    }
-    if (numberState === "" || numberState === "error") {
-      setnumberState("error");
-      alert("Algunos campos no tienen datos correctos");
-      return;
-    }
-    if (equalToState === "" || equalToState === "error") {
-      setequalToState("error");
-      alert("Las contraseñas no coinciden");
-      return;
-    }
-    const URL_USER_POST = baseUrl+"User";
-    let programsArrayObject = arrayProgramas.map(x => {return({id:x})})
-    let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
-
-    let newUser = new userModel(username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, rolesArrayObject,programsArrayObject, celular, otrosTrabajos,idUpb, emailPersonal, profesion, idUserSender);
-
-    newUser = JSON.stringify(newUser);
-    axios
-      .post(URL_USER_POST, newUser, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + auth
-        }
-      })
-      .then(function(response) {
-        console.log(response);
-        console.log(newUser);
-        setDataState({
-          id_type: "",
-          id_number: 0,
-          name: "",
-          last_name: "",
-          email: null,
-          email_UPB: "",
-          phone: null,
-          idUPB: null,
-          job:null,
-          programs:[],
-          other_job:null,
-          user:"",
-          password:"",
-          roles:[]
-        })
-        responseConfirmAlertNext(
-          response.data.data.error.message
-        );
-        setOpen(false)
-      })
-      .catch(function(error) {
-        console.log(error);
-        responseConfirmAlertNext(
-          error.data.data.error.message
-        );
-        setOpen(false);
-        return;
-      });
+    
   };
 
   
@@ -503,6 +537,7 @@ const Users = ({token, userId}) => {
 							/>
 							Agregar Usuario
 						</Button>
+            {/* Edit Modal */}
             <Modal
 							aria-labelledby="simple-modal-title"
 							aria-describedby="simple-modal-description"
@@ -727,7 +762,8 @@ const Users = ({token, userId}) => {
               </GridContainer>
 
             </Modal>
-						<Modal
+						{/* Create modal */}
+            <Modal
 							aria-labelledby="simple-modal-title"
 							aria-describedby="simple-modal-description"
 							open={open}
@@ -745,12 +781,12 @@ const Users = ({token, userId}) => {
                     <h4 style={{margin: "25px 0px"}}><b>Datos personales</b></h4>
                       <form>
                         <GridContainer>
-                        <GridItem xs={12} sm={2}>
+                          <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
                               Tipo de identificacíon
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={2}>
+                          <GridItem xs={12} sm={3}>
                           <FormControl className={classesDrop.formControl}>
                             <Select
                               id="demo-simple-select"
@@ -765,31 +801,31 @@ const Users = ({token, userId}) => {
                             </Select>
                           </FormControl>
                           </GridItem>
-                          <GridItem xs={12} sm={1}>
+                          <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
-                              ID
+                              # Identificación
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={5}>
+                          <GridItem xs={12} sm={3}>
                             <CustomInput
-                              success={numberState === "success"}
-                              error={numberState === "error"}
-                              id="number"
+                              success={requireIdentification === "success"}
+                              error={requireIdentification === "error"}
+                              id="Identification"
                               formControlProps={{
                                 fullWidth: true
                               }}
                               inputProps={{
                                 onChange: event => {
                                   if (verifyNumber(event.target.value)) {
-                                    setnumberState("success");
+                                    setrequireIdentification("success");
                                   } else {
-                                    setnumberState("error");
+                                    setrequireIdentification("error");
                                   }
                                   setDataState({...dataState, id_number: event.target.value})
                                 },
                                 type: "number",
                                 endAdornment:
-                                  numberState === "error" ? (
+                                requireIdentification === "error" ? (
                                     <InputAdornment position="end">
                                       <Close className={classes.danger} />
                                     </InputAdornment>
@@ -801,31 +837,31 @@ const Users = ({token, userId}) => {
                           </GridItem>
                         </GridContainer>
                         <GridContainer>
-                          <GridItem xs={12} sm={1}>
+                          <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
                               Nombre
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={2}>
+                          <GridItem xs={12} sm={3}>
                             <CustomInput
-                              success={requiredState === "success"}
-                              error={requiredState === "error"}
-                              id="required"
+                              success={requireName === "success"}
+                              error={requireName === "error"}
+                              id="name"
                               formControlProps={{
                                 fullWidth: true
                               }}
                               inputProps={{
                                 onChange: event => {
                                   if (verifyLength(event.target.value, 0)) {
-                                    setrequiredState("success");
+                                    setrequireName("success");
                                   } else {
-                                    setrequiredState("error");
+                                    setrequireName("error");
                                   }
                                   setDataState({...dataState, name: event.target.value})
                                 },
                                 type: "text",
                                 endAdornment:
-                                  requiredState === "error" ? (
+                                requireName === "error" ? (
                                     <InputAdornment position="end">
                                       <Close className={classes.danger} />
                                     </InputAdornment>
@@ -835,31 +871,31 @@ const Users = ({token, userId}) => {
                               }}
                             />
                           </GridItem>
-                          <GridItem xs={12} sm={1}>
+                          <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
                               Apellidos
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={2}>
+                          <GridItem xs={12} sm={3}>
                             <CustomInput
-                              success={requiredState === "success"}
-                              error={requiredState === "error"}
-                              id="required"
+                              success={requireLastName === "success"}
+                              error={requireLastName === "error"}
+                              id="lastName"
                               formControlProps={{
                                 fullWidth: true
                               }}
                               inputProps={{
                                 onChange: event => {
                                   if (verifyLength(event.target.value, 0)) {
-                                    setrequiredState("success");
+                                    setrequireLastName("success");
                                   } else {
-                                    setrequiredState("error");
+                                    setrequireLastName("error");
                                   }
                                   setDataState({...dataState, last_name: event.target.value})
                                 },
                                 type: "text",
                                 endAdornment:
-                                  requiredState === "error" ? (
+                                requireLastName === "error" ? (
                                     <InputAdornment position="end">
                                       <Close className={classes.danger} />
                                     </InputAdornment>
@@ -869,12 +905,151 @@ const Users = ({token, userId}) => {
                               }}
                             />
                           </GridItem>
+                        </GridContainer>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Email Personal
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={3}>
+                            <CustomInput
+                              success={typeEmailState === "success"}
+                              error={typeEmailState === "error"}
+                              id="Email1"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyEmail(event.target.value)) {
+                                    settypeEmailState("success");
+                                  } else {
+                                    settypeEmailState("error");
+                                  }
+                                  setDataState({...dataState, email: event.target.value})
+                                },
+                                type: "email",
+                              }}
+                            />
+                          </GridItem>
                           <GridItem xs={12} sm={1}>
+                            <FormLabel className={classes.labelLeftHorizontal}>
+                              <code>opcional</code>
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={1}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Email UPB
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={3}>
+                            <CustomInput
+                              success={requireEmail2 === "success"}
+                              error={requireEmail2 === "error"}
+                              id="Email2"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyEmail(event.target.value)) {
+                                    setrequireEmail2("success");
+                                  } else {
+                                    setrequireEmail2("error");
+                                  }
+                                  setDataState({...dataState, email_UPB: event.target.value})
+                                },
+                                type: "email",
+                                endAdornment:
+                                requireEmail2 === "error" ? (
+                                    <InputAdornment position="end">
+                                      <Close className={classes.danger} />
+                                    </InputAdornment>
+                                  ) : (
+                                    undefined
+                                  )
+                              }}
+                            />
+                          </GridItem>
+                        </GridContainer>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Celular
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={3}>
+                            <CustomInput
+                              success={requireCell === "success"}
+                              error={requireCell === "error"}
+                              id="Cellphone"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyNumber(event.target.value)) {
+                                    setrequireCell("success");
+                                  } else {
+                                    setrequireCell("error");
+                                  }
+                                  setDataState({...dataState, phone: event.target.value})
+                                },
+                                type: "number",
+                                endAdornment:
+                                requireCell === "error" ? (
+                                    <InputAdornment position="end">
+                                      <Close className={classes.danger} />
+                                    </InputAdornment>
+                                  ) : (
+                                    undefined
+                                  )
+                              }}
+                            />
+                          </GridItem>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              ID UPB
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={3}>
+                            <CustomInput
+                              success={requireIdUpb === "success"}
+                              error={requireIdUpb === "error"}
+                              id="IdUPB"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyNumber(event.target.value)) {
+                                    setrequireIdUpb("success");
+                                  } else {
+                                    setrequireIdUpb("error");
+                                  }
+                                  setDataState({...dataState, idUPB: event.target.value})
+                                },
+                                type: "number",
+                                endAdornment:
+                                requireIdUpb === "error" ? (
+                                  <InputAdornment position="end">
+                                    <Close className={classes.danger} />
+                                  </InputAdornment>
+                                ) : (
+                                  undefined
+                                )
+                              }}
+                            />
+                          </GridItem>
+                        </GridContainer>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
                               Roles
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={1}>
+                          <GridItem xs={12} sm={3}>
                             <FormControl className={classesDrop.formControl}>
                               <Select
                                 id="demo-mutiple-role"
@@ -892,181 +1067,12 @@ const Users = ({token, userId}) => {
                               </Select>
                             </FormControl>
                           </GridItem>
-                        </GridContainer>
-                        <GridContainer>
-                          <GridItem xs={12} sm={1}>
-                            <FormLabel className={classes.labelHorizontal}>
-                              Email Personal
-                            </FormLabel>
-                          </GridItem>
-                          <GridItem xs={12} sm={2}>
-                            <CustomInput
-                              success={typeEmailState === "success"}
-                              error={typeEmailState === "error"}
-                              id="typeemail"
-                              formControlProps={{
-                                fullWidth: true
-                              }}
-                              inputProps={{
-                                onChange: event => {
-                                  if (verifyEmail(event.target.value)) {
-                                    settypeEmailState("success");
-                                  } else {
-                                    settypeEmailState("error");
-                                  }
-                                  setDataState({...dataState, email: event.target.value})
-                                },
-                                type: "email",
-                              }}
-                            />
-                          </GridItem>
-                          <GridItem xs={12} sm={2}>
-                            <FormLabel className={classes.labelLeftHorizontal}>
-                              <code>opcional</code>
-                            </FormLabel>
-                          </GridItem>
-                          <GridItem xs={12} sm={1}>
-                            <FormLabel className={classes.labelHorizontal}>
-                              Email UPB
-                            </FormLabel>
-                          </GridItem>
-                          <GridItem xs={12} sm={4}>
-                            <CustomInput
-                              success={typeEmailState === "success"}
-                              error={typeEmailState === "error"}
-                              id="typeemail"
-                              formControlProps={{
-                                fullWidth: true
-                              }}
-                              inputProps={{
-                                onChange: event => {
-                                  if (verifyEmail(event.target.value)) {
-                                    settypeEmailState("success");
-                                  } else {
-                                    settypeEmailState("error");
-                                  }
-                                  setDataState({...dataState, email_UPB: event.target.value})
-                                },
-                                type: "email",
-                                endAdornment:
-                                  typeEmailState === "error" ? (
-                                    <InputAdornment position="end">
-                                      <Close className={classes.danger} />
-                                    </InputAdornment>
-                                  ) : (
-                                    undefined
-                                  )
-                              }}
-                            />
-                          </GridItem>
-                        </GridContainer>
-                        <GridContainer>
-                          <GridItem xs={12} sm={1}>
-                            <FormLabel className={classes.labelHorizontal}>
-                              Celular
-                            </FormLabel>
-                          </GridItem>
-                          <GridItem xs={12} sm={2}>
-                            <CustomInput
-                              success={numberState === "success"}
-                              error={numberState === "error"}
-                              id="number"
-                              formControlProps={{
-                                fullWidth: true
-                              }}
-                              inputProps={{
-                                onChange: event => {
-                                  if (verifyNumber(event.target.value)) {
-                                    setnumberState("success");
-                                  } else {
-                                    setnumberState("error");
-                                  }
-                                  setDataState({...dataState, phone: event.target.value})
-                                },
-                                type: "number",
-                                endAdornment:
-                                  numberState === "error" ? (
-                                    <InputAdornment position="end">
-                                      <Close className={classes.danger} />
-                                    </InputAdornment>
-                                  ) : (
-                                    undefined
-                                  )
-                              }}
-                            />
-                          </GridItem>
-                          <GridItem xs={12} sm={1}>
-                            <FormLabel className={classes.labelHorizontal}>
-                              ID UPB
-                            </FormLabel>
-                          </GridItem>
-                          <GridItem xs={12} sm={5}>
-                            <CustomInput
-                              success={numberState === "success"}
-                              error={numberState === "error"}
-                              id="number"
-                              formControlProps={{
-                                fullWidth: true
-                              }}
-                              inputProps={{
-                                onChange: event => {
-                                  if (verifyNumber(event.target.value)) {
-                                    setnumberState("success");
-                                  } else {
-                                    setnumberState("error");
-                                  }
-                                  setDataState({...dataState, idUPB: event.target.value})
-                                },
-                                type: "number",
-                              }}
-                            />
-                          </GridItem>
-                          <GridItem xs={12} sm={2}>
-                            <FormLabel className={classes.labelLeftHorizontal}>
-                              <code>opcional</code>
-                            </FormLabel>
-                          </GridItem>
-                        </GridContainer>
-                        <GridContainer>
-                          <GridItem xs={12} sm={1}>
-                            <FormLabel className={classes.labelHorizontal}>
-                              Profesión
-                            </FormLabel>
-                          </GridItem>
-                          <GridItem xs={12} sm={8}>
-                            <CustomInput
-                              success={requiredState === "success"}
-                              error={requiredState === "error"}
-                              id="required"
-                              formControlProps={{
-                                fullWidth: true
-                              }}
-                              inputProps={{
-                                onChange: event => {
-                                  if (verifyLength(event.target.value, 0)) {
-                                    setrequiredState("success");
-                                  } else {
-                                    setrequiredState("error");
-                                  }
-                                  setDataState({...dataState, job: event.target.value})
-                                },
-                                type: "text",
-                              }}
-                            />
-                          </GridItem>
-                          <GridItem xs={12} sm={2}>
-                            <FormLabel className={classes.labelLeftHorizontal}>
-                              <code>opcional</code>
-                            </FormLabel>
-                          </GridItem>
-                        </GridContainer>
-                        <GridContainer>
                           <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
                               Programas
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={4}>
+                          <GridItem xs={12} sm={3}>
                             <FormControl className={classesDrop.formControl}>
                               <Select
                                 id="demo-mutiple-name"
@@ -1084,16 +1090,47 @@ const Users = ({token, userId}) => {
                               </Select>
                             </FormControl>
                           </GridItem>
+                        </GridContainer>
+                        <GridContainer>
+                          <GridItem xs={12} sm={2}>
+                            <FormLabel className={classes.labelHorizontal}>
+                              Profesión
+                            </FormLabel>
+                          </GridItem>
+                          <GridItem xs={12} sm={3}>
+                            <CustomInput
+                              success={requiredState === "success"}
+                              error={requiredState === "error"}
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: event => {
+                                  if (verifyLength(event.target.value, 0)) {
+                                    setrequiredState("success");
+                                  } else {
+                                    setrequiredState("error");
+                                  }
+                                  setDataState({...dataState, job: event.target.value})
+                                },
+                                type: "text",
+                              }}
+                            />
+                          </GridItem>
+                          <GridItem xs={12} sm={1}>
+                            <FormLabel className={classes.labelLeftHorizontal}>
+                              <code>opcional</code>
+                            </FormLabel>
+                          </GridItem>
                           <GridItem xs={12} sm={1}>
                             <FormLabel className={classes.labelHorizontal}>
                               Otros trabajos
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={2}>
+                          <GridItem xs={12} sm={3}>
                             <CustomInput
                               success={requiredState === "success"}
                               error={requiredState === "error"}
-                              id="required"
                               formControlProps={{
                                 fullWidth: true
                               }}
@@ -1110,7 +1147,7 @@ const Users = ({token, userId}) => {
                               }}
                             />
                           </GridItem>
-                          <GridItem xs={12} sm={3}>
+                          <GridItem xs={12} sm={1}>
                             <FormLabel className={classes.labelLeftHorizontal}>
                               <code>opcional</code>
                             </FormLabel>
@@ -1123,26 +1160,26 @@ const Users = ({token, userId}) => {
                               Usuario
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={7}>
+                          <GridItem xs={12} sm={8}>
                             <CustomInput
-                              success={requiredState === "success"}
-                              error={requiredState === "error"}
-                              id="required"
+                              success={requireUserName === "success"}
+                              error={requireUserName === "error"}
+                              id="Username"
                               formControlProps={{
                                 fullWidth: true
                               }}
                               inputProps={{
                                 onChange: event => {
                                   if (verifyLength(event.target.value, 0)) {
-                                    setrequiredState("success");
+                                    setrequireUserName("success");
                                   } else {
-                                    setrequiredState("error");
+                                    setrequireUserName("error");
                                   }
                                   setDataState({...dataState, user: event.target.value})
                                 },
                                 type: "text",
                                 endAdornment:
-                                  requiredState === "error" ? (
+                                requireUserName === "error" ? (
                                     <InputAdornment position="end">
                                       <Close className={classes.danger} />
                                     </InputAdornment>
@@ -1181,12 +1218,12 @@ const Users = ({token, userId}) => {
                               }}
                             />
                           </GridItem>
-                          <GridItem xs={1} sm={2}>
+                          <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
                               Confirmar
                             </FormLabel>
                           </GridItem>
-                          <GridItem xs={12} sm={2}>
+                          <GridItem xs={12} sm={3}>
                             <CustomInput
                               success={equalToState === "success"}
                               error={equalToState === "error"}
