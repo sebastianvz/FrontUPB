@@ -1,7 +1,6 @@
 import React, { useState, Suspense, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import cx from "classnames";
-import axios from "axios";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 
 
@@ -164,7 +163,7 @@ const Dashboard = props => {
   };
 
   const getActiveRoute = routes => {
-    let activeRoute = "Default Brand Text";
+    let activeRoute = "Bienvenido al sistema de gestión del laboratorio de simulación";
     for (let i = 0; i < routes.length; i++) {
       if (routes[i].collapse) {
         let collapseActiveRoute = getActiveRoute(routes[i].views);

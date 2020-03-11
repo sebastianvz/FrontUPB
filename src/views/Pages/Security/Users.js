@@ -294,7 +294,6 @@ const Users = ({token, userId}) => {
   };
 
   const changeDataUser = (idDataBase, username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
-
     const URL_USER_PUT = baseUrl+"User";
     let programsArrayObject = arrayProgramas.map(x => {return({id:x})})
     let rolesArrayObject = arrayRoles.map(x => {return({id:x})})
@@ -450,15 +449,13 @@ const Users = ({token, userId}) => {
 										simple
 										onClick={() => {
                       let obj = resultActive.find(o => o.username === prop.username);
-                      console.log(obj)
+                      debugger;
                       const arrayInPutRoles = obj.role.map(x => {return(x.id)})
-                      //const arrayInPutPrograms = obj.programa.map(x => {return({id:x})})
-                      console.log(arrayInPutRoles)
-
+                      const arrayInPutPrograms = obj.programa.map(x => {return(x.id)})
                       setDataState({...dataState, name: obj.nombreCompleto, job:obj.profesion, last_name: obj.apellidos, email: obj.emailPersonal,
                         other_job: obj.otrosTrabajos, phone: obj.celular, id_number: obj.numeroIdentificacion, email_UPB: obj.emailUpb,
                         user: obj.username, password: obj.contrasena, id_type:obj.idTipoIdentificacion, id: obj.id, idUPB: obj.idUpb, roles: arrayInPutRoles,
-                        
+                        programs: arrayInPutPrograms
                       })
                       handleOpenModified();
 										}}
