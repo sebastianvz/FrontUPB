@@ -238,7 +238,7 @@ const Users = ({token, userId}) => {
         setequalToState("error");
         responseConfirmAlertNext("Las contraseñas no son iguales");
       }
-debugger;
+
       if(requireLastName==="success" && requireName=== "success" && requireIdentification=== "success" && requireEmail2=== "success" && requireIdUpb=== "success" && requireUserName=== "success" &&equalToState=== "success" && idTipoIdentificacion >0 && arrayRoles.length > 0 && arrayProgramas.length>0 )
       {
         const URL_USER_POST = baseUrl+"User";
@@ -277,7 +277,8 @@ debugger;
             responseConfirmAlertNext(
               response.data.data.error.message
             );
-            setOpen(false)
+            setOpen(false);
+            loadData();
           })
           .catch(function(error) {
             console.log(error);
@@ -291,8 +292,6 @@ debugger;
 
     
   };
-
-  
 
   const changeDataUser = (idDataBase, username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular = null, otrosTrabajos = null, idUpb = null, emailPersonal = null, profesion = null, idUserSender = liableID) => {
 
@@ -332,7 +331,8 @@ debugger;
         responseConfirmAlertNext(
           response.data.data.error.message
         );
-        setOpenModified(false)
+        setOpenModified(false);
+        loadData();
       })
       .catch(function(error) {
         console.log(error);
@@ -373,8 +373,9 @@ debugger;
 		})
   );
 
-	useEffect(() => {
-		const URL_GetUser = baseUrl+"User";
+  const loadData = () => 
+  {
+    const URL_GetUser = baseUrl+"User";
     const URL_GetDocuments = baseUrl+"Master/GetDocuments"
     const URL_GetPrograms = baseUrl+"Master/GetPrograms"
     const URL_GetRole = baseUrl+"Role"
@@ -488,6 +489,7 @@ debugger;
                         responseConfirmAlertNext(
                           response.data.data.error.message
                         );
+                        loadData();
                       })
                       .catch(function(error) {
                         console.log(error);
@@ -509,6 +511,10 @@ debugger;
       })).catch(errors => {
         // react on errors.
       })
+  } 
+
+	useEffect(() => {
+		loadData();
 	}, []);
 
   const classesAlerts = useStylesAlerts();
@@ -769,7 +775,7 @@ debugger;
 							open={open}
 							onClose={handleClose}
 						>
-              <GridContainer>
+              <GridContainer style={{maxHeight: "600px", overflow: "auto"}}>
                 <GridItem xs={12} sm={12} md={12}>
                   <Card>
                     <CardHeader color="danger" text>

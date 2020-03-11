@@ -5,6 +5,7 @@ import axios from "axios";
 import ReactTable from "react-table";
 import SweetAlert from "react-bootstrap-sweetalert";
 
+
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -69,28 +70,6 @@ const Practices = ({
 	const inputAlert = () => {
 		history.push("/practica");
 	};
-	const inputConfirmAlertNext = e => {
-		arrayIdPermits = [];
-		setAlerta(e);
-		setTimeout(() => {
-			setAlerta(
-				<SweetAlert
-					style={{ display: "block", marginTop: "-100px" }}
-					onConfirm={() => hideAlert()}
-					onCancel={() => hideAlert()}
-					confirmBtnCssClass={
-						classesAlerts.button + " " + classesAlerts.default
-					}
-					title={
-						<p>
-							Nombre de la parctica: <b>{e}</b>
-						</p>
-					}
-				/>
-			);
-		}, 200);
-	};
-
 	const responseConfirmAlertNext = e => {
 		arrayIdPermits = [];
 		setAlerta(e);
@@ -105,7 +84,7 @@ const Practices = ({
 					}
 					title={
 						<p>
-							<b>{e}</b>
+							Nombre de la parctica: <b>{e}</b>
 						</p>
 					}
 				/>

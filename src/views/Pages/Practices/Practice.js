@@ -77,8 +77,8 @@ const FormDetails = ({
 	return (
 		<GridItem xs={12} sm={12} md={12}>
 			<Card>
-				<CardHeader color="rose" icon>
-					<CardIcon color="rose">
+				<CardHeader color="danger" icon>
+					<CardIcon color="danger">
 						<i class="material-icons">{icon}</i>
 					</CardIcon>
 					<h4 className={classes.cardIconTitle}>{title}</h4>
@@ -343,8 +343,8 @@ const Form = ({
 		<GridContainer>
 			<GridItem xs={12} sm={12} md={12}>
 				<Card>
-					<CardHeader color="rose" text>
-						<CardText color="rose">
+					<CardHeader color="danger" text>
+						<CardText color="danger">
 							<h4 className={classes.cardTitle}>Practicas</h4>
 						</CardText>
 					</CardHeader>
@@ -537,8 +537,8 @@ const Form = ({
 			/>
 			<GridItem xs={12} sm={12} md={12}>
 				<Card>
-					<CardHeader color="rose" icon>
-						<CardIcon color="rose">
+					<CardHeader color="danger" icon>
+						<CardIcon color="danger">
 							<i class="material-icons">chrome_reader_mode</i>
 						</CardIcon>
 						<h4 className={classes.cardIconTitle}>Observaciones</h4>
@@ -571,8 +571,8 @@ const Form = ({
 			</GridItem>
 			<GridItem xs={12} sm={12} md={12}>
 				<Card>
-					<CardHeader color="rose" icon>
-						<CardIcon color="rose">
+					<CardHeader color="danger" icon>
+						<CardIcon color="danger">
 							<i class="material-icons">attach_file</i>
 						</CardIcon>
 						<h4 className={classes.cardIconTitle}>Adjuntos</h4>
@@ -652,7 +652,7 @@ const Form = ({
 				<GridItem xs={12} sm={12} md={12}>
 					<div style={{ 'textAlign': 'right' }}>
 						<Button
-							color="rose"
+							color="danger"
 							onClick={handlres.save}
 						>Guardar</Button>
 					</div>
@@ -661,7 +661,6 @@ const Form = ({
 		</GridContainer>
 	);
 };
-
 
 const mapState = state => ({
 	devicesList: state.masters.devices,
