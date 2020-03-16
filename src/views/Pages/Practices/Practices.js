@@ -131,7 +131,7 @@ const Practices = ({
 										round
 										simple
 										onClick={() => {
-											history.push('/practica');
+											history.push(`/practica/${prop.id}`);
 										}}
 										color="warning"
 										className="edit"

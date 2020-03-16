@@ -14,4 +14,5 @@ export const practices = {
     save: 'Practics',
     remove: 'Practices/Remove',
     list: 'Practices/List',
+    getById: 'Practics/',
 }

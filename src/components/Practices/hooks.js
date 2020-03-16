@@ -1,18 +1,32 @@
 import React from 'react';
 import instance from '../../services/instance';
 
-import { save as saveAPI } from '../../services/practices/practices';
+import { save as saveAPI, getById as getByIdAPI, update as updateAPI } from '../../services/practices/practices';
 import { useMatersList as loadMasterList } from '../Masters';
 
-export default function useCRUD() {
+export default function useCRUD() {    
     const save = (data, onSucced) => {
-        saveAPI(data).then(e => {
+        debugger;
+        let _API;
+        if (data.id > 0) {
+            _API = updateAPI(data);
+        } else {
+            _API = saveAPI(data);
+        }
+        _API.then(e => {
             onSucced();
         }).catch(e => {
         });
     };
+    const getById = (id, onSucced = () => { }) => {
+        getByIdAPI(id)
+            .then(e => {
+                onSucced(e.data.data);
+            })
+            .catch(e => { });
+    };
     const remove = () => { };
     const list = () => { };
     const loadList = () => loadMasterList().loadPracticesList();
-    return { save, remove, list, loadList };
+    return { save, remove, list, loadList, getById };
 }

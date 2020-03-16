@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -31,10 +32,122 @@ import FileUpload from "../../../components/core/CustomUpload/FileUpload";
 import { useCRUD } from '../../../components/Practices';
 
 import styles from "../../../assets/jss/material-dashboard-pro-react/views/regularFormsStyle";
+import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
 import { Autocomplete } from '../../../components/Shared';
 
 const useStyles = makeStyles(styles);
+
+const FormObjetives = ({
+	setData,
+	data,
+}) => {
+	const [objetivo, setObjetivo] = useState("");
+	const [disabledButton, setDisabledButton] = useState(false);
+
+	const classes = useStyles();
+
+	useEffect(() => {
+		setDisabledButton(false);
+	}, [data])
+
+	const handlres = {
+		changeObjetivo: (e) => {
+			setObjetivo(e.target.value);
+		},
+		add: () => {
+			if (objetivo.length === 0) return;
+			setData([{
+				id: data.length,
+				name: objetivo,
+			},
+			...data
+			]);
+			setObjetivo('');
+		},
+		remove: id => {
+			setData(data.filter(x => x.id !== id));
+		}
+	};
+
+	return (
+		<GridItem xs={12} sm={12} md={12}>
+			<Card>
+				<CardHeader color="danger" icon>
+					<CardIcon color="danger">
+						<i class="material-icons">track_changes</i>
+					</CardIcon>
+					<h4 className={classes.cardIconTitle}>Objetivos</h4>
+				</CardHeader>
+				<CardBody>
+					<form id='form-header'>
+						<GridContainer>
+							<GridItem xs={12} sm={10} lg={10}>
+								<GridContainer>
+									<CustomInput
+										labelText={"Objetivo"}
+										id={"Objetivo"}
+										formControlProps={{
+											fullWidth: true
+										}}
+										inputProps={{
+											onChange: handlres.changeObjetivo,
+											value: objetivo,
+										}}
+									/>
+								</GridContainer>
+							</GridItem>
+							<GridItem xs={12} sm={2} lg={2}>
+								<Button
+									color="info"
+									className={classes.actionButton}
+									disabled={disabledButton}
+									onClick={() => { setDisabledButton(true); handlres.add(); }}
+								>
+									<Plus className={classes.icon} />
+								</Button>
+							</GridItem>
+						</GridContainer>
+					</form>
+					<GridContainer>
+						{
+							data
+							&& data.length > 0
+							&& <GridItem xs={12} sm={12} lg={12}>
+								<Table
+									tableHead={["Objetivo", "acciones"]}
+									tableData={data.map(x => [
+										x.name,
+										<Button
+											color="danger"
+											className={classes.actionButton}
+											onClick={() => { handlres.remove(x.id) }}
+										>
+											<Close className={classes.icon} />
+										</Button>
+									])}
+									customCellClasses={[classes.center, classes.right]}
+									customClassesForCells={[0, 4, 5]}
+									customHeadCellClasses={[
+										classes.center,
+										classes.left,
+										classes.right
+									]}
+									customHeadClassesForCells={[0, 4, 5]}
+								/>
+							</GridItem>
+						}
+					</GridContainer>
+				</CardBody>
+			</Card>
+		</GridItem>
+	);
+}
+
+FormObjetives.propTypes = {
+	setData: PropTypes.func,
+	data: PropTypes.array,
+}
 
 const FormDetails = ({
 	title,
@@ -42,8 +155,6 @@ const FormDetails = ({
 	list,
 	setData,
 	data,
-	hideAutocomplete,
-	hideQuantity,
 	icon,
 }) => {
 	const [listValue, setListValue] = useState("");
@@ -53,15 +164,16 @@ const FormDetails = ({
 
 	const handlres = {
 		changeListValue(e) {
-			setListValue(e.target ? e.target.value : e);
+			setListValue(e);
 		},
 		changeQuantity: (e) => {
 			setQuantity(e.target.value);
 		},
 		add: () => {
+			if (listValue == null) return;
 			setData([{
-				id: data.length,
-				label: list ? (list.find(x => x.id === listValue) || { name: '' }).name : listValue,
+				id: listValue,
+				name: (list.find(x => x.id === listValue) || { name: '' }).name,
 				cantidad: quantity
 			},
 			...data
@@ -86,40 +198,24 @@ const FormDetails = ({
 				<CardBody>
 					<form id='form-header'>
 						<GridContainer>
-							<GridItem xs={12} sm={hideQuantity ? 10 : 5} lg={hideQuantity ? 10 : 5}>
+							<GridItem xs={12} sm={5} lg={5}>
 								<GridContainer>
-									{hideAutocomplete ?
-										<CustomInput
-											labelText={labelList}
-											id={labelList}
-											formControlProps={{
-												fullWidth: true
-											}}
-											inputProps={{
-												onChange: handlres.changeListValue,
-												value: listValue,
-											}}
-										/>
-										:
-										<>
-											<GridItem xs={12} sm={12} lg={12}>
-												<InputLabel
-													htmlFor="multiple-select"
-													className={classes.selectLabel}
-												>
-													{labelList}
-												</InputLabel>
-											</GridItem>
-											<GridItem xs={12} sm={12} lg={12}>
-												{list && <Autocomplete
-													minFilter={3}
-													suggestions={list}
-													defaultValue={listValue}
-													onChange={handlres.changeListValue}
-												/>}
-											</GridItem>
-										</>}
-
+									<GridItem xs={12} sm={12} lg={12}>
+										<InputLabel
+											htmlFor="multiple-select"
+											className={classes.selectLabel}
+										>
+											{labelList}
+										</InputLabel>
+									</GridItem>
+									<GridItem xs={12} sm={12} lg={12}>
+										{list && <Autocomplete
+											minFilter={3}
+											suggestions={list}
+											defaultValue={listValue}
+											onChange={handlres.changeListValue}
+										/>}
+									</GridItem>
 								</GridContainer>
 								{/* <Select
 										MenuProps={{
@@ -152,22 +248,20 @@ const FormDetails = ({
 										))}
 									</Select> */}
 							</GridItem>
-							{hideQuantity ? ''
-								: <GridItem xs={12} sm={5} lg={5}>
-									<CustomInput
-										labelText="Cantidad"
-										id="Cantidad"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											onChange: handlres.changeQuantity,
-											type: "number",
-											value: quantity,
-										}}
-									/>
-								</GridItem>
-							}
+							<GridItem xs={12} sm={5} lg={5}>
+								<CustomInput
+									labelText="Cantidad"
+									id="Cantidad"
+									formControlProps={{
+										fullWidth: true
+									}}
+									inputProps={{
+										onChange: handlres.changeQuantity,
+										type: "number",
+										value: quantity,
+									}}
+								/>
+							</GridItem>
 							<GridItem xs={12} sm={2} lg={2}>
 								<Button
 									color="info"
@@ -185,16 +279,14 @@ const FormDetails = ({
 							&& data.length > 0
 							&& <GridItem xs={12} sm={12} lg={12}>
 								<Table
-									tableHead={hideQuantity ? [
+									tableHead={[
 										labelList,
+										"Cantidad",
 										"Acciones"
-									] : [
-											labelList,
-											"Cantidad",
-											"Acciones"
-										]}
-									tableData={data.map(x => hideQuantity ? [
-										x.label,
+									]}
+									tableData={data.map(x => [
+										x.name,
+										x.cantidad,
 										<Button
 											color="danger"
 											className={classes.actionButton}
@@ -202,17 +294,7 @@ const FormDetails = ({
 										>
 											<Close className={classes.icon} />
 										</Button>
-									] : [
-											x.label,
-											x.cantidad,
-											<Button
-												color="danger"
-												className={classes.actionButton}
-												onClick={() => { handlres.remove(x.id) }}
-											>
-												<Close className={classes.icon} />
-											</Button>
-										])}
+									])}
 									customCellClasses={[classes.center, classes.right, classes.right, classes.left]}
 									customClassesForCells={[0, 4, 5]}
 									customHeadCellClasses={[
@@ -242,6 +324,7 @@ FormDetails.propTypes = {
 }
 
 const REQUIRED_FIELDS = [
+	'autores',
 	'nombrePractica',
 	'descripcion',
 	'tiempoEstimado',
@@ -252,34 +335,52 @@ const REQUIRED_FIELDS = [
 	'observaciones'
 ];
 
+const useStylesAlerts = makeStyles(stylesForAlerts);
+
 const Form = ({
 	devicesList,
 	suppliestList,
 	simulatorsList,
 	autorsList,
 	history,
+	match,
+	userId,
 }) => {
 	const [files, setFiles] = useState(null);
+	const [_ID, setID] = useState(0);
 	const [equipos, setEquipos] = useState([]);
 	const [simuladores, setSimuladores] = useState([]);
 	const [insumos, setInsumos] = useState([]);
 	const [objetivos, setObjetivos] = useState([]);
 	const [autors, setAutors] = useState([]);
+	const [errors, setErrors] = useState({});
+	const [alerta, setAlerta] = useState('');
 	const refHeaderForm = useRef();
 	const refObservationForm = useRef();
 	const CRUD = useCRUD();
 	const classes = useStyles();
+	const classesAlerts = useStylesAlerts();
 
 	useEffect(() => {
 		CRUD.loadList();
-	}, [])
+	}, []);
+
+	useEffect(() => {
+		if (match.params.id > 0) {
+			CRUD.getById(match.params.id, handlres.loadFields);
+		}
+	}, [autorsList]);
 
 	const handlres = {
 		save: (e) => {
 			e.preventDefault();
 			const headerForm = refHeaderForm.current;
 			const ObonForm = refObservationForm.current;
+
 			const data = {
+				id: _ID,
+				idUserSender: userId,
+				activo: true,
 				nombrePractica: headerForm.elements.nombrePractica.value,
 				descripcion: headerForm.elements.descripcion.value,
 				tiempoEstimado: headerForm.elements.tiempoEstimado.value,
@@ -287,7 +388,7 @@ const Form = ({
 				criteriosCompetencia: headerForm.elements.criteriosCompetencia.value,
 				obejtivo: headerForm.elements.obejtivo.value,
 				observaciones: ObonForm.elements.observaciones.value,
-				autores: [],
+				autores: autors.length > 0 ? autors.map(e => ({ id: e })) : '',
 				archivos: {
 					evaluacion: null,
 					recursos: files,
@@ -299,21 +400,26 @@ const Form = ({
 			};
 
 			let exit = false;
-			REQUIRED_FIELDS.forEach(name => {				
+			const _errors = {};
+			REQUIRED_FIELDS.forEach(name => {
 				const item = headerForm.elements[name] || ObonForm.elements[name];
-				if(data[name] == '') {
+				if (data[name] == '') {
+					_errors[name] = true;
 					item.style = "background: #ffe4e4";
 					exit = true;
 				} else {
+					_errors[name] = false;
 					item.style = "background: none";
 				}
 			});
-			
-			if(exit){
-				alert('faltan campos por llenar!');
+
+			if (exit) {
+				setErrors(_errors);
+				alert.show("¡Hay campos sin llenar!");
 				return;
 			}
 
+			setErrors({});
 
 			CRUD.save(data, () => {
 				history.push('/practicas');
@@ -322,8 +428,28 @@ const Form = ({
 		changeAutors: (e) => {
 			console.log('e.target.value', e.target.value);
 			setAutors(e.target.value)
+		},
+		loadFields: (data) => {
+			const headerForm = refHeaderForm.current;
+			const ObonForm = refObservationForm.current;
+			headerForm.elements.nombrePractica.value = data.nombrePractica;
+			headerForm.elements.descripcion.value = data.descripcion
+			headerForm.elements.tiempoEstimado.value = data.tiempoEstimado;
+			headerForm.elements.competencia.value = data.competencia;
+			headerForm.elements.criteriosCompetencia.value = data.criteriosCompetencia;
+			headerForm.elements.obejtivo.value = data.obejtivo;
+			ObonForm.elements.observaciones.value = data.observaciones;
+			setID(data.id);
+			setFiles(data.archivos.recursos);
+			setEquipos(data.equipos);
+			setSimuladores(data.simuladores);
+			setInsumos(data.insumos);
+			setObjetivos(data.objetivos);
+			if (data.autors.length > 0) {
+				setAutors(data.autors.map(e => e.id));
+			}
 		}
-	}
+	};
 
 	const filesHandlers = {
 		remove: uid => {
@@ -339,326 +465,356 @@ const Form = ({
 		},
 	};
 
+	const alert = {
+		show(message) {
+			setAlerta(
+				<SweetAlert
+					style={{ display: "block", marginTop: "-100px" }}
+					onConfirm={alert.hide}
+					onCancel={alert.hide}
+					confirmBtnCssClass={
+						classesAlerts.button + " " + classesAlerts.default
+					}
+					title={
+						<p>
+							<b>{message}</b>
+						</p>
+					}
+				/>
+			);
+		},
+		hide() {
+			setAlerta('');
+		},
+	}
+
+
 	return (
-		<GridContainer>
-			<GridItem xs={12} sm={12} md={12}>
-				<Card>
-					<CardHeader color="danger" text>
-						<CardText color="danger">
-							<h4 className={classes.cardTitle}>Practicas</h4>
-						</CardText>
-					</CardHeader>
-					<CardBody>
-						<form ref={refHeaderForm}>
-							<GridContainer>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Nombre Parctica
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="nombrePractica"
-										name="nombrePractica"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										descripción
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="descripcion"
-										name="descripcion"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text",
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-							<GridContainer>
-								<GridItem xs={12} sm={6} lg={6}>
-									<FormControl
-										fullWidth
-										className={classes.selectFormControl}
-									>
-										<InputLabel
-											htmlFor="multiple-select"
-											className={classes.selectLabel}
-										>
-											Autores
-                        </InputLabel>
-										<Select
-											multiple
-											value={autors}
-											onChange={handlres.changeAutors}
-											MenuProps={{ className: classes.selectMenu }}
-											classes={{ select: classes.select }}
-											inputProps={{
-												name: "autores",
-												id: "autores"
-											}}
-										>
-											{autorsList && autorsList.map(x => (
-												<MenuItem
-													classes={{
-														root: classes.selectMenuItem,
-														selected: classes.selectMenuItemSelectedMultiple
-													}}
-													value={x.id}
-												>
-													{x.showFullName}
-												</MenuItem>
-											))}
-										</Select>
-									</FormControl>
-								</GridItem>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Tiempo Estimado
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="tiempoEstimado"
-										name="tiempoEstimado"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											placeholder: "Minutos",
-											type: "number",
-											min: 0,
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-							<GridContainer>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Competencia
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="competencia"
-										name="competencia"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Criterio de competencia
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="criteriosCompetencia"
-										name="criteriosCompetencia"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text",
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-							<GridContainer>
-								<GridItem xs={12} sm={5} lg={2}>
-									<FormLabel className={classes.labelHorizontal}>
-										Objetivo
-                  </FormLabel>
-								</GridItem>
-								<GridItem xs={12} sm={7} lg={4}>
-									<CustomInput
-										id="obejtivo"
-										name="obejtivo"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-						</form>
-					</CardBody>
-				</Card>
-			</GridItem>
-			<FormDetails
-				title="Objetivos"
-				labelList="Objetivos"
-				setData={setObjetivos}
-				data={objetivos}
-				hideQuantity={true}
-				hideAutocomplete={true}
-				icon="track_changes"
-			/>
-			<FormDetails
-				setData={setSimuladores}
-				title="Simuladores"
-				labelList="Simulador"
-				data={simuladores}
-				list={simulatorsList}
-				icon="airline_seat_flat_angled"
-			/>
-			<FormDetails
-				title="Equipos"
-				labelList="Equipo"
-				setData={setEquipos}
-				data={equipos}
-				list={devicesList}
-				icon="video_label"
-			/>
-			<FormDetails
-				title="Insumos"
-				labelList="Insumo"
-				setData={setInsumos}
-				data={insumos}
-				list={suppliestList}
-				icon="local_pharmacy"
-			/>
-			<GridItem xs={12} sm={12} md={12}>
-				<Card>
-					<CardHeader color="danger" icon>
-						<CardIcon color="danger">
-							<i class="material-icons">chrome_reader_mode</i>
-						</CardIcon>
-						<h4 className={classes.cardIconTitle}>Observaciones</h4>
-					</CardHeader>
-					<CardBody>
-						<form ref={refObservationForm}>
-							<GridContainer>
-								<GridItem xs={12} sm={12} lg={12}>
-									<InputLabel
-										htmlFor={'observaciones'}
-										className={classes.FormControlLabel}
-									>
-										Observaciones
-                  </InputLabel>
-									<CustomInput
-										id="observaciones"
-										name="observaciones"
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											type: "text"
-										}}
-									/>
-								</GridItem>
-							</GridContainer>
-						</form>
-					</CardBody>
-				</Card>
-			</GridItem>
-			<GridItem xs={12} sm={12} md={12}>
-				<Card>
-					<CardHeader color="danger" icon>
-						<CardIcon color="danger">
-							<i class="material-icons">attach_file</i>
-						</CardIcon>
-						<h4 className={classes.cardIconTitle}>Adjuntos</h4>
-					</CardHeader>
-					<CardBody>
-						<form>
-							<GridContainer>
-								<GridItem xs={12} sm={12} lg={12}>
-									<InputLabel
-										htmlFor={'evaluacionFile'}
-										className={classes.FormControlLabel}
-									>
-										Evaluación
-                  </InputLabel>
-									<FileUpload
-										defaultImage={null}
-										id={'evaluacionFile'}
-										multiple={false}
-									/>
-								</GridItem>
-							</GridContainer>
-							<hr />
-							<GridContainer>
-								<GridItem xs={12} sm={12} lg={12}>
-									<InputLabel
-										htmlFor={'recursosFile'}
-										className={classes.FormControlLabel}
-									>
-										Recursos
-                  </InputLabel>
-									<FileUpload
-										defaultImage={null}
-										id={'recursosFile'}
-										onChange={filesHandlers.add}
-										multiple
-									/>
-								</GridItem>
-							</GridContainer>
-						</form>
-						<GridContainer>
-							{
-								files
-								&& files.length > 0
-								&& <GridItem xs={12} sm={12} lg={12}>
-									<Table
-										tableHead={[
-											"Nombre del recurso",
-											"Tipo",
-											"Acciones"
-										]}
-										tableData={files.map(x => ([
-											x.name, x.extention,
-											<Button
-												color="danger"
-												className={classes.actionButton}
-												onClick={() => { filesHandlers.remove(x.uid) }}
-											>
-												<Close className={classes.icon} />
-											</Button>
-										]))}
-										customCellClasses={[classes.center, classes.right, classes.right]}
-										customClassesForCells={[0, 4, 5]}
-										customHeadCellClasses={[
-											classes.center,
-											classes.right,
-											classes.right
-										]}
-										customHeadClassesForCells={[0, 4, 5]}
-									/>
-								</GridItem>
-							}
-						</GridContainer>
-					</CardBody>
-				</Card>
-			</GridItem>
+		<>
 			<GridContainer>
 				<GridItem xs={12} sm={12} md={12}>
-					<div style={{ 'textAlign': 'right' }}>
-						<Button
-							color="danger"
-							onClick={handlres.save}
-						>Guardar</Button>
-					</div>
+					<Card>
+						<CardHeader color="danger" text>
+							<CardText color="danger">
+								<h4 className={classes.cardTitle}>Practicas</h4>
+							</CardText>
+						</CardHeader>
+						<CardBody>
+							<form ref={refHeaderForm}>
+								<GridContainer>
+									<GridItem xs={12} sm={5} lg={2}>
+										<FormLabel className={classes.labelHorizontal}>
+											Nombre Parctica
+                  </FormLabel>
+									</GridItem>
+									<GridItem xs={12} sm={7} lg={4}>
+										<CustomInput
+											id="nombrePractica"
+											name="nombrePractica"
+											error={errors.nombrePractica}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												type: "text"
+											}}
+										/>
+									</GridItem>
+									<GridItem xs={12} sm={5} lg={2}>
+										<FormLabel className={classes.labelHorizontal}>
+											descripción
+                  </FormLabel>
+									</GridItem>
+									<GridItem xs={12} sm={7} lg={4}>
+										<CustomInput
+											id="descripcion"
+											name="descripcion"
+											error={errors.descripcion}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												type: "text",
+											}}
+										/>
+									</GridItem>
+								</GridContainer>
+								<GridContainer>
+									<GridItem xs={12} sm={6} lg={6}>
+										<FormControl
+											fullWidth
+											className={classes.selectFormControl}
+										>
+											<InputLabel
+												htmlFor="multiple-select"
+												className={classes.selectLabel}
+											>
+												Autores
+                        </InputLabel>
+											<Select
+												multiple
+												error={errors.autors}
+												value={autors}
+												onChange={handlres.changeAutors}
+												MenuProps={{ className: classes.selectMenu }}
+												classes={{ select: classes.select }}
+												inputProps={{
+													name: "autores",
+													id: "autores"
+												}}
+											>
+												{autorsList && autorsList.map(x => (
+													<MenuItem
+														classes={{
+															root: classes.selectMenuItem,
+															selected: classes.selectMenuItemSelectedMultiple
+														}}
+														value={x.id}
+													>
+														{x.showFullName}
+													</MenuItem>
+												))}
+											</Select>
+										</FormControl>
+									</GridItem>
+									<GridItem xs={12} sm={5} lg={2}>
+										<FormLabel className={classes.labelHorizontal}>
+											Tiempo Estimado
+                  </FormLabel>
+									</GridItem>
+									<GridItem xs={12} sm={7} lg={4}>
+										<CustomInput
+											id="tiempoEstimado"
+											name="tiempoEstimado"
+											error={errors.tiempoEstimado}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												placeholder: "Minutos",
+												type: "number",
+												min: 0,
+											}}
+										/>
+									</GridItem>
+								</GridContainer>
+								<GridContainer>
+									<GridItem xs={12} sm={5} lg={2}>
+										<FormLabel className={classes.labelHorizontal}>
+											Competencia
+                  </FormLabel>
+									</GridItem>
+									<GridItem xs={12} sm={7} lg={4}>
+										<CustomInput
+											id="competencia"
+											name="competencia"
+											error={errors.competencia}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												type: "text"
+											}}
+										/>
+									</GridItem>
+									<GridItem xs={12} sm={5} lg={2}>
+										<FormLabel className={classes.labelHorizontal}>
+											Criterio de competencia
+                  </FormLabel>
+									</GridItem>
+									<GridItem xs={12} sm={7} lg={4}>
+										<CustomInput
+											id="criteriosCompetencia"
+											name="criteriosCompetencia"
+											error={errors.criteriosCompetencia}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												type: "text",
+											}}
+										/>
+									</GridItem>
+								</GridContainer>
+								<GridContainer>
+									<GridItem xs={12} sm={5} lg={2}>
+										<FormLabel className={classes.labelHorizontal}>
+											Objetivo
+                  </FormLabel>
+									</GridItem>
+									<GridItem xs={12} sm={7} lg={4}>
+										<CustomInput
+											id="obejtivo"
+											name="obejtivo"
+											error={errors.obejtivo}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												type: "text"
+											}}
+										/>
+									</GridItem>
+								</GridContainer>
+							</form>
+						</CardBody>
+					</Card>
 				</GridItem>
+				<FormObjetives
+					setData={setObjetivos}
+					data={objetivos}
+				/>
+				<FormDetails
+					setData={setSimuladores}
+					title="Simuladores"
+					labelList="Simulador"
+					data={simuladores}
+					list={simulatorsList}
+					icon="airline_seat_flat_angled"
+				/>
+				<FormDetails
+					title="Equipos"
+					labelList="Equipo"
+					setData={setEquipos}
+					data={equipos}
+					list={devicesList}
+					icon="video_label"
+				/>
+				<FormDetails
+					title="Insumos"
+					labelList="Insumo"
+					setData={setInsumos}
+					data={insumos}
+					list={suppliestList}
+					icon="local_pharmacy"
+				/>
+				<GridItem xs={12} sm={12} md={12}>
+					<Card>
+						<CardHeader color="danger" icon>
+							<CardIcon color="danger">
+								<i class="material-icons">chrome_reader_mode</i>
+							</CardIcon>
+							<h4 className={classes.cardIconTitle}>Observaciones</h4>
+						</CardHeader>
+						<CardBody>
+							<form ref={refObservationForm}>
+								<GridContainer>
+									<GridItem xs={12} sm={12} lg={12}>
+										<InputLabel
+											htmlFor={'observaciones'}
+											className={classes.FormControlLabel}
+										>
+											Observaciones
+                  </InputLabel>
+										<CustomInput
+											id="observaciones"
+											name="observaciones"
+											error={errors.observaciones}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												type: "text"
+											}}
+										/>
+									</GridItem>
+								</GridContainer>
+							</form>
+						</CardBody>
+					</Card>
+				</GridItem>
+				<GridItem xs={12} sm={12} md={12}>
+					<Card>
+						<CardHeader color="danger" icon>
+							<CardIcon color="danger">
+								<i class="material-icons">attach_file</i>
+							</CardIcon>
+							<h4 className={classes.cardIconTitle}>Adjuntos</h4>
+						</CardHeader>
+						<CardBody>
+							<form>
+								<GridContainer>
+									<GridItem xs={12} sm={12} lg={12}>
+										<InputLabel
+											htmlFor={'evaluacionFile'}
+											className={classes.FormControlLabel}
+										>
+											Evaluación
+                  </InputLabel>
+										<FileUpload
+											defaultImage={null}
+											id={'evaluacionFile'}
+											multiple={false}
+										/>
+									</GridItem>
+								</GridContainer>
+								<hr />
+								<GridContainer>
+									<GridItem xs={12} sm={12} lg={12}>
+										<InputLabel
+											htmlFor={'recursosFile'}
+											className={classes.FormControlLabel}
+										>
+											Recursos
+                  </InputLabel>
+										<FileUpload
+											defaultImage={null}
+											id={'recursosFile'}
+											onChange={filesHandlers.add}
+											multiple
+										/>
+									</GridItem>
+								</GridContainer>
+							</form>
+							<GridContainer>
+								{
+									files
+									&& files.length > 0
+									&& <GridItem xs={12} sm={12} lg={12}>
+										<Table
+											tableHead={[
+												"Nombre del recurso",
+												"Tipo",
+												"Acciones"
+											]}
+											tableData={files.map(x => ([
+												x.name, x.extention,
+												<Button
+													color="danger"
+													className={classes.actionButton}
+													onClick={() => { filesHandlers.remove(x.uid) }}
+												>
+													<Close className={classes.icon} />
+												</Button>
+											]))}
+											customCellClasses={[classes.center, classes.right, classes.right]}
+											customClassesForCells={[0, 4, 5]}
+											customHeadCellClasses={[
+												classes.center,
+												classes.right,
+												classes.right
+											]}
+											customHeadClassesForCells={[0, 4, 5]}
+										/>
+									</GridItem>
+								}
+							</GridContainer>
+						</CardBody>
+					</Card>
+				</GridItem>
+				<GridContainer>
+					<GridItem xs={12} sm={12} md={12}>
+						<div style={{ 'textAlign': 'right' }}>
+							<Button
+								color="danger"
+								onClick={handlres.save}
+							>Guardar</Button>
+						</div>
+					</GridItem>
+				</GridContainer>
 			</GridContainer>
-		</GridContainer>
+			{alerta}
+		</>
 	);
 };
 
@@ -667,9 +823,9 @@ const mapState = state => ({
 	suppliestList: state.masters.supplies,
 	simulatorsList: state.masters.simulators,
 	autorsList: state.masters.autors,
+	userId: state.auth.user.id,
 }),
-	mapDispatch = dispatch => ({
-	});
+	mapDispatch = dispatch => ({});
 
 export default connect(
 	mapState,
