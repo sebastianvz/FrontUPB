@@ -7,7 +7,8 @@ export const auth = {
 };
 
 export const attachment = {
-    post: ''
+    saveTemp: '/Attachments/saveTemp',
+    remove: '/Attachments/Remove',
 }
 
 export const practices = {
@@ -16,3 +17,4 @@ export const practices = {
     list: 'Practices/List',
     getById: 'Practics/',
 }
+

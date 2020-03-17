@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import Table from "../Table/Table.js";
 import './customUpload.css';
+import { saveTemp } from "../../../services/common/attachments";
+
+import axios from 'axios';
 
 const FileUpload = ({
   id,
@@ -26,8 +29,27 @@ const FileUpload = ({
       if (fileName)
         setNameOfFIle(fileName);
 
-      onChange(e.target.files[0]);
-    },   
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+
+      axios
+        ({
+          url: `https://localhost:44394/api/v1/Attachments/PostFile`,
+          method: 'POST',
+          data: formData,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(x => {
+          console.log('FILES SUCCES', x)
+          onChange(x.data);
+        })
+        .catch(e => console.log('FILES SUCCES', e));
+
+      
+    },
   };
 
   return (
