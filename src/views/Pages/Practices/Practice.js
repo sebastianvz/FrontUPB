@@ -170,7 +170,7 @@ const FormDetails = ({
 			setQuantity(e.target.value);
 		},
 		add: () => {
-			if (listValue == null) return;
+			if (listValue == null || listValue == '') return;
 			setData([{
 				id: listValue,
 				name: (list.find(x => x.id === listValue) || { name: '' }).name,
@@ -346,7 +346,8 @@ const Form = ({
 	match,
 	userId,
 }) => {
-	const [files, setFiles] = useState(null);
+	const [files, setFiles] = useState([]);
+	const [evaluationFile, setEvaluationFile] = useState(null);
 	const [_ID, setID] = useState(0);
 	const [equipos, setEquipos] = useState([]);
 	const [simuladores, setSimuladores] = useState([]);
@@ -390,7 +391,7 @@ const Form = ({
 				observaciones: ObonForm.elements.observaciones.value,
 				autores: autors.length > 0 ? autors.map(e => ({ id: e })) : '',
 				archivos: {
-					evaluacion: null,
+					evaluacion: [evaluationFile],
 					recursos: files,
 				},
 				objetivos,
@@ -441,6 +442,7 @@ const Form = ({
 			ObonForm.elements.observaciones.value = data.observaciones;
 			setID(data.id);
 			setFiles(data.archivos.recursos);
+			setEvaluationFile(data.archivos.evaluacion[0]);
 			setEquipos(data.equipos);
 			setSimuladores(data.simuladores);
 			setInsumos(data.insumos);
@@ -455,13 +457,8 @@ const Form = ({
 		remove: uid => {
 			setFiles(files.filter(x => x.uid === uid));
 		},
-		add: (file) => {
-			setFiles([{
-				uid: files.length,
-				name: file.name,
-				extention: file.tipo,
-				url: file.url,
-			}, ...files]);
+		add: (data) => {
+			setFiles([data.attachment, ...files]);
 		},
 	};
 
@@ -744,6 +741,7 @@ const Form = ({
 										<FileUpload
 											defaultImage={null}
 											id={'evaluacionFile'}
+											onChange={({ attachment = null }) => setEvaluationFile(attachment)}
 											multiple={false}
 										/>
 									</GridItem>
@@ -761,7 +759,7 @@ const Form = ({
 											defaultImage={null}
 											id={'recursosFile'}
 											onChange={filesHandlers.add}
-											multiple
+											multiple={false}
 										/>
 									</GridItem>
 								</GridContainer>

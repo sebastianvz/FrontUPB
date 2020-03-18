@@ -1,16 +1,20 @@
 import React, { useState } from "react";
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import Table from "../Table/Table.js";
 import './customUpload.css';
-import { saveTemp } from "../../../services/common/attachments";
+import GlobalVariables from "../../../variables/globalVariables";
 
 import axios from 'axios';
+
+
+const variables = new GlobalVariables();
 
 const FileUpload = ({
   id,
   defaultImage,
   multiple,
+  token,
   onRemove = () => { },
   onChange = () => { },
 }) => {
@@ -34,11 +38,12 @@ const FileUpload = ({
 
       axios
         ({
-          url: `https://localhost:44394/api/v1/Attachments/PostFile`,
+          url: `${variables.productionURL}Attachments/PostFile`,
           method: 'POST',
           data: formData,
           headers: {
             Accept: 'application/json',
+            Authorization: `bearer ${token}`,
             'Content-Type': 'multipart/form-data',
           },
         })
@@ -48,7 +53,7 @@ const FileUpload = ({
         })
         .catch(e => console.log('FILES SUCCES', e));
 
-      
+
     },
   };
 
@@ -76,4 +81,12 @@ const FileUpload = ({
 
 FileUpload.propTypes = {};
 
-export default FileUpload;
+const mapState = state => ({
+  token: state.auth.token,
+}),
+	mapDispatch = dispatch => ({});
+
+  export default connect(
+    mapState,
+    mapDispatch,
+  )(FileUpload);
