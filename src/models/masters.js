@@ -36,38 +36,43 @@ const masters = {
 		}),
 	},
 	effects: dispatch => ({
-		getPrograms() {
+		getPrograms(onSucced) {
 			instance.get('Master/GetPrograms').then(e => {
 				if(e.data) {
 					this.setPrograms(e.data);
+					onSucced && onSucced();
 				}
 			});
 		},
-		getDevices() {
+		getDevices(onSucced) {
 			instance.get('Master/GetDevices').then(e => {
 				if(e.data) {
 					this.setDevice(e.data);
+					onSucced && onSucced();
 				}
 			});
 		},
-		getSimulator() {
+		getSimulator(onSucced) {
 			instance.get('Master/GetSimulators').then(e => {
 				if(e.data) {
 					this.setSimulators(e.data);
+					onSucced && onSucced();
 				}
 			});
 		},
-		getSupplies() {
+		getSupplies(onSucced) {
 			instance.get('Master/GetSupplies').then(e => {
 				if(e.data) {
 					this.setSupplies(e.data);
+					onSucced && onSucced();
 				}
 			});
 		},
-		getAutors() {
+		getAutors(onSucced) {
 			instance.get('User').then(e => {
 				if(e.data) {
 					this.setAutors(e.data);
+					onSucced && onSucced();
 				}
 			});
 		},

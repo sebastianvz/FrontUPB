@@ -1,7 +1,7 @@
 import React from 'react';
 import instance from '../../services/instance';
 
-import { save as saveAPI, getById as getByIdAPI, update as updateAPI } from '../../services/practices/practices';
+import { save as saveAPI, getById as getByIdAPI, update as updateAPI, removeFile as removeFileAPI } from '../../services/practices/practices';
 import { useMatersList as loadMasterList } from '../Masters';
 
 export default function useCRUD() {    
@@ -26,7 +26,12 @@ export default function useCRUD() {
             .catch(e => { });
     };
     const remove = () => { };
+    const removeFile = (id, type, onSucced) => {
+        removeFileAPI(id, type).then(e => {
+            onSucced && onSucced();
+        });
+    };
     const list = () => { };
     const loadList = () => loadMasterList().loadPracticesList();
-    return { save, remove, list, loadList, getById };
+    return { save, remove, list, loadList, getById, removeFile };
 }

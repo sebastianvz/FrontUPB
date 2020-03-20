@@ -442,7 +442,7 @@ const Form = ({
 			ObonForm.elements.observaciones.value = data.observaciones;
 			setID(data.id);
 			setFiles(data.archivos.recursos);
-			setEvaluationFile(data.archivos.evaluacion[0]);
+			setEvaluationFile((data.archivos.evaluacion || [null])[0]);
 			setEquipos(data.equipos);
 			setSimuladores(data.simuladores);
 			setInsumos(data.insumos);
@@ -455,9 +455,18 @@ const Form = ({
 
 	const filesHandlers = {
 		remove: uid => {
+			if (uid > 0) {
+				CRUD.removeFile(uid, 'recurso', () => {
+					setFiles(files.filter(x => x.uid === uid));
+				});
+				return;
+			}
 			setFiles(files.filter(x => x.uid === uid));
 		},
 		add: (data) => {
+			if (data.attachment.uid == 0) {
+				data.attachment.uid = files.length * -1;
+			}
 			setFiles([data.attachment, ...files]);
 		},
 	};
@@ -745,6 +754,20 @@ const Form = ({
 											multiple={false}
 										/>
 									</GridItem>
+									<GridItem xs={12} sm={6} lg={6}>
+										{evaluationFile
+											&& <>
+												<a href={evaluationFile.url} download>{evaluationFile.name}</a>&nbsp;
+												<a
+													href="jabascript:void(0)"
+													style={{ color: 'red', textDecoration: 'none' }}
+													onClick={
+														() => CRUD.removeFile(evaluationFile.uid, 'Evaluacion', () => {
+															setEvaluationFile(null);
+														})
+													}>[Eliminar]</a>
+											</>}
+									</GridItem>
 								</GridContainer>
 								<hr />
 								<GridContainer>
@@ -776,7 +799,8 @@ const Form = ({
 												"Acciones"
 											]}
 											tableData={files.map(x => ([
-												x.name, x.extention,
+												<a href={x.url} download>{x.name}</a>,
+												x.extention,
 												<Button
 													color="danger"
 													className={classes.actionButton}
@@ -803,6 +827,10 @@ const Form = ({
 				<GridContainer>
 					<GridItem xs={12} sm={12} md={12}>
 						<div style={{ 'textAlign': 'right' }}>
+							<Button
+								color="primary"
+								onClick={() => history.goBack()}
+							>Cancelar</Button>
 							<Button
 								color="danger"
 								onClick={handlres.save}
