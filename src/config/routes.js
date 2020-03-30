@@ -17,6 +17,7 @@ const AsyncRoles = lazy(() => import('../views/Pages/Security/Roles.js'));
 //Practices
 const AsyncPractices = lazy(() => import('../views/Pages/Practices/Practices.js'));
 const AsyncPractice = lazy(() => import('../views/Pages/Practices/Practice.js'));
+const AsyncAsociatePractice = lazy(() => import('../views/Pages/Practices/AsociatePractice.js'));
 
 export default [
 	//AUTH
@@ -29,7 +30,8 @@ export default [
 
 	//Practices
 	createRoute('/Practicas', AsyncPractices, LOGGED),
-	createRoute('/Practica/:id?', AsyncPractice, LOGGED),		
+	createRoute('/Practica/:id?', AsyncPractice, LOGGED),	
+	createRoute('/asociatePractice', AsyncAsociatePractice, GUEST),	
 
 	//Common
 	createRoute('/abaout', AsyncAbout),
