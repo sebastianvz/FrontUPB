@@ -9,6 +9,7 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Input from "@material-ui/core/Input";
+import Textarea from "@material-ui/core/TextareaAutosize";
 
 import styles from "assets/jss/material-dashboard-pro-react/components/customInputStyle.js";
 
@@ -26,7 +27,8 @@ export default function CustomInput(props) {
     white,
     inputRootCustomClasses,
     success,
-    helperText
+    helperText,
+    textArea,
   } = props;
 
   const labelClasses = classNames({
@@ -70,16 +72,35 @@ export default function CustomInput(props) {
           {labelText}
         </InputLabel>
       ) : null}
-      <Input
-        classes={{
-          input: inputClasses,
-          root: marginTop,
-          disabled: classes.disabled,
-          underline: underlineClasses
-        }}
-        id={id}
-        {...inputProps}
-      />
+      {textArea ?
+        <Textarea
+          classes={{
+            input: inputClasses,
+            root: marginTop,
+            disabled: classes.disabled,
+            underline: underlineClasses
+          }}
+          style={{
+            borderLeft: "none",
+            borderRight: "none",
+            borderTop: "none",
+            borderBottom: "1px solid rgb(210, 210, 210)",
+          }}
+          rows={3}
+          id={id}
+          {...inputProps}
+        />
+        : <Input
+          classes={{
+            input: inputClasses,
+            root: marginTop,
+            disabled: classes.disabled,
+            underline: underlineClasses
+          }}
+          id={id}
+          {...inputProps}
+        />}
+
       {helperText !== undefined ? (
         <FormHelperText id={id + "-text"} className={helpTextClasses}>
           {helperText}

@@ -52,19 +52,19 @@
 }
 
 .inputfile-6 + label {
-    color: #d3394c;
+    color: #0193a7;
 }
 
 .inputfile-6 + label {
-    border: 1px solid #d3394c;
-    background-color: #f1e5e6;
+    border: 1px solid #0193a7;
+    background-color: #effeff;
     padding: 0;
 }
 
 .inputfile-6:focus + label,
 .inputfile-6.has-focus + label,
 .inputfile-6 + label:hover {
-    border-color: #722040;
+    border-color: #0193a7;
 }
 
 .inputfile-6 + label span,
@@ -86,14 +86,14 @@
 .inputfile-6 + label strong {
     height: 100%;
     color: #f1e5e6;
-    background-color: #d3394c;
+    background-color: #00acc1;
     display: inline-block;
 }
 
 .inputfile-6:focus + label strong,
 .inputfile-6.has-focus + label strong,
 .inputfile-6 + label:hover strong {
-    background-color: #722040;
+    background-color: #0193a7;
 }
 
 @media screen and (max-width: 50em) {

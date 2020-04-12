@@ -772,7 +772,7 @@ const Users = ({token, userId}) => {
 							open={open}
 							onClose={handleClose}
 						>
-              <GridContainer style={{maxHeight: "600px", overflow: "auto"}}>
+              <GridContainer style={{margin:"auto", width:"1000px"}}>
                 <GridItem xs={12} sm={12} md={12}>
                   <Card>
                     <CardHeader color="danger" text>
@@ -780,7 +780,7 @@ const Users = ({token, userId}) => {
                         <h4 className={classes.cardTitle}>Usuarios</h4>
                       </CardText>
                     </CardHeader>
-                    <CardBody>
+                    <CardBody style={{maxHeight: "500px", overflow: "auto"}}>
                     <h4 style={{margin: "25px 0px"}}><b>Datos personales</b></h4>
                       <form>
                         <GridContainer>

@@ -93,6 +93,8 @@ const FormObjetives = ({
 										inputProps={{
 											onChange: handlres.changeObjetivo,
 											value: objetivo,
+											multiline:true,
+											rows:"3"
 										}}
 									/>
 								</GridContainer>
@@ -167,7 +169,10 @@ const FormDetails = ({
 			setListValue(e);
 		},
 		changeQuantity: (e) => {
-			setQuantity(e.target.value);
+			if (parseInt(e.target.value) < 0)
+				setQuantity(0);
+			else
+				setQuantity(e.target.value);
 		},
 		add: () => {
 			if (listValue == null || listValue == '') return;
@@ -332,7 +337,6 @@ const REQUIRED_FIELDS = [
 	'competencia',
 	'criteriosCompetencia',
 	'obejtivo',
-	'observaciones'
 ];
 
 const useStylesAlerts = makeStyles(stylesForAlerts);
@@ -356,6 +360,8 @@ const Form = ({
 	const [autors, setAutors] = useState([]);
 	const [errors, setErrors] = useState({});
 	const [alerta, setAlerta] = useState('');
+	const [tiempoEstimadoState, setTiempoEstimadoState] = useState(null);
+
 	const refHeaderForm = useRef();
 	const refObservationForm = useRef();
 	const CRUD = useCRUD();
@@ -384,7 +390,7 @@ const Form = ({
 				activo: true,
 				nombrePractica: headerForm.elements.nombrePractica.value,
 				descripcion: headerForm.elements.descripcion.value,
-				tiempoEstimado: headerForm.elements.tiempoEstimado.value,
+				tiempoEstimado: tiempoEstimadoState,
 				competencia: headerForm.elements.competencia.value,
 				criteriosCompetencia: headerForm.elements.criteriosCompetencia.value,
 				obejtivo: headerForm.elements.obejtivo.value,
@@ -430,12 +436,18 @@ const Form = ({
 			console.log('e.target.value', e.target.value);
 			setAutors(e.target.value)
 		},
+		changeTiempoEstimado: (e) => {
+			if (parseInt(e.target.value) < 0)
+				setTiempoEstimadoState(0);
+			else
+				setTiempoEstimadoState(e.target.value);
+		},
 		loadFields: (data) => {
 			const headerForm = refHeaderForm.current;
 			const ObonForm = refObservationForm.current;
 			headerForm.elements.nombrePractica.value = data.nombrePractica;
 			headerForm.elements.descripcion.value = data.descripcion
-			headerForm.elements.tiempoEstimado.value = data.tiempoEstimado;
+			setTiempoEstimadoState(data.tiempoEstimado);
 			headerForm.elements.competencia.value = data.competencia;
 			headerForm.elements.criteriosCompetencia.value = data.criteriosCompetencia;
 			headerForm.elements.obejtivo.value = data.obejtivo;
@@ -541,6 +553,8 @@ const Form = ({
 											}}
 											inputProps={{
 												type: "text",
+												multiline: true,
+												rows: "3"
 											}}
 										/>
 									</GridItem>
@@ -599,7 +613,8 @@ const Form = ({
 											inputProps={{
 												placeholder: "Minutos",
 												type: "number",
-												min: 0,
+												value: tiempoEstimadoState,
+												onChange: handlres.changeTiempoEstimado,
 											}}
 										/>
 									</GridItem>
@@ -720,7 +735,9 @@ const Form = ({
 												fullWidth: true
 											}}
 											inputProps={{
-												type: "text"
+												type: "text",
+												multiline: true,
+												rows: "3"
 											}}
 										/>
 									</GridItem>
