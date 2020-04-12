@@ -672,7 +672,9 @@ const Form = ({
 												fullWidth: true
 											}}
 											inputProps={{
-												type: "text"
+												type: "text",
+												multiline: true,
+												rows: "3"
 											}}
 										/>
 									</GridItem>
