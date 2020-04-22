@@ -8,6 +8,7 @@ const masters = {
 		devices: null,
 		autors: null,
 		objetives: null,
+		semesters: null,
 	},
 	reducers: {
 		setPrograms: (state, payload) => ({
@@ -33,6 +34,10 @@ const masters = {
 		setObjetives:(state, payload) => ({
 			...state,
 			objetives: payload.data,
+		}),
+		setSemesters: (state, payload) => ({
+			...state,
+			semesters: payload.data,
 		}),
 	},
 	effects: dispatch => ({
@@ -72,6 +77,14 @@ const masters = {
 			instance.get('User').then(e => {
 				if(e.data) {
 					this.setAutors(e.data);
+					onSucced && onSucced();
+				}
+			});
+		},
+		getSemestersByProgram({programId, onSucced = () => {}}) {
+			instance.get(`Master/GetSemesters?programId=${programId}`).then(e => {
+				if(e.data) {
+					this.setSemesters(e.data);
 					onSucced && onSucced();
 				}
 			});

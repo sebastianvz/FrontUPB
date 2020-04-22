@@ -31,7 +31,7 @@ export default [
 	//Practices
 	createRoute('/Practicas', AsyncPractices, LOGGED),
 	createRoute('/Practica/:id?', AsyncPractice, LOGGED),	
-	createRoute('/asociatePractice', AsyncAsociatePractice, GUEST),	
+	createRoute('/asociatePractice', AsyncAsociatePractice, LOGGED),	
 
 	//Common
 	createRoute('/abaout', AsyncAbout),

@@ -18,3 +18,7 @@ export const practices = {
     getById: 'Practics/',
 }
 
+export const asociatePractices = {
+    list: 'SemestersPratice/',
+    save: 'SemestersPratice'
+};

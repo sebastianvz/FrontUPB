@@ -19,28 +19,34 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-const ComboBox = ({ label }) => {
+const ComboBox = ({
+    label,
+    data,
+    value,
+    onChange,
+    id
+}) => {
     const classes = useStyles();
     return (
-        <GridItem xs={12} sm={4} lg={4}>
+        <GridItem xs={12} sm={6} lg={6}>
             <FormControl
                 fullWidth
                 className={classes.selectFormControl}
             >
                 <InputLabel
-                    htmlFor="multiple-select"
+                    htmlFor={id}
                     className={classes.selectLabel}
                 >
                     {label}
                 </InputLabel>
                 <Select
-                    // value={null}
-                    // onChange={handleMultiple}
+                    value={value}
+                    onChange={onChange}
                     MenuProps={{ className: classes.selectMenu }}
                     classes={{ select: classes.select }}
                     inputProps={{
-                        name: "multipleSelect",
-                        id: "multiple-select"
+                        name: { id },
+                        id: { id }
                     }}
                 >
                     <MenuItem
@@ -51,7 +57,18 @@ const ComboBox = ({ label }) => {
                         value="-1"
                     >
                         Seleccione
-                          </MenuItem>
+                    </MenuItem>
+                    {data && data.map(x =>
+                        <MenuItem
+                            classes={{
+                                root: classes.selectMenuItem,
+                                selected: classes.selectMenuItemSelectedMultiple
+                            }}
+                            value={x.key}
+                        >
+                            {x.label}
+                        </MenuItem>
+                    )}
                 </Select>
             </FormControl>
         </GridItem>

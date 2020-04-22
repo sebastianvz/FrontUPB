@@ -8,6 +8,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
+import Checkbox from "@material-ui/core/Checkbox";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -37,6 +38,7 @@ import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweet
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
+import { useCRUD } from '../../../components/AsociatePractice';
 
 const variables = new GlobalVariables();
 const baseUrl = variables.Url;
@@ -51,156 +53,106 @@ const styles = {
 
 const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
-
-
+const INVALID_VALUES = [null, '', '-1', -1, undefined];
+let selectedPractices = [];
 
 const AsociateToPractice = ({
 	token,
 	userId,
-	history
+	history,
+	programsList,
+	semestersList,
+	getSemesters
 }) => {
-	const [alerta, setAlerta] = React.useState(null);
-	const [checkboxState, setCheckboxState] = useState([]);
-	let arrayIdPermits = [];
+	const [alerta, setAlerta] = useState();
+	const [program, setProgram] = useState();
+	const [semester, setSemester] = useState();
+	const [practicesList, setPracticesList] = useState();
 
-	const handleChange = name => event => {
-		if (!event.target.checked) {
-			for (let i = 0; i < arrayIdPermits.length; i++) {
-				if (arrayIdPermits[i].id == event.target.value) {
-					arrayIdPermits.splice(i, 1);
-				}
+	const CRUD = useCRUD();
+
+	useEffect(() => {
+		CRUD.loadList();
+	}, []);
+	useEffect(() => { setPracticesList(null) }, [program, semester]);
+	useEffect(() => {
+		if (practicesList && practicesList.length > 0)
+			selectedPractices = (practicesList
+				.filter(e => e.asociated)
+				.map(e => e.id));
+		else
+			selectedPractices = [];
+	}, [practicesList]);
+
+	const handlers = {
+		changeAsociated: (event) =>
+			selectedPractices = event.target.checked ?
+				[...selectedPractices, event.target.value]
+				: selectedPractices.filter(e => e != event.target.value),
+		changeProgrm(e) {
+			setProgram(e.target.value);
+			if (INVALID_VALUES.indexOf(e.target.value) === -1) {
+				getSemesters(e.target.value);
 			}
-		} else {
-			arrayIdPermits.push({ id: event.target.value });
+		},
+		changeSemester: (e) => {
+			setSemester(e.target.value);
+			if (INVALID_VALUES.indexOf(e.target.value) === -1) {
+				CRUD.list(e.target.value, (x) => {
+					handlers.fillData(x);
+				});
+			}
+		},
+		fillData: ({ data = [] }) =>
+			data && setPracticesList(data.map(e => ({
+				id: e.id,
+				nombrePractica: e.nombrePractica,
+				descripcion: e.descripcion,
+				asociated: e.asociated,
+				actions: (
+					<div style={{ textAlign: 'right' }}>
+						<Checkbox
+							onChange={handlers.changeAsociated}
+							value={e.id}
+							defaultChecked={e.asociated}
+						/>
+					</div>
+				)
+			}))),
+		save() {
+			if (selectedPractices.length === 0) {
+				alert.show('Selecione al menos un dato');
+				return;
+			}
+			CRUD.save({
+				id: semester,
+				practicesId: selectedPractices
+			}, () => { alert.show('Guardado Exitoso!!') });
 		}
-		setCheckboxState([...checkboxState, arrayIdPermits]);
-	};
+	}
 
-	const inputAlert = () => {
-		history.push("/practica");
-	};
-	const responseConfirmAlertNext = e => {
-		arrayIdPermits = [];
-		setAlerta(e);
-		setTimeout(() => {
+	const alert = {
+		show(message) {
 			setAlerta(
 				<SweetAlert
 					style={{ display: "block", marginTop: "-100px" }}
-					onConfirm={() => hideAlert()}
-					onCancel={() => hideAlert()}
+					onConfirm={alert.hide}
+					onCancel={alert.hide}
 					confirmBtnCssClass={
 						classesAlerts.button + " " + classesAlerts.default
 					}
 					title={
 						<p>
-							Nombre de la parctica: <b>{e}</b>
+							<b>{message}</b>
 						</p>
 					}
 				/>
 			);
-		}, 200);
-	};
-
-	const hideAlert = () => {
-		arrayIdPermits = [];
-		setAlerta(null);
-	};
-
-	const [data, setData] = React.useState([]);
-
-	let liableID = userId;//JSON.parse(localStorage.getItem("id"));
-	let auth = token;	//localStorage.getItem("auth");
-
-	const loadGrid = () => {
-		const URL = baseUrl + "Practics";
-		axios
-			.get(URL, {
-				headers: {
-					Authorization: "Bearer " + auth
-				}
-			})
-			.then(function (response) {
-				const resultActive = response.data.data.filter(x => x.activo === true);
-				setData(
-					resultActive.map((prop, key) => {
-						return {
-							id: key,
-							nombrePractica: prop.nombrePractica,
-							descripcion: prop.descripcion,
-							tiempoEstimado: prop.tiempoEstimado,
-							competencia: prop.competencia,
-							criteriosCompetencia: prop.criteriosCompetencia,
-							obejtivo: prop.obejtivo,
-							actions: (
-								// we've added some custom button actions
-								<div className="actions-right">
-									{/* use this button to add a edit kind of action */}
-									<Button
-										justIcon
-										round
-										simple
-										onClick={() => {
-											history.push(`/practica/${prop.id}`);
-										}}
-										color="warning"
-										className="edit"
-									>
-										<Create />
-									</Button>{" "}
-									{/* use this button to remove the data row */}
-									<Button
-										justIcon
-										round
-										simple
-										onClick={() => {
-											const URL_DeleteUser = baseUrl + "Practics";
-											const obj = {
-												id: prop.id,
-												idUserSender: liableID
-											};
-											axios
-												.delete(URL_DeleteUser, {
-													headers: {
-														"Content-Type": "application/json",
-														Authorization: "Bearer " + auth
-													},
-													data: obj
-												})
-												.then(response => {
-													loadGrid();
-													responseConfirmAlertNext(
-														response.data.data.error.message
-													);
-													hideAlert();
-												})
-												.catch(function (error) {
-													console.log(error);
-													responseConfirmAlertNext(
-														error.data.data.error.message
-													);
-													hideAlert();
-													return;
-												});
-										}}
-										color="danger"
-										className="remove"
-									>
-										<Close />
-									</Button>{" "}
-								</div>
-							)
-						};
-					})
-				);
-			})
-			.catch(function (error) {
-				console.log(error);
-			});
-	};
-
-	useEffect(() => {
-		loadGrid();
-	}, []);
+		},
+		hide() {
+			setAlerta('');
+		},
+	}
 
 	const classesAlerts = useStylesAlerts();
 	const classes = useStyles();
@@ -215,68 +167,73 @@ const AsociateToPractice = ({
 								<SettingsApplications />
 							</CardIcon>
 							<h4 className={classes.cardIconTitle}>Asosciar Pracvticas a Semestre</h4>
-							<br />						
+							<br />
 						</CardHeader>
 						<CardBody>
-							<GridContainer>								
-								<ComboBox 
-								label="Programa"
-								/>	
-								<ComboBox 
-								label="Semestre"
-								/>	
-								<ComboBox 
-								label="Practica"
-								/>	
+							<GridContainer>
+								<ComboBox
+									label="Programa"
+									onChange={handlers.changeProgrm}
+									value={program}
+									data={programsList && programsList.map(e => ({
+										key: e.id,
+										label: e.nombrePrograma
+									}))}
+								/>
+								<ComboBox
+									label="Semestre"
+									onChange={handlers.changeSemester}
+									value={semester}
+									data={semestersList && semestersList.map(e => ({
+										key: e.id,
+										label: e.nombreSemestre
+									}))}
+								/>
 							</GridContainer>
 							<hr />
-							<ReactTable
-								data={data}
-								filterable
-								columns={[
-									{
-										Header: "Nombre",
-										accessor: "nombrePractica"
-									},
-									{
-										Header: "Descripción",
-										accessor: "descripcion"
-									},
-									{
-										Header: "Tiempo Estimado",
-										accessor: "tiempoEstimado"
-									},
-									{
-										Header: "Competencia",
-										accessor: "competencia"
-									},
-									{
-										Header: "Criterios de Competencia",
-										accessor: "criteriosCompetencia"
-									},
-									{
-										Header: "Objetivo",
-										accessor: "obejtivo"
-									},
-									{
-										Header: "",
-										accessor: "actions",
-										sortable: false,
-										filterable: false
-									}
-								]}
-								defaultPageSize={10}
-								showPaginationTop
-								previousText="Anterior"
-								nextText="Siguiente"
-								loadingText="Cargando..."
-								noDataText="No se encontraron filas"
-								pageText="Página"
-								ofText="de"
-								rowsText="filas"
-								showPaginationBottom={false}
-								className="-striped -highlight"
-							/>
+							{practicesList
+								&& <>
+									<ReactTable
+										data={practicesList}
+										filterable
+										columns={[
+											{
+												Header: "Nombre",
+												accessor: "nombrePractica"
+											},
+											{
+												Header: "Descripción",
+												accessor: "descripcion"
+											},
+											{
+												Header: "",
+												accessor: "actions",
+												sortable: false,
+												filterable: false
+											}
+										]}
+										defaultPageSize={10}
+										showPaginationTop
+										previousText="Anterior"
+										nextText="Siguiente"
+										loadingText="Cargando..."
+										noDataText="No se encontraron filas"
+										pageText="Página"
+										ofText="de"
+										rowsText="filas"
+										showPaginationBottom={false}
+										className="-striped -highlight"
+									/>
+									<GridItem xs={12} sm={12} md={12}>
+										<div style={{ 'textAlign': 'right' }}>
+											<Button
+												color="danger"
+												onClick={handlers.save}
+											>Guardar</Button>
+										</div>
+									</GridItem>
+								</>
+							}
 						</CardBody>
 					</Card>
 				</GridItem>
@@ -289,6 +246,10 @@ const AsociateToPractice = ({
 const mapState = state => ({
 	token: state.auth.token,
 	userId: state.auth.user.id,
-}), mapDispatch = dispatch => ({});
+	programsList: state.masters.programs,
+	semestersList: state.masters.semesters,
+}), mapDispatch = dispatch => ({
+	getSemesters: programId => dispatch.masters.getSemestersByProgram({ programId }),
+});
 
 export default connect(mapState, mapDispatch)(AsociateToPractice);
