@@ -786,7 +786,7 @@ const Users = ({token, userId}) => {
                         <GridContainer>
                           <GridItem xs={12} sm={2}>
                             <FormLabel className={classes.labelHorizontal}>
-                              Tipo de identificacíon
+                              Tipo de identificación
                             </FormLabel>
                           </GridItem>
                           <GridItem xs={12} sm={3}>

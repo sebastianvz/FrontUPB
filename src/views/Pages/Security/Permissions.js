@@ -115,7 +115,7 @@ const Permissions = ({token}) => {
 									accessor: "icon"
 								},
 								{
-									Header: "Menu",
+									Header: "Menú",
 									accessor: "menu"
 								},
 								{

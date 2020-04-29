@@ -514,7 +514,7 @@ const Form = ({
 					<Card>
 						<CardHeader color="danger" text>
 							<CardText color="danger">
-								<h4 className={classes.cardTitle}>Practicas</h4>
+								<h4 className={classes.cardTitle}>Prácticas</h4>
 							</CardText>
 						</CardHeader>
 						<CardBody>
@@ -522,7 +522,7 @@ const Form = ({
 								<GridContainer>
 									<GridItem xs={12} sm={5} lg={2}>
 										<FormLabel className={classes.labelHorizontal}>
-											Nombre Parctica
+											Nombre Práctica
                   </FormLabel>
 									</GridItem>
 									<GridItem xs={12} sm={7} lg={4}>

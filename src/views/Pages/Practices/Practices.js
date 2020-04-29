@@ -205,7 +205,7 @@ const Practices = ({
 							<CardIcon color="danger">
 								<SettingsApplications />
 							</CardIcon>
-							<h4 className={classes.cardIconTitle}>Practicas</h4>
+							<h4 className={classes.cardIconTitle}>Prácticas</h4>
 							<br />
 							<Button onClick={inputAlert}>
 								<Add
@@ -216,7 +216,7 @@ const Practices = ({
 										marginBottom: 2 + "px"
 									}}
 								/>
-								Agregar Parctica
+								Agregar Práctica
 							</Button>
 						</CardHeader>
 						<CardBody>

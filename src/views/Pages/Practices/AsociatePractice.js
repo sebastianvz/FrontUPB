@@ -166,7 +166,7 @@ const AsociateToPractice = ({
 							<CardIcon color="danger">
 								<SettingsApplications />
 							</CardIcon>
-							<h4 className={classes.cardIconTitle}>Asosciar Pracvticas a Semestre</h4>
+							<h4 className={classes.cardIconTitle}>Asociar prácticas a semestre</h4>
 							<br />
 						</CardHeader>
 						<CardBody>
