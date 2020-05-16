@@ -45,10 +45,11 @@ const styles = {
 const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
 
-const Practices = ({ 
-	token, 
-	userId, 
-	history
+const Practices = ({
+	token,
+	userId,
+	history,
+	setID
 }) => {
 	const [alerta, setAlerta] = React.useState(null);
 	const [checkboxState, setCheckboxState] = useState([]);
@@ -130,9 +131,11 @@ const Practices = ({
 										justIcon
 										round
 										simple
-										onClick={() => {
-											history.push(`/practica/${prop.id}`);
-										}}
+										onClick={() =>
+											setID(prop.id, () =>
+												history.push(`/practica`)
+											)
+										}
 										color="warning"
 										className="edit"
 									>
@@ -143,7 +146,7 @@ const Practices = ({
 										justIcon
 										round
 										simple
-										onClick={() => {											
+										onClick={() => {
 											const URL_DeleteUser = baseUrl + "Practics";
 											const obj = {
 												id: prop.id,
@@ -279,6 +282,8 @@ const Practices = ({
 const mapState = state => ({
 	token: state.auth.token,
 	userId: state.auth.user.id,
-}), mapDispatch = dispatch => ({});
+}), mapDispatch = dispatch => ({
+	setID: (id, onSucced) => dispatch.practices.setID({ id, onSucced }),
+});
 
 export default connect(mapState, mapDispatch)(Practices);

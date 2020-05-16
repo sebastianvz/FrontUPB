@@ -19,6 +19,9 @@ const AsyncPractices = lazy(() => import('../views/Pages/Practices/Practices.js'
 const AsyncPractice = lazy(() => import('../views/Pages/Practices/Practice.js'));
 const AsyncAsociatePractice = lazy(() => import('../views/Pages/Practices/AsociatePractice.js'));
 
+//Configuration
+const AsyncPrograms = lazy(() => import('../views/Pages/Configuration/Programs.js'));
+
 export default [
 	//AUTH
 	createRoute('/login', AsyncLogin, GUEST),
@@ -30,10 +33,13 @@ export default [
 
 	//Practices
 	createRoute('/Practicas', AsyncPractices, LOGGED),
-	createRoute('/Practica/:id?', AsyncPractice, LOGGED),	
+	createRoute('/Practica', AsyncPractice, LOGGED),	
 	createRoute('/asociatePractice', AsyncAsociatePractice, LOGGED),	
 
 	//Common
 	createRoute('/abaout', AsyncAbout),
 	createRoute('/', Home, LOGGED, true),
+
+	//Configuration
+	createRoute('/programs', AsyncPrograms, LOGGED),
 ];

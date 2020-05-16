@@ -12,7 +12,7 @@ export default function useMatersList() {
     });
   };
 
-  const loadPractiocesByProgramList = () => {
+  const loadProgramList = () => {
     store.dispatch.masters.getPrograms(() => {
 
     });
@@ -22,7 +22,7 @@ export default function useMatersList() {
 
   return {
     loadPracticesList,
-    loadPractiocesByProgramList,
+    loadProgramList,
     loadSemestersByProgram,
   };
 }

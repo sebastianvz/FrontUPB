@@ -14,7 +14,7 @@ export default function useCRUD() {
             onSucced(e.data);
         }).catch(e => {
         });
-    const loadList = () => loadMasterList().loadPractiocesByProgramList();
+    const loadList = () => loadMasterList().loadProgramList();
     
     return { loadList, save, list };
 }

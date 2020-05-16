@@ -1,4 +1,4 @@
-const auth = {
+const practices = {
   state: {
     data: {},
   },
@@ -7,10 +7,17 @@ const auth = {
       ...state,
       data: payload.data
     }),
+    _setID: (state, payload) => ({
+      ...state,
+      data: payload
+    }),
   },
   effects: dispatch => ({
-    
+    setID({ id, onSucced }) {
+      this._setID({ id });
+      onSucced && onSucced();
+    }
   }),
 };
 
-export default auth;
+export default practices;

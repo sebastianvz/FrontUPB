@@ -22,3 +22,8 @@ export const asociatePractices = {
     list: 'SemestersPratice/',
     save: 'SemestersPratice'
 };
+
+export const program = {
+    save: 'Program',
+    delete: 'Program',
+};

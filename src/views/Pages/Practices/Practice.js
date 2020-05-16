@@ -347,8 +347,8 @@ const Form = ({
 	simulatorsList,
 	autorsList,
 	history,
-	match,
 	userId,
+	practiceID,
 }) => {
 	const [files, setFiles] = useState([]);
 	const [evaluationFile, setEvaluationFile] = useState(null);
@@ -373,8 +373,8 @@ const Form = ({
 	}, []);
 
 	useEffect(() => {
-		if (match.params.id > 0) {
-			CRUD.getById(match.params.id, handlres.loadFields);
+		if (practiceID > 0) {
+			CRUD.getById(practiceID, handlres.loadFields);
 		}
 	}, [autorsList]);
 
@@ -869,6 +869,7 @@ const mapState = state => ({
 	simulatorsList: state.masters.simulators,
 	autorsList: state.masters.autors,
 	userId: state.auth.user.id,
+	practiceID: state.practices.data.id,
 }),
 	mapDispatch = dispatch => ({});
 
