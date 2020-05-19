@@ -122,7 +122,7 @@ const Semester = ({ list, programList }) => {
           cancelBtnText="Cancelar"
           title="Ingrese el nombre del programa"
           required
-          validationMsg="Debe digitar el nombre del Semestre"
+          validationMsg="Debe digitar el nombre del Semestre/Curso"
           defaultValue={item && item.nombreSemestre}
           onConfirm={name => handlers.save({ id: item.id, nombreSemestre: name })}
           onCancel={handlers.cancel}
@@ -178,7 +178,7 @@ const Semester = ({ list, programList }) => {
               <CardIcon color="danger">
                 <SettingsApplications />
               </CardIcon>
-              <h4 className={classes.cardIconTitle}>Semestre</h4>
+              <h4 className={classes.cardIconTitle}>Semestre/Curso</h4>
               <br />
               <Button onClick={handlers.showModal}>
                 <Add
@@ -189,7 +189,7 @@ const Semester = ({ list, programList }) => {
                     marginBottom: 2 + "px"
                   }}
                 />
-								Agregar Semestre
+								Agregar Semestre/Curso
 							</Button>
             </CardHeader>
             <CardBody>

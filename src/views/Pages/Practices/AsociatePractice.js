@@ -166,7 +166,7 @@ const AsociateToPractice = ({
 							<CardIcon color="danger">
 								<SettingsApplications />
 							</CardIcon>
-							<h4 className={classes.cardIconTitle}>Asociar prácticas a semestre</h4>
+							<h4 className={classes.cardIconTitle}>Asociar prácticas a semestre/curso</h4>
 							<br />
 						</CardHeader>
 						<CardBody>
@@ -181,7 +181,7 @@ const AsociateToPractice = ({
 									}))}
 								/>
 								<ComboBox
-									label="Semestre"
+									label="Semestre/curso"
 									onChange={handlers.changeSemester}
 									value={semester}
 									data={semestersList && semestersList.map(e => ({
