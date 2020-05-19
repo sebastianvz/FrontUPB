@@ -3,6 +3,7 @@ import instance from '../services/instance';
 const masters = {
 	state: {
 		programs: null,
+		programsCount: null,
 		supplies: null,
 		simulators: null,
 		devices: null,
@@ -13,6 +14,7 @@ const masters = {
 	reducers: {
 		setPrograms: (state, payload) => ({
 			...state,
+			programsCount: payload.data.length,
 			programs: payload.data
 		}),
 		setSupplies: (state, payload) => ({
@@ -83,6 +85,14 @@ const masters = {
 		},
 		getSemestersByProgram({programId, onSucced = () => {}}) {
 			instance.get(`Master/GetSemesters?programId=${programId}`).then(e => {
+				if(e.data) {
+					this.setSemesters(e.data);
+					onSucced && onSucced();
+				}
+			});
+		},
+		getSemesters(onSucced) {
+			instance.get(`/Semester`).then(e => {
 				if(e.data) {
 					this.setSemesters(e.data);
 					onSucced && onSucced();

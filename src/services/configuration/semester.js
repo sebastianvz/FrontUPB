@@ -1,5 +1,5 @@
 import instance from '../instance';
-import { program as urls } from '../../config/services';
+import { semester as urls } from '../../config/services';
 
 export const save = (data) =>
     instance.post(urls.save, data);

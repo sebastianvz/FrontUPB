@@ -27,3 +27,8 @@ export const program = {
     save: 'Program',
     delete: 'Program',
 };
+
+export const semester = {
+    save: 'Semester',
+    delete: 'Semester',
+};

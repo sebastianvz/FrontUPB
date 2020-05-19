@@ -21,6 +21,7 @@ const AsyncAsociatePractice = lazy(() => import('../views/Pages/Practices/Asocia
 
 //Configuration
 const AsyncPrograms = lazy(() => import('../views/Pages/Configuration/Programs.js'));
+const AsyncSemesters = lazy(() => import('../views/Pages/Configuration/Semester.js'));
 
 export default [
 	//AUTH
@@ -42,4 +43,5 @@ export default [
 
 	//Configuration
 	createRoute('/programs', AsyncPrograms, LOGGED),
+	createRoute('/semesters', AsyncSemesters, LOGGED),
 ];

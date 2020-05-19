@@ -6,6 +6,8 @@ import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
@@ -25,7 +27,9 @@ import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweet
 
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
-import { useProgram } from 'components/Masters';
+import { useSemester } from 'components/Masters';
+
+import { useAlerta } from 'components/Shared';
 
 const styles = {
   cardIconTitle: {
@@ -37,17 +41,22 @@ const styles = {
 
 const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
+let selectedPrograms = [];
 
-const Programs = ({ programList, programsCount }) => {
-  const [alerta, setAlerta] = useState(null);
+const Semester = ({ list, programList }) => {
+  const [form, setForm] = useState(null);
   const [data, setData] = useState([]);
 
-  const CRUD = useProgram();
-
+  const CRUD = useSemester();
+  const { Alerta, alerta } = useAlerta();
   const handlers = {
     cancel() {
-      setAlerta('');
+      setForm('');
     },
+    change: (event) =>
+      selectedPrograms = event.target.checked ?
+        [...selectedPrograms, event.target.value]
+        : selectedPrograms.filter(e => e != event.target.value),
     delete(item) {
       CRUD.remove(item, (e) => {
         CRUD.loadList();
@@ -55,10 +64,10 @@ const Programs = ({ programList, programsCount }) => {
       });
     },
     loadList() {
-      console.log('DATA', programList);
-      setData(programList.map((e, key) => ({
+      setData(list.map((e, key) => ({
         key: key,
-        name: e.nombrePrograma,
+        name: e.nombreSemestre,
+        programs: e.programs && e.programs.map(x => x.nombrePrograma).join(', '),
         actions:
           <div className="actions-right">
             <Button
@@ -84,15 +93,27 @@ const Programs = ({ programList, programsCount }) => {
             </Button>
           </div>
       })));
+      alerta.hide();
     },
     save(item) {
-      CRUD.save(item, (e) => {
+      if (selectedPrograms.length === 0) {
+        alerta.show('Selecione al menos un dato');        
+        return;
+      }
+      CRUD.save({
+        ...item,
+        programs: selectedPrograms.map(x => ({ id: x }))
+      }, (e) => {
         CRUD.loadList();
         handlers.cancel();
+        alerta.show('Información almacenada correctamente');        
       });
     },
     showModal: (item) => {
-      setAlerta(
+      if (item.programs && item.programs.length > 0) {
+        selectedPrograms = item.programs.map(e => e.id);
+      }
+      setForm(
         <SweetAlert
           input
           showCancel
@@ -101,9 +122,9 @@ const Programs = ({ programList, programsCount }) => {
           cancelBtnText="Cancelar"
           title="Ingrese el nombre del programa"
           required
-          validationMsg="Debe digitar el nombre del programa"
-          defaultValue={item && item.nombrePrograma}
-          onConfirm={name => handlers.save({ id: item.id, nombrePrograma: name })}
+          validationMsg="Debe digitar el nombre del Semestre"
+          defaultValue={item && item.nombreSemestre}
+          onConfirm={name => handlers.save({ id: item.id, nombreSemestre: name })}
           onCancel={handlers.cancel}
           confirmBtnCssClass={
             classesAlerts.button + " " + classesAlerts.default
@@ -112,26 +133,44 @@ const Programs = ({ programList, programsCount }) => {
             classesAlerts.button + " " + classesAlerts.danger
           }
         >
+          {
+            programList && programList.map(x => (
+              <FormControlLabel
+                key={x.id}
+                control={
+                  <Checkbox
+                    onChange={handlers.change}
+                    value={x.id}
+                    defaultChecked={item.programs
+                      && item.programs.find(e => e.id === x.id)}
+                  />
+                }
+                label={x.nombrePrograma}
+              />
+            ))
+          }
         </SweetAlert>
       );
     }
   }
 
   useEffect(() => {
-    if (programList && programList.length > 0) {
+    if (list && list.length > 0) {
       handlers.loadList();
     }
-  }, [programList]);
+  }, [list]);
 
   useEffect(() => {
     CRUD.loadList();
+    alerta.show('Cargando Información');
   }, []);
 
   const classesAlerts = useStylesAlerts();
   const classes = useStyles();
   return (
     <div>
-      {alerta}
+      {Alerta}
+      {form}
       <GridContainer>
         <GridItem xs={12}>
           <Card>
@@ -139,7 +178,7 @@ const Programs = ({ programList, programsCount }) => {
               <CardIcon color="danger">
                 <SettingsApplications />
               </CardIcon>
-              <h4 className={classes.cardIconTitle}>Programas</h4>
+              <h4 className={classes.cardIconTitle}>Semestre</h4>
               <br />
               <Button onClick={handlers.showModal}>
                 <Add
@@ -150,7 +189,7 @@ const Programs = ({ programList, programsCount }) => {
                     marginBottom: 2 + "px"
                   }}
                 />
-								Agregar Programa
+								Agregar Semestre
 							</Button>
             </CardHeader>
             <CardBody>
@@ -161,6 +200,10 @@ const Programs = ({ programList, programsCount }) => {
                   {
                     Header: "Nombre",
                     accessor: "name"
+                  },
+                  {
+                    Header: "Programas",
+                    accessor: "programs",
                   },
                   {
                     Header: "",
@@ -191,8 +234,8 @@ const Programs = ({ programList, programsCount }) => {
 
 
 const mapState = state => ({
+  list: state.masters.semesters,
   programList: state.masters.programs,
-  programsCount: state.masters.programsCount,
 }), mapDispatch = dispatch => ({});
 
-export default connect(mapState, mapDispatch)(Programs);
+export default connect(mapState, mapDispatch)(Semester);
