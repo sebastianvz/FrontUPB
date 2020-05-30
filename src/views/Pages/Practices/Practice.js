@@ -93,8 +93,8 @@ const FormObjetives = ({
 										inputProps={{
 											onChange: handlres.changeObjetivo,
 											value: objetivo,
-											multiline:true,
-											rows:"3"
+											multiline: true,
+											rows: "3"
 										}}
 									/>
 								</GridContainer>
@@ -161,6 +161,7 @@ const FormDetails = ({
 }) => {
 	const [listValue, setListValue] = useState("");
 	const [quantity, setQuantity] = useState(0);
+	const [disponible, setDisponibilidad] = useState(0);
 
 	const classes = useStyles();
 
@@ -174,12 +175,16 @@ const FormDetails = ({
 			else
 				setQuantity(e.target.value);
 		},
+		changeDisponibilidad: (e) => {
+			setDisponibilidad(e.target.value)
+		},
 		add: () => {
 			if (listValue == null || listValue == '') return;
 			setData([{
 				id: listValue,
 				name: (list.find(x => x.id === listValue) || { name: '' }).name,
-				cantidad: quantity
+				cantidad: quantity,
+				disponibilidad: disponible,
 			},
 			...data
 			]);
@@ -203,7 +208,7 @@ const FormDetails = ({
 				<CardBody>
 					<form id='form-header'>
 						<GridContainer>
-							<GridItem xs={12} sm={5} lg={5}>
+							<GridItem xs={12} sm={4} lg={4}>
 								<GridContainer>
 									<GridItem xs={12} sm={12} lg={12}>
 										<InputLabel
@@ -253,7 +258,7 @@ const FormDetails = ({
 										))}
 									</Select> */}
 							</GridItem>
-							<GridItem xs={12} sm={5} lg={5}>
+							<GridItem xs={12} sm={3} lg={3}>
 								<CustomInput
 									labelText="Cantidad"
 									id="Cantidad"
@@ -266,6 +271,56 @@ const FormDetails = ({
 										value: quantity,
 									}}
 								/>
+							</GridItem>
+							<GridItem xs={12} sm={3} lg={3}>
+								<GridContainer>
+									<FormControl
+										fullWidth
+										className={classes.selectFormControl}
+										style={{paddingTop: '11px'}}
+									>
+										<InputLabel
+											htmlFor="multiple-select"
+											className={classes.selectLabel}
+											style={{paddingTop: '18px'}}
+										>
+											Sujeto a disponibilidad
+                        </InputLabel>
+										<Select
+											MenuProps={{
+												className: classes.selectLabel
+											}}
+											classes={{
+												select: classes.Select
+											}}
+											value={disponible}
+											onChange={handlres.changeDisponibilidad}
+											formControlProps={{
+												fullWidth: false
+											}}
+											inputProps={{
+												name: 'disponibilidad',
+												id: 'disponibilidad',
+											}}
+											style={{ 'maxWidth': '100%' }}
+										>
+											{[
+												{ id: 1, name: 'Si' },
+												{ id: 0, name: 'No' }
+											].map(x => (
+												<MenuItem
+													classes={{
+														root: classes.selectMenuItem,
+														selected: classes.selectMenuItemSelected
+													}}
+													value={x.id}
+												>
+													{x.name}
+												</MenuItem>
+											))}
+										</Select>
+									</FormControl>
+								</GridContainer>
 							</GridItem>
 							<GridItem xs={12} sm={2} lg={2}>
 								<Button
@@ -287,11 +342,13 @@ const FormDetails = ({
 									tableHead={[
 										labelList,
 										"Cantidad",
+										"Disponibilidad",
 										"Acciones"
 									]}
 									tableData={data.map(x => [
 										x.name,
 										x.cantidad,
+										x.disponibilidad == 1 ? 'Si' : 'No',
 										<Button
 											color="danger"
 											className={classes.actionButton}

@@ -26,6 +26,12 @@ class Autocomplete extends Component {
         };
     }
 
+    // componentDidMount() {
+    //     this.setState({
+    //         userInput: this.props.defaultValue
+    //     });
+    // }
+
     onChange = e => {
         const { suggestions, minFilter } = this.props;
         const userInput = e.currentTarget.value;
@@ -60,7 +66,7 @@ class Autocomplete extends Component {
         const filter = e.currentTarget.innerText,
             { filteredSuggestions } = this.state;
         const obj = filteredSuggestions.find(e => e.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
-        if (obj) {            
+        if (obj) {
             this.props.onChange && this.props.onChange(obj.id);
         }
 
