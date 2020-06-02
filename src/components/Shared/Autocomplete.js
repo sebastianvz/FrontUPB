@@ -154,6 +154,7 @@ class Autocomplete extends Component {
                     onKeyDown={onKeyDown}
                     value={userInput}
                     className={this.props.className}
+                    style={{border: 'none', borderBottom: '1px solid lightgray'}}
                 />
                 {suggestionsListComponent}
             </Fragment>

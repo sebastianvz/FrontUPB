@@ -35,6 +35,7 @@ import styles from "../../../assets/jss/material-dashboard-pro-react/views/regul
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
 import { Autocomplete } from '../../../components/Shared';
+import { useAlerta } from 'components/Shared';
 
 const useStyles = makeStyles(styles);
 
@@ -209,11 +210,12 @@ const FormDetails = ({
 					<form id='form-header'>
 						<GridContainer>
 							<GridItem xs={12} sm={4} lg={4}>
-								<GridContainer>
+								<GridContainer style={{padding: '13px 0px 0px 0px'}}>
 									<GridItem xs={12} sm={12} lg={12}>
 										<InputLabel
 											htmlFor="multiple-select"
 											className={classes.selectLabel}
+											style={{fontSize: '13px'}}
 										>
 											{labelList}
 										</InputLabel>
@@ -415,23 +417,26 @@ const Form = ({
 	const [insumos, setInsumos] = useState([]);
 	const [objetivos, setObjetivos] = useState([]);
 	const [autors, setAutors] = useState([]);
-	const [errors, setErrors] = useState({});
-	const [alerta, setAlerta] = useState('');
+	const [errors, setErrors] = useState({});	
 	const [tiempoEstimadoState, setTiempoEstimadoState] = useState(null);
 
 	const refHeaderForm = useRef();
 	const refObservationForm = useRef();
 	const CRUD = useCRUD();
+	const { Alerta, alerta } = useAlerta();
 	const classes = useStyles();
 	const classesAlerts = useStylesAlerts();
 
 	useEffect(() => {
 		CRUD.loadList();
+		alerta.show('Cargando información');
 	}, []);
 
 	useEffect(() => {
 		if (practiceID > 0) {
 			CRUD.getById(practiceID, handlres.loadFields);
+		}else {
+			alerta.hide();
 		}
 	}, [autorsList]);
 
@@ -479,7 +484,7 @@ const Form = ({
 
 			if (exit) {
 				setErrors(_errors);
-				alert.show("¡Hay campos sin llenar!");
+				alerta.show("¡Hay campos sin llenar!");
 				return;
 			}
 
@@ -516,9 +521,10 @@ const Form = ({
 			setSimuladores(data.simuladores);
 			setInsumos(data.insumos);
 			setObjetivos(data.objetivos);
-			if (data.autors.length > 0) {
-				setAutors(data.autors.map(e => e.id));
+			if (data.autores.length > 0) {				
+				setAutors(data.autores.map(e => e.id));
 			}
+			alerta.hide();
 		}
 	};
 
@@ -539,30 +545,6 @@ const Form = ({
 			setFiles([data.attachment, ...files]);
 		},
 	};
-
-	const alert = {
-		show(message) {
-			setAlerta(
-				<SweetAlert
-					style={{ display: "block", marginTop: "-100px" }}
-					onConfirm={alert.hide}
-					onCancel={alert.hide}
-					confirmBtnCssClass={
-						classesAlerts.button + " " + classesAlerts.default
-					}
-					title={
-						<p>
-							<b>{message}</b>
-						</p>
-					}
-				/>
-			);
-		},
-		hide() {
-			setAlerta('');
-		},
-	}
-
 
 	return (
 		<>
@@ -915,7 +897,7 @@ const Form = ({
 					</GridItem>
 				</GridContainer>
 			</GridContainer>
-			{alerta}
+			{Alerta}
 		</>
 	);
 };

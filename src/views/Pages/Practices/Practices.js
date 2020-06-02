@@ -31,6 +31,8 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
 
+import { useAlerta } from 'components/Shared';
+
 const variables = new GlobalVariables();
 const baseUrl = variables.Url;
 
@@ -51,8 +53,9 @@ const Practices = ({
 	history,
 	setID
 }) => {
-	const [alerta, setAlerta] = React.useState(null);
+	const [modal, setModal] = React.useState(null);
 	const [checkboxState, setCheckboxState] = useState([]);
+	const { Alerta, alerta } = useAlerta();
 	let arrayIdPermits = [];
 
 	const handleChange = name => event => {
@@ -73,9 +76,9 @@ const Practices = ({
 	};
 	const responseConfirmAlertNext = e => {
 		arrayIdPermits = [];
-		setAlerta(e);
+		setModal(e);
 		setTimeout(() => {
-			setAlerta(
+			setModal(
 				<SweetAlert
 					style={{ display: "block", marginTop: "-100px" }}
 					onConfirm={() => hideAlert()}
@@ -95,7 +98,7 @@ const Practices = ({
 
 	const hideAlert = () => {
 		arrayIdPermits = [];
-		setAlerta(null);
+		setModal(null);
 	};
 
 	const [data, setData] = React.useState([]);
@@ -186,6 +189,7 @@ const Practices = ({
 						};
 					})
 				);
+				alerta.hide();
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -194,13 +198,15 @@ const Practices = ({
 
 	useEffect(() => {
 		loadGrid();
+		alerta.show('Cargando Información');
 	}, []);
 
 	const classesAlerts = useStylesAlerts();
 	const classes = useStyles();
 	return (
 		<div>
-			{alerta}
+			{Alerta}
+			{modal}
 			<GridContainer>
 				<GridItem xs={12}>
 					<Card>
