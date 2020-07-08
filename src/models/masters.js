@@ -4,6 +4,7 @@ const masters = {
 	state: {
 		programs: null,
 		programsCount: null,
+		practices: null,
 		supplies: null,
 		simulators: null,
 		devices: null,
@@ -40,6 +41,10 @@ const masters = {
 		setSemesters: (state, payload) => ({
 			...state,
 			semesters: payload.data,
+		}),
+		setPractices: (state, payload) => ({
+			...state,
+			practices: payload.data,
 		}),
 	},
 	effects: dispatch => ({
@@ -95,6 +100,14 @@ const masters = {
 			instance.get(`/Semester`).then(e => {
 				if(e.data) {
 					this.setSemesters(e.data);
+					onSucced && onSucced();
+				}
+			});
+		},
+		getPractices({programSemesterId, onSucced = () => {}}) {
+			instance.get(`/Master/GetPractices/${programSemesterId}`).then(e => {
+				if(e.data) {
+					this.setPractices(e.data);
 					onSucced && onSucced();
 				}
 			});

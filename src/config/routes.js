@@ -18,10 +18,12 @@ const AsyncRoles = lazy(() => import('../views/Pages/Security/Roles.js'));
 const AsyncPractices = lazy(() => import('../views/Pages/Practices/Practices.js'));
 const AsyncPractice = lazy(() => import('../views/Pages/Practices/Practice.js'));
 const AsyncAsociatePractice = lazy(() => import('../views/Pages/Practices/AsociatePractice.js'));
+const AsyncReservations = lazy(() => import('../views/Pages/Practices/Reservations.js'));
 
 //Configuration
 const AsyncPrograms = lazy(() => import('../views/Pages/Configuration/Programs.js'));
 const AsyncSemesters = lazy(() => import('../views/Pages/Configuration/Semester.js'));
+const AsyncReservationState = lazy(() => import('../views/Pages/Configuration/ReservationState.js'));
 
 export default [
 	//AUTH
@@ -36,6 +38,7 @@ export default [
 	createRoute('/Practicas', AsyncPractices, LOGGED),
 	createRoute('/Practica', AsyncPractice, LOGGED),	
 	createRoute('/asociatePractice', AsyncAsociatePractice, LOGGED),	
+	createRoute('/reserva', AsyncReservations, LOGGED),	
 
 	//Common
 	createRoute('/abaout', AsyncAbout),
@@ -44,4 +47,5 @@ export default [
 	//Configuration
 	createRoute('/programs', AsyncPrograms, LOGGED),
 	createRoute('/semesters', AsyncSemesters, LOGGED),
+	createRoute('/estadoReserva', AsyncReservationState, LOGGED),
 ];

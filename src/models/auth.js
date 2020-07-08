@@ -42,9 +42,17 @@ const auth = {
           credentials.password,
         );
 
-        const data = await promise.data;        
+        const data = await promise.data;
         const { username, nombreCompleto, apellidos, token, role, id } = data.data;
-        this.setAuthenticated({ user: { id, username, fullName: `${nombreCompleto} ${apellidos}` }, token });
+        this.setAuthenticated({
+          user: {
+            id,
+            username,
+            role: role[0].roleName,
+            fullName: `${nombreCompleto} ${apellidos}`
+          },
+          token
+        });
         instance.setToken(token);
         if (role.length > 0) {
           dispatch.config.loadMenu(role[0].permmisionRole);

@@ -15,6 +15,8 @@ export default function useAlerta() {
 		show(message, {
 			confirm = () => { },
 			cancel = () => { },
+			title,
+			...rest
 		} = {}) {
 			const onCancel = () => {
 				cancel();
@@ -24,19 +26,16 @@ export default function useAlerta() {
 				alerta.hide()
 			}
 			setAlerta(
-				<SweetAlert
+				<SweetAlert									
 					style={{ display: "block", marginTop: "-100px" }}
 					onConfirm={onConfirm}
-					onCancel={onCancel}
+					onCancel={onCancel}					
 					confirmBtnCssClass={
 						classesAlerts.button + " " + classesAlerts.default
 					}
-					title={
-						<p>
-							<b>{message}</b>
-						</p>
-					}
-				/>
+					title={title}
+					{...rest}
+				>{message}</SweetAlert>
 			);
 		},
 		hide() {

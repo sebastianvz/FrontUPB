@@ -15,9 +15,9 @@ export default function useMatersList() {
     });
   };
 
-  const loadProgramList = () => {
+  const loadProgramList = (callback) => {
     store.dispatch.masters.getPrograms(() => {
-
+      callback && callback();
     });
   };
 
@@ -28,6 +28,8 @@ export default function useMatersList() {
   };
 
   const loadSemestersByProgram = () => store.dispatch.masters.getSemestersByProgram(() => { });
+
+  const loadPractices = (programSemesterId) => store.dispatch.masters.getPractices({programSemesterId});
 
   const loadSemestersList = () => {
     store.dispatch.masters.getPrograms(() => {
@@ -43,6 +45,7 @@ export default function useMatersList() {
     loadSemestersByProgram,
     loadSemestersList,
     loadSemesterList,
+    loadPractices,
   };
 };
 

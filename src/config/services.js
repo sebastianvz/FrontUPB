@@ -23,6 +23,12 @@ export const asociatePractices = {
     save: 'SemestersPratice'
 };
 
+export const reservation = {
+    list: 'Reserva/GetByProgramSemester/',
+    save: 'Reserva',
+    changeState: 'Reserva/ChangeState',
+};
+
 export const program = {
     save: 'Program',
     delete: 'Program',
