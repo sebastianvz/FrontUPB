@@ -26,6 +26,7 @@ export const asociatePractices = {
 export const reservation = {
     list: 'Reserva/GetByProgramSemester/',
     save: 'Reserva',
+    delete: 'Reserva',
     changeState: 'Reserva/ChangeState',
 };
 

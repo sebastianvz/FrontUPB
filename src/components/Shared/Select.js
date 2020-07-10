@@ -58,6 +58,7 @@ const ComboBox = (props) => {
 							selected: classes.selectMenuItemSelectedMultiple
 						}}
 						value={x.key}
+						key={x.key}
 					>
 						{x.label}
 					</MenuItem>

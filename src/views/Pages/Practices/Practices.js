@@ -198,7 +198,9 @@ const Practices = ({
 
 	useEffect(() => {
 		loadGrid();
-		alerta.show('Cargando Información');
+		alerta.show('Cargando Información...', {
+			loading: true,
+		});
 	}, []);
 
 	const classesAlerts = useStylesAlerts();

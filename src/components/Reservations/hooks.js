@@ -2,7 +2,8 @@ import React from 'react';
 import {
     save as saveAPI,
     list as listAPI,
-    changeState as changeStateAPI
+    remove as deleteAPI,
+    changeState as changeStateAPI,
 } from '../../services/practices/reservation';
 import { useMatersList as loadMasterList } from '../Masters';
 
@@ -13,7 +14,12 @@ export default function useCRUD() {
             onSucced();
         }).catch(e => {
         });
-    const changeState = (data, onSucced) => changeState(data)
+    const remove = (id, onSucced) => deleteAPI(id)
+        .then(e => {
+            onSucced();
+        }).catch(e => {
+        });
+    const changeState = (data, onSucced) => changeStateAPI(data)
         .then(e => {
             onSucced();
         }).catch(e => {
@@ -26,5 +32,5 @@ export default function useCRUD() {
     const loadList = (callback) => loadProgramList(callback);
     const loadPracticesList = (programSemesterId) => loadPractices(programSemesterId);
 
-    return { loadList, save, list, changeState, loadPracticesList };
+    return { loadList, save, list, changeState, loadPracticesList, remove };
 }

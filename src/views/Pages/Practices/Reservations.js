@@ -9,12 +9,14 @@ import ReactTable from "react-table";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from '@material-ui/core/TextField';
 import FormLabel from "@material-ui/core/FormLabel";
+import InputLabel from "@material-ui/core/InputLabel";
 
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
 import Create from "@material-ui/icons/Create";
 import Close from "@material-ui/icons/Close";
 import Add from "@material-ui/icons/Add";
+import Delete from "@material-ui/icons/Delete";
 
 
 // core components
@@ -38,6 +40,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 import GlobalVariables from "../../../variables/globalVariables.js";
 import { useCRUD } from '../../../components/Reservations';
 import { useAlerta } from 'components/Shared';
+import { Autocomplete } from '../../../components/Shared';
 
 const variables = new GlobalVariables();
 const baseUrl = variables.Url;
@@ -57,6 +60,13 @@ const ROLES = {
 	laboratorio: 'Laboratorio1',
 };
 const INVALID_VALUES = [null, '', '-1', -1, undefined];
+const ESTADO_RESERVA = {
+	abierta: 1,
+	aprobada: 2,
+	rechazada: 3,
+	modificada: 4,
+	cerrada: 5,
+};
 const REQUIRED_FIELDS = [
 	'idPractica',
 	'cantidadEstaciones',
@@ -68,17 +78,25 @@ const REQUIRED_FIELDS = [
 const ChangerState = ({ onSaved }) => {
 	const { Alerta, alerta } = useAlerta();
 	const handlers = {
-		accept() { },
+		accept() {
+			onSaved({
+				idEstado: ESTADO_RESERVA.aprobada,
+				description: '',
+			});
+		},
 		refuse() {
 			alerta.show('Motivo por el cual se rechaza la reserva', {
 				validationMsg: "El campo es obligatorio",
 				input: true,
-				showCancel: true,
 				confirmBtnText: "Confirmar",
 				required: true,
-				onConfirm: (e) => {
-					onSaved(e, alerta.hide);
-				}
+				confirm: (e) => {
+					onSaved({
+						idEstado: ESTADO_RESERVA.rechazada,
+						description: e,
+					});
+				},
+				cancel: () => { }
 			})
 		},
 	};
@@ -109,6 +127,8 @@ const Form = ({
 	onSave = () => { },
 	practicesList,
 	onCancel,
+	userId,
+	role,
 }) => {
 	const [values, setValues] = useState({});
 	const [errors, setErrors] = useState({});
@@ -123,9 +143,14 @@ const Form = ({
 	}, [data]);
 
 	const handlers = {
-		change(e) {
-			const { name, value } = e.target;
-			setValues({ ...values, [name]: value });
+		change(e, prop) {
+			if (e.target) {
+				const { name, value } = e.target;
+				setValues({ ...values, [name]: value });
+			} else {
+				debugger;
+				setValues({ ...values, [prop]: e });
+			}
 		},
 		save(e) {
 			const _errors = {};
@@ -137,8 +162,8 @@ const Form = ({
 			setErrors(_errors);
 			if (Object.keys(_errors).length > 0) {
 				alerta.show('Hay campos sin llenar!!', {
-					showCancel: false,
 					type: 'danger',
+					confirm: () => {},
 				});
 				return;
 			}
@@ -150,7 +175,30 @@ const Form = ({
 		<GridItem xs={12} sm={12} md={12}>
 			{Alerta}
 			<form>
-				<GridContainer>
+				<GridContainer style={{ padding: '13px 0px 0px 0px' }}>
+					<GridItem xs={12} sm={12} lg={12}>
+						<InputLabel
+							htmlFor="multiple-select"
+							className={classes.selectLabel}
+							style={{ fontSize: '13px' }}
+						>
+							Prácticas
+						</InputLabel>
+					</GridItem>
+					<GridItem xs={12} sm={12} lg={12}>
+						<Autocomplete
+							name="idPractica"
+							minFilter={3}
+							suggestions={practicesList.map(e => ({
+								id: e.key,
+								name: e.label,
+							}))}
+							defaultValue={values.idPractica}
+							onChange={handlers.change}
+						/>
+					</GridItem>
+				</GridContainer>
+				{/* <GridContainer>
 					<ComboBox
 						id="idPractica"
 						name="idPractica"
@@ -170,7 +218,7 @@ const Form = ({
 						}}
 						data={practicesList}
 					/>
-				</GridContainer>
+				</GridContainer> */}
 				<GridContainer>
 					<GridItem xs={12} sm={6} lg={6}>
 						<TextField
@@ -310,16 +358,87 @@ const AsociateToPractice = ({
 
 	useEffect(() => {
 		alerta.show('Cargando información...', {
-			showCancel: false,
-			showConfirm: false,
-			type: 'custom',
-			customIcon: 'load'
+			loading: true,
 		});
 		CRUD.loadList(() => {
 			alerta.hide();
 		});
 	}, []);
 	useEffect(() => { setReservationsList(null) }, [program, semester]);
+
+	const Actions = ({ item }) => {
+		switch (item.idEstado) {
+			case ESTADO_RESERVA.abierta:
+				return role === ROLES.laboratorio
+					&& item.idUsuario === userId
+					? <>
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => handlers.edit({
+								...item,
+								idEstado: ESTADO_RESERVA.abierta
+							})}
+							color="warning"
+							className="edit"
+						>
+							<Create />
+						</Button>&nbsp;
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => handlers.delete(item)}
+							color="danger"
+							className="remove"
+						>
+							<Delete />
+						</Button>
+					</>
+					: role === ROLES.admin
+					&& (item.idAprobador == null || item.idAprobador === userId)
+					&& <Button
+						justIcon
+						round
+						simple
+						onClick={() => handlers.showAcceprOrRefuse(item)}
+						color="warning"
+						className="edit"
+					>
+						<SettingsApplications />
+					</Button>
+			case ESTADO_RESERVA.aprobada:
+				return item.idUsuario === userId
+					&& <Button
+						justIcon
+						round
+						simple
+						onClick={() => handlers.showChangerState(item, ESTADO_RESERVA.cerrada)}
+						color="danger"
+						className="remove"
+					>
+						<Close />
+					</Button>
+			case ESTADO_RESERVA.rechazada:
+				return item.idUsuario === userId
+					&& <Button
+						justIcon
+						round
+						simple
+						onClick={() => handlers.edit({
+							...item,
+							idEstado: ESTADO_RESERVA.abierta
+						})}
+						color="warning"
+						className="edit"
+					>
+						<Create />
+					</Button>
+			default:
+				return '';
+		};
+	};
 
 	const handlers = {
 		changeProgrm(e) {
@@ -332,10 +451,7 @@ const AsociateToPractice = ({
 			setSemester(e.target.value);
 			if (INVALID_VALUES.indexOf(e.target.value) === -1) {
 				alerta.show('Cargando información...', {
-					showCancel: false,
-					showConfirm: false,
-					type: 'custom',
-					customIcon: 'load'
+					loading: true,
 				});
 				CRUD.list(e.target.value, (x) => {
 					handlers.fillData(x);
@@ -344,15 +460,66 @@ const AsociateToPractice = ({
 				CRUD.loadPracticesList(e.target.value);
 			}
 		},
-		changeState(e) {
-			alerta.show(<ChangerState
-				onSaved={CRUD.changeState}//Crear el objeto de guardado para el cambio de estado
-			/>, {
-				showCancel: false,
-				showConfirm: false,
+		changeState: (item, onSucced, idSemester) => {
+			idSemester = idSemester || semester;
+			onSucced && onSucced();
+
+			alerta.show('Cargando información...', {
+				loading: true,
+			});
+			CRUD.changeState(item, () => {
+				CRUD.list(idSemester, (x) => {
+					handlers.fillData(x);
+					handlers.hideForm();
+					alerta.hide();
+				});
 			})
 		},
-		delete() { },
+		showAcceprOrRefuse(current) {
+			const _userId = userId;
+			alerta.show(<ChangerState
+				onSaved={(item) => {
+					handlers.changeState({
+						...current,
+						...item,
+						idAprobador: _userId,
+					}, alerta.hide);
+				}}
+			/>)
+		},
+		showChangerState(item, newEstado) {
+			alerta.show('Motivo por el cual se cierra ra reserva', {
+				validationMsg: "El campo es obligatorio",
+				input: true,
+				showCancel: true,
+				confirmBtnText: "Confirmar",
+				required: true,
+				confirm: (e) => {
+					handlers.changeState({
+						...item,
+						idEstado: newEstado,
+						description: e,
+					});
+				}
+			})
+		},
+		delete(item) {
+			const idSemester = semester;
+			alerta.show('¿Esta Seguro de que quiere eliminar el registro?', {
+				showCancel: true,
+				cancelBtnText: "No",
+				confirmBtnText: "Sí",
+				confirm: () => {
+					CRUD.remove(item.id, () => {
+						CRUD.list(semester, (x) => {
+							handlers.fillData(x);
+							alerta.hide();
+						});
+					});
+				},
+				cancel: alert.hide
+			})
+		},
 		edit(item) {
 			setCurrent(item);
 			handlers.showForm();
@@ -367,53 +534,14 @@ const AsociateToPractice = ({
 				fechaInicio: moement(e.fechaInicio).format("DD-MM-YYYY HH:mm"),
 				fechaFin: moement(e.fechaFin).format("DD-MM-YYYY HH:mm"),
 				observaciones: e.observaciones,
-				actions: (
-					<div className="actions-right">
-						{role === ROLES.admin ?
-							<Button
-								justIcon
-								round
-								simple
-								onClick={() => handlers.changeState(e)}
-								color="warning"
-								className="edit"
-							>
-								<SettingsApplications />
-							</Button>
-							:
-							<>
-								<Button
-									justIcon
-									round
-									simple
-									onClick={() => handlers.edit(e)}
-									color="warning"
-									className="edit"
-								>
-									<Create />
-								</Button>&nbsp;
-								<Button
-									justIcon
-									round
-									simple
-									onClick={() => handlers.delete(e)}
-									color="danger"
-									className="remove"
-								>
-									<Close />
-								</Button>
-							</>
-						}
-					</div>
-				)
+				actions: <Actions item={e} />
 			}))),
 		hideForm() {
 			setShowForm(false);
 		},
 		save(values) {
 			alerta.show('Almacenando Información...', {
-				showCancel: false,
-				showConfirm: false,
+				loading: true,
 			});
 			CRUD.save({
 				idProgramaSemestre: semester,
@@ -547,7 +675,6 @@ const AsociateToPractice = ({
 		</div >
 	);
 }
-
 
 const mapState = state => ({
 	token: state.auth.token,

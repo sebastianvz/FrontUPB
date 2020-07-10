@@ -67,7 +67,7 @@ class Autocomplete extends Component {
             { filteredSuggestions } = this.state;
         const obj = filteredSuggestions.find(e => e.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
         if (obj) {
-            this.props.onChange && this.props.onChange(obj.id);
+            this.props.onChange && this.props.onChange(obj.id, this.props.name);
         }
 
     };
@@ -82,7 +82,7 @@ class Autocomplete extends Component {
                 showSuggestions: false,
                 userInput: filteredSuggestions[activeSuggestion].name
             });
-            this.props.onChange && this.props.onChange(filteredSuggestions[activeSuggestion].id);
+            this.props.onChange && this.props.onChange(filteredSuggestions[activeSuggestion].id, this.props.name);
         }
         // User pressed the up arrow
         else if (e.keyCode === 38) {
@@ -152,9 +152,10 @@ class Autocomplete extends Component {
                     type="text"
                     onChange={onChange}
                     onKeyDown={onKeyDown}
+                    name={this.props.name}
                     value={userInput}
                     className={this.props.className}
-                    style={{border: 'none', borderBottom: '1px solid lightgray'}}
+                    style={{border: 'none', borderBottom: '1px solid #949494', width: '100%'}}
                 />
                 {suggestionsListComponent}
             </Fragment>
