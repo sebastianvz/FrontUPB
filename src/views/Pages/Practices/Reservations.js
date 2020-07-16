@@ -42,6 +42,8 @@ import { useCRUD } from '../../../components/Reservations';
 import { useAlerta } from 'components/Shared';
 import { Autocomplete } from '../../../components/Shared';
 
+import Practica from './Practice';
+
 const variables = new GlobalVariables();
 const baseUrl = variables.Url;
 
@@ -148,7 +150,6 @@ const Form = ({
 				const { name, value } = e.target;
 				setValues({ ...values, [name]: value });
 			} else {
-				debugger;
 				setValues({ ...values, [prop]: e });
 			}
 		},
@@ -163,7 +164,7 @@ const Form = ({
 			if (Object.keys(_errors).length > 0) {
 				alerta.show('Hay campos sin llenar!!', {
 					type: 'danger',
-					confirm: () => {},
+					confirm: () => { },
 				});
 				return;
 			}
@@ -346,6 +347,7 @@ const AsociateToPractice = ({
 	semestersList,
 	getSemesters,
 	practicesList,
+	setPractice,
 }) => {
 	const [program, setProgram] = useState();
 	const [semester, setSemester] = useState();
@@ -528,7 +530,11 @@ const AsociateToPractice = ({
 			data && setReservationsList(data.map(e => ({
 				id: e.id,
 				nombreEstado: e.nombreEstado,
-				nombrePractica: e.nombrePractica,
+				nombrePractica: (
+					<a onClick={() => handlers.showPractice(e)}>
+						{e.nombrePractica}
+					</a>
+				),
 				cantidadEstaciones: e.cantidadEstaciones,
 				cantidadEstudiantes: e.cantidadEstudiantes,
 				fechaInicio: moement(e.fechaInicio).format("DD-MM-YYYY HH:mm"),
@@ -558,6 +564,11 @@ const AsociateToPractice = ({
 		},
 		showForm() {
 			setShowForm(true);
+		},
+		showPractice(data) {
+			setPractice(data.practica, () => {
+				alerta.show(<Practica />, {});
+			});
 		},
 	}
 
@@ -685,6 +696,7 @@ const mapState = state => ({
 	practicesList: state.masters.practices,
 }), mapDispatch = dispatch => ({
 	getSemesters: programId => dispatch.masters.getSemestersByProgram({ programId }),
+	setPractice: (data, onSucced) => dispatch.practices.setData({ data, onSucced }),
 });
 
 export default connect(mapState, mapDispatch)(AsociateToPractice);

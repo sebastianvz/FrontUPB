@@ -158,6 +158,7 @@ const FormDetails = ({
 	setData,
 	data,
 	icon,
+	enabled
 }) => {
 	const [listValue, setListValue] = useState("");
 	const [quantity, setQuantity] = useState(0);
@@ -209,12 +210,12 @@ const FormDetails = ({
 					<form id='form-header'>
 						<GridContainer>
 							<GridItem xs={12} sm={4} lg={4}>
-								<GridContainer style={{padding: '13px 0px 0px 0px'}}>
+								<GridContainer style={{ padding: '13px 0px 0px 0px' }}>
 									<GridItem xs={12} sm={12} lg={12}>
 										<InputLabel
 											htmlFor="multiple-select"
 											className={classes.selectLabel}
-											style={{fontSize: '13px'}}
+											style={{ fontSize: '13px' }}
 										>
 											{labelList}
 										</InputLabel>
@@ -263,6 +264,7 @@ const FormDetails = ({
 								<CustomInput
 									labelText="Cantidad"
 									id="Cantidad"
+									enabled={enabled}
 									formControlProps={{
 										fullWidth: true
 									}}
@@ -278,16 +280,17 @@ const FormDetails = ({
 									<FormControl
 										fullWidth
 										className={classes.selectFormControl}
-										style={{paddingTop: '11px'}}
+										style={{ paddingTop: '11px' }}
 									>
 										<InputLabel
 											htmlFor="multiple-select"
 											className={classes.selectLabel}
-											style={{paddingTop: '18px'}}
+											style={{ paddingTop: '18px' }}
 										>
 											Sujeto a disponibilidad
                         </InputLabel>
 										<Select
+											enabled={enabled}
 											MenuProps={{
 												className: classes.selectLabel
 											}}
@@ -326,6 +329,7 @@ const FormDetails = ({
 							<GridItem xs={12} sm={2} lg={2}>
 								<Button
 									color="info"
+									enabled={enabled}
 									className={classes.actionButton}
 									onClick={handlres.add}
 								>
@@ -352,6 +356,7 @@ const FormDetails = ({
 										x.disponibilidad == 1 ? 'Si' : 'No',
 										<Button
 											color="danger"
+											enabled={enabled}
 											className={classes.actionButton}
 											onClick={() => { handlres.remove(x.id) }}
 										>
@@ -407,6 +412,8 @@ const Form = ({
 	history,
 	userId,
 	practiceID,
+	enabled,
+	datos
 }) => {
 	const [files, setFiles] = useState([]);
 	const [evaluationFile, setEvaluationFile] = useState(null);
@@ -416,7 +423,7 @@ const Form = ({
 	const [insumos, setInsumos] = useState([]);
 	const [objetivos, setObjetivos] = useState([]);
 	const [autors, setAutors] = useState([]);
-	const [errors, setErrors] = useState({});	
+	const [errors, setErrors] = useState({});
 	const [tiempoEstimadoState, setTiempoEstimadoState] = useState(null);
 
 	const refHeaderForm = useRef();
@@ -432,9 +439,11 @@ const Form = ({
 	}, []);
 
 	useEffect(() => {
-		if (practiceID > 0) {
+		if (datos != null) {
+			handlres.loadFields(datos);
+		} else if (practiceID > 0) {
 			CRUD.getById(practiceID, handlres.loadFields);
-		}else {
+		} else {
 			alerta.hide();
 		}
 	}, [autorsList]);
@@ -520,7 +529,7 @@ const Form = ({
 			setSimuladores(data.simuladores);
 			setInsumos(data.insumos);
 			setObjetivos(data.objetivos);
-			if (data.autores.length > 0) {				
+			if (data.autores.length > 0) {
 				setAutors(data.autores.map(e => e.id));
 			}
 			alerta.hide();
@@ -568,6 +577,7 @@ const Form = ({
 											id="nombrePractica"
 											name="nombrePractica"
 											error={errors.nombrePractica}
+											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
@@ -586,6 +596,7 @@ const Form = ({
 											id="descripcion"
 											name="descripcion"
 											error={errors.descripcion}
+											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
@@ -612,6 +623,7 @@ const Form = ({
 											<Select
 												multiple
 												error={errors.autors}
+												enabled={enabled}
 												value={autors}
 												onChange={handlres.changeAutors}
 												MenuProps={{ className: classes.selectMenu }}
@@ -645,6 +657,7 @@ const Form = ({
 											id="tiempoEstimado"
 											name="tiempoEstimado"
 											error={errors.tiempoEstimado}
+											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
@@ -668,6 +681,7 @@ const Form = ({
 											id="competencia"
 											name="competencia"
 											error={errors.competencia}
+											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
@@ -686,6 +700,7 @@ const Form = ({
 											id="criteriosCompetencia"
 											name="criteriosCompetencia"
 											error={errors.criteriosCompetencia}
+											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
@@ -706,6 +721,7 @@ const Form = ({
 											id="obejtivo"
 											name="obejtivo"
 											error={errors.obejtivo}
+											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
@@ -731,6 +747,7 @@ const Form = ({
 					labelList="Simulador"
 					data={simuladores}
 					list={simulatorsList}
+					enabled={enabled}
 					icon="airline_seat_flat_angled"
 				/>
 				<FormDetails
@@ -739,6 +756,7 @@ const Form = ({
 					setData={setEquipos}
 					data={equipos}
 					list={devicesList}
+					enabled={enabled}
 					icon="video_label"
 				/>
 				<FormDetails
@@ -747,6 +765,7 @@ const Form = ({
 					setData={setInsumos}
 					data={insumos}
 					list={suppliestList}
+					enabled={enabled}
 					icon="local_pharmacy"
 				/>
 				<GridItem xs={12} sm={12} md={12}>
@@ -806,6 +825,7 @@ const Form = ({
                   </InputLabel>
 										<FileUpload
 											defaultImage={null}
+											enabled={enabled}
 											id={'evaluacionFile'}
 											onChange={({ attachment = null }) => setEvaluationFile(attachment)}
 											multiple={false}
@@ -837,6 +857,7 @@ const Form = ({
                   </InputLabel>
 										<FileUpload
 											defaultImage={null}
+											enabled={enabled}
 											id={'recursosFile'}
 											onChange={filesHandlers.add}
 											multiple={false}
@@ -889,6 +910,7 @@ const Form = ({
 								onClick={() => history.goBack()}
 							>Cancelar</Button>
 							<Button
+								enabled={enabled}
 								color="danger"
 								onClick={handlres.save}
 							>Guardar</Button>
@@ -908,6 +930,8 @@ const mapState = state => ({
 	autorsList: state.masters.autors,
 	userId: state.auth.user.id,
 	practiceID: state.practices.data.id,
+	datos: state.practices.data,
+	enabled: state.practices.enabled,
 }),
 	mapDispatch = dispatch => ({});
 
