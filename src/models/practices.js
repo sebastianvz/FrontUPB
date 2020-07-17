@@ -1,7 +1,7 @@
 const practices = {
   state: {
     data: {},
-    enabled: false,
+    disabled: false,
   },
   reducers: {
     _setData: (state, payload) => ({
@@ -12,9 +12,10 @@ const practices = {
       ...state,
       data: payload
     }),
-    _setEnabled: (state, payload) => ({
+    _setDisabled: (state, payload) => ({
       ...state,
-      enabled: payload
+      disabled: payload.disabled,
+      data: payload.data
     }),
   },
   effects: dispatch => ({
@@ -22,9 +23,8 @@ const practices = {
       this._setID({ id });
       onSucced && onSucced();
     },
-    setData({ data, onSucced }) {
-      this._setData({ data });
-      this._setEnabled(true);
+    setData({ data, disabled, onSucced }) {
+      this._setDisabled({ data, disabled });      
       onSucced && onSucced();
     }
   }),

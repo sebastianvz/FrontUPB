@@ -10,6 +10,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from '@material-ui/core/TextField';
 import FormLabel from "@material-ui/core/FormLabel";
 import InputLabel from "@material-ui/core/InputLabel";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
@@ -17,6 +22,7 @@ import Create from "@material-ui/icons/Create";
 import Close from "@material-ui/icons/Close";
 import Add from "@material-ui/icons/Add";
 import Delete from "@material-ui/icons/Delete";
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 
 // core components
@@ -354,6 +360,9 @@ const AsociateToPractice = ({
 	const [reservationsList, setReservationsList] = useState();
 	const [showForm, setShowForm] = useState(false);
 	const [current, setCurrent] = useState();
+	const [practica, setPractica] = useState('');
+	const [open, setOpen] = useState(false);
+
 
 	const CRUD = useCRUD();
 	const { Alerta, alerta } = useAlerta();
@@ -367,6 +376,14 @@ const AsociateToPractice = ({
 		});
 	}, []);
 	useEffect(() => { setReservationsList(null) }, [program, semester]);
+	useEffect(() => {
+		if (practica != '') {
+			setOpen(true);
+			alerta.hide();
+		} else {
+			setOpen(false);
+		}
+	}, [practica])
 
 	const Actions = ({ item }) => {
 		switch (item.idEstado) {
@@ -530,11 +547,16 @@ const AsociateToPractice = ({
 			data && setReservationsList(data.map(e => ({
 				id: e.id,
 				nombreEstado: e.nombreEstado,
-				nombrePractica: (
-					<a onClick={() => handlers.showPractice(e)}>
+				nombrePractica: (<>
+					<span
+						style={{ cursor: 'pointer' }}
+						onClick={() => handlers.showPractice(e)}>
+						<VisibilityIcon />
+					</span>
+					<div style={{ float: 'right', width: '75%' }}>
 						{e.nombrePractica}
-					</a>
-				),
+					</div>
+				</>),
 				cantidadEstaciones: e.cantidadEstaciones,
 				cantidadEstudiantes: e.cantidadEstudiantes,
 				fechaInicio: moement(e.fechaInicio).format("DD-MM-YYYY HH:mm"),
@@ -566,10 +588,15 @@ const AsociateToPractice = ({
 			setShowForm(true);
 		},
 		showPractice(data) {
-			setPractice(data.practica, () => {
-				alerta.show(<Practica />, {});
+			setPractice(data.practica, true, () => {
+				setPractica(<Practica />);
 			});
 		},
+		closePractice() {
+			setPractice({}, false, () => {
+				setPractica('');
+			});
+		}
 	}
 
 	const classesAlerts = useStylesAlerts();
@@ -683,6 +710,22 @@ const AsociateToPractice = ({
 					</Card>
 				</GridItem>
 			</GridContainer>
+			<Dialog
+				fullWidth={true}
+				maxWidth={'xl'}
+				open={open}
+				onClose={handlers.closePractice}
+				aria-labelledby="max-width-dialog-title"
+			>
+				<DialogContent>
+					{practica}
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handlers.closePractice} color="primary">
+						Cerrar
+          			</Button>
+				</DialogActions>
+			</Dialog>
 		</div >
 	);
 }
@@ -696,7 +739,7 @@ const mapState = state => ({
 	practicesList: state.masters.practices,
 }), mapDispatch = dispatch => ({
 	getSemesters: programId => dispatch.masters.getSemestersByProgram({ programId }),
-	setPractice: (data, onSucced) => dispatch.practices.setData({ data, onSucced }),
+	setPractice: (data, disabled, onSucced) => dispatch.practices.setData({ data, disabled, onSucced }),
 });
 
 export default connect(mapState, mapDispatch)(AsociateToPractice);

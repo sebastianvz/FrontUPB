@@ -41,6 +41,7 @@ const useStyles = makeStyles(styles);
 const FormObjetives = ({
 	setData,
 	data,
+	disabledPractice,
 }) => {
 	const [objetivo, setObjetivo] = useState("");
 	const [disabledButton, setDisabledButton] = useState(false);
@@ -80,37 +81,40 @@ const FormObjetives = ({
 					<h4 className={classes.cardIconTitle}>Objetivos</h4>
 				</CardHeader>
 				<CardBody>
-					<form id='form-header'>
-						<GridContainer>
-							<GridItem xs={12} sm={10} lg={10}>
-								<GridContainer>
-									<CustomInput
-										labelText={"Objetivo"}
-										id={"Objetivo"}
-										formControlProps={{
-											fullWidth: true
-										}}
-										inputProps={{
-											onChange: handlres.changeObjetivo,
-											value: objetivo,
-											multiline: true,
-											rows: "3"
-										}}
-									/>
-								</GridContainer>
-							</GridItem>
-							<GridItem xs={12} sm={2} lg={2}>
-								<Button
-									color="info"
-									className={classes.actionButton}
-									disabled={disabledButton}
-									onClick={() => { setDisabledButton(true); handlres.add(); }}
-								>
-									<Plus className={classes.icon} />
-								</Button>
-							</GridItem>
-						</GridContainer>
-					</form>
+					{!disabledPractice &&
+						<form id='form-header'>
+							<GridContainer>
+								<GridItem xs={12} sm={10} lg={10}>
+									<GridContainer>
+										<CustomInput
+											labelText={"Objetivo"}
+											id={"Objetivo"}
+											formControlProps={{
+												fullWidth: true
+											}}
+											inputProps={{
+												onChange: handlres.changeObjetivo,
+												value: objetivo,
+												multiline: true,
+												disabled: disabledPractice,
+												rows: "3"
+											}}
+										/>
+									</GridContainer>
+								</GridItem>
+								<GridItem xs={12} sm={2} lg={2}>
+									{!disabledPractice && <Button
+										color="info"
+										className={classes.actionButton}
+										disabled={disabledButton}
+										onClick={() => { setDisabledButton(true); handlres.add(); }}
+									>
+										<Plus className={classes.icon} />
+									</Button>}
+								</GridItem>
+							</GridContainer>
+						</form>
+					}
 					<GridContainer>
 						{
 							data
@@ -123,6 +127,7 @@ const FormObjetives = ({
 										<Button
 											color="danger"
 											className={classes.actionButton}
+											disabled={disabledPractice}
 											onClick={() => { handlres.remove(x.id) }}
 										>
 											<Close className={classes.icon} />
@@ -149,6 +154,7 @@ const FormObjetives = ({
 FormObjetives.propTypes = {
 	setData: PropTypes.func,
 	data: PropTypes.array,
+	disabledPractice: PropTypes.bool,
 }
 
 const FormDetails = ({
@@ -158,7 +164,7 @@ const FormDetails = ({
 	setData,
 	data,
 	icon,
-	enabled
+	disabledPractice
 }) => {
 	const [listValue, setListValue] = useState("");
 	const [quantity, setQuantity] = useState(0);
@@ -207,29 +213,30 @@ const FormDetails = ({
 					<h4 className={classes.cardIconTitle}>{title}</h4>
 				</CardHeader>
 				<CardBody>
-					<form id='form-header'>
-						<GridContainer>
-							<GridItem xs={12} sm={4} lg={4}>
-								<GridContainer style={{ padding: '13px 0px 0px 0px' }}>
-									<GridItem xs={12} sm={12} lg={12}>
-										<InputLabel
-											htmlFor="multiple-select"
-											className={classes.selectLabel}
-											style={{ fontSize: '13px' }}
-										>
-											{labelList}
-										</InputLabel>
-									</GridItem>
-									<GridItem xs={12} sm={12} lg={12}>
-										{list && <Autocomplete
-											minFilter={3}
-											suggestions={list}
-											defaultValue={listValue}
-											onChange={handlres.changeListValue}
-										/>}
-									</GridItem>
-								</GridContainer>
-								{/* <Select
+					{!disabledPractice &&
+						<form id='form-header'>
+							<GridContainer>
+								<GridItem xs={12} sm={4} lg={4}>
+									<GridContainer style={{ padding: '13px 0px 0px 0px' }}>
+										<GridItem xs={12} sm={12} lg={12}>
+											<InputLabel
+												htmlFor="multiple-select"
+												className={classes.selectLabel}
+												style={{ fontSize: '13px' }}
+											>
+												{labelList}
+											</InputLabel>
+										</GridItem>
+										<GridItem xs={12} sm={12} lg={12}>
+											{list && <Autocomplete
+												minFilter={3}
+												suggestions={list}
+												defaultValue={listValue}
+												onChange={handlres.changeListValue}
+											/>}
+										</GridItem>
+									</GridContainer>
+									{/* <Select
 										MenuProps={{
 											className: classes.selectLabel
 										}}
@@ -259,85 +266,87 @@ const FormDetails = ({
 											</MenuItem>
 										))}
 									</Select> */}
-							</GridItem>
-							<GridItem xs={12} sm={3} lg={3}>
-								<CustomInput
-									labelText="Cantidad"
-									id="Cantidad"
-									enabled={enabled}
-									formControlProps={{
-										fullWidth: true
-									}}
-									inputProps={{
-										onChange: handlres.changeQuantity,
-										type: "number",
-										value: quantity,
-									}}
-								/>
-							</GridItem>
-							<GridItem xs={12} sm={3} lg={3}>
-								<GridContainer>
-									<FormControl
-										fullWidth
-										className={classes.selectFormControl}
-										style={{ paddingTop: '11px' }}
-									>
-										<InputLabel
-											htmlFor="multiple-select"
-											className={classes.selectLabel}
-											style={{ paddingTop: '18px' }}
+								</GridItem>
+								<GridItem xs={12} sm={3} lg={3}>
+									<CustomInput
+										labelText="Cantidad"
+										id="Cantidad"
+										disable={disabledPractice}
+										formControlProps={{
+											fullWidth: true
+										}}
+										inputProps={{
+											onChange: handlres.changeQuantity,
+											type: "number",
+											disabled: disabledPractice,
+											value: quantity,
+										}}
+									/>
+								</GridItem>
+								<GridItem xs={12} sm={3} lg={3}>
+									<GridContainer>
+										<FormControl
+											fullWidth
+											className={classes.selectFormControl}
+											style={{ paddingTop: '11px' }}
 										>
-											Sujeto a disponibilidad
+											<InputLabel
+												htmlFor="multiple-select"
+												className={classes.selectLabel}
+												style={{ paddingTop: '18px' }}
+											>
+												Sujeto a disponibilidad
                         </InputLabel>
-										<Select
-											enabled={enabled}
-											MenuProps={{
-												className: classes.selectLabel
-											}}
-											classes={{
-												select: classes.Select
-											}}
-											value={disponible}
-											onChange={handlres.changeDisponibilidad}
-											formControlProps={{
-												fullWidth: false
-											}}
-											inputProps={{
-												name: 'disponibilidad',
-												id: 'disponibilidad',
-											}}
-											style={{ 'maxWidth': '100%' }}
-										>
-											{[
-												{ id: 1, name: 'Si' },
-												{ id: 0, name: 'No' }
-											].map(x => (
-												<MenuItem
-													classes={{
-														root: classes.selectMenuItem,
-														selected: classes.selectMenuItemSelected
-													}}
-													value={x.id}
-												>
-													{x.name}
-												</MenuItem>
-											))}
-										</Select>
-									</FormControl>
-								</GridContainer>
-							</GridItem>
-							<GridItem xs={12} sm={2} lg={2}>
-								<Button
-									color="info"
-									enabled={enabled}
-									className={classes.actionButton}
-									onClick={handlres.add}
-								>
-									<Plus className={classes.icon} />
-								</Button>
-							</GridItem>
-						</GridContainer>
-					</form>
+											<Select
+												disabled={disabledPractice}
+												MenuProps={{
+													className: classes.selectLabel
+												}}
+												classes={{
+													select: classes.Select
+												}}
+												value={disponible}
+												onChange={handlres.changeDisponibilidad}
+												formControlProps={{
+													fullWidth: false
+												}}
+												inputProps={{
+													name: 'disponibilidad',
+													id: 'disponibilidad',
+												}}
+												style={{ 'maxWidth': '100%' }}
+											>
+												{[
+													{ id: 1, name: 'Si' },
+													{ id: 0, name: 'No' }
+												].map(x => (
+													<MenuItem
+														classes={{
+															root: classes.selectMenuItem,
+															selected: classes.selectMenuItemSelected
+														}}
+														value={x.id}
+													>
+														{x.name}
+													</MenuItem>
+												))}
+											</Select>
+										</FormControl>
+									</GridContainer>
+								</GridItem>
+								<GridItem xs={12} sm={2} lg={2}>
+									<Button
+										color="info"
+										disabled={disabledPractice}
+										className={classes.actionButton}
+										onClick={handlres.add}
+									>
+										<Plus className={classes.icon} />
+									</Button>
+								</GridItem>
+							</GridContainer>
+						</form>
+					}
 					<GridContainer>
 						{
 							data
@@ -356,7 +365,7 @@ const FormDetails = ({
 										x.disponibilidad == 1 ? 'Si' : 'No',
 										<Button
 											color="danger"
-											enabled={enabled}
+											disabled={disabledPractice}
 											className={classes.actionButton}
 											onClick={() => { handlres.remove(x.id) }}
 										>
@@ -388,7 +397,8 @@ FormDetails.propTypes = {
 	setData: PropTypes.func,
 	data: PropTypes.array,
 	hideAutocomplete: PropTypes.bool,
-	icon: PropTypes.string
+	icon: PropTypes.string,
+	disabledPractice: PropTypes.bool,
 }
 
 const REQUIRED_FIELDS = [
@@ -412,7 +422,7 @@ const Form = ({
 	history,
 	userId,
 	practiceID,
-	enabled,
+	disabledPractice,
 	datos
 }) => {
 	const [files, setFiles] = useState([]);
@@ -439,7 +449,7 @@ const Form = ({
 	}, []);
 
 	useEffect(() => {
-		if (datos != null) {
+		if (disabledPractice && typeof (datos) === 'object' && datos.hasOwnProperty('id')) {
 			handlres.loadFields(datos);
 		} else if (practiceID > 0) {
 			CRUD.getById(practiceID, handlres.loadFields);
@@ -577,12 +587,12 @@ const Form = ({
 											id="nombrePractica"
 											name="nombrePractica"
 											error={errors.nombrePractica}
-											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
 											inputProps={{
-												type: "text"
+												type: "text",
+												disabled: disabledPractice,
 											}}
 										/>
 									</GridItem>
@@ -596,13 +606,13 @@ const Form = ({
 											id="descripcion"
 											name="descripcion"
 											error={errors.descripcion}
-											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
 											inputProps={{
 												type: "text",
 												multiline: true,
+												disabled: disabledPractice,
 												rows: "3"
 											}}
 										/>
@@ -623,14 +633,14 @@ const Form = ({
 											<Select
 												multiple
 												error={errors.autors}
-												enabled={enabled}
 												value={autors}
 												onChange={handlres.changeAutors}
 												MenuProps={{ className: classes.selectMenu }}
 												classes={{ select: classes.select }}
 												inputProps={{
 													name: "autores",
-													id: "autores"
+													id: "autores",
+													disabled: disabledPractice,
 												}}
 											>
 												{autorsList && autorsList.map(x => (
@@ -657,7 +667,6 @@ const Form = ({
 											id="tiempoEstimado"
 											name="tiempoEstimado"
 											error={errors.tiempoEstimado}
-											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
@@ -666,6 +675,7 @@ const Form = ({
 												type: "number",
 												value: tiempoEstimadoState,
 												onChange: handlres.changeTiempoEstimado,
+												disabled: disabledPractice,
 											}}
 										/>
 									</GridItem>
@@ -681,12 +691,12 @@ const Form = ({
 											id="competencia"
 											name="competencia"
 											error={errors.competencia}
-											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
 											inputProps={{
-												type: "text"
+												type: "text",
+												disabled: disabledPractice,
 											}}
 										/>
 									</GridItem>
@@ -700,12 +710,12 @@ const Form = ({
 											id="criteriosCompetencia"
 											name="criteriosCompetencia"
 											error={errors.criteriosCompetencia}
-											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
 											inputProps={{
 												type: "text",
+												disabled: disabledPractice,
 											}}
 										/>
 									</GridItem>
@@ -721,13 +731,13 @@ const Form = ({
 											id="obejtivo"
 											name="obejtivo"
 											error={errors.obejtivo}
-											enabled={enabled}
 											formControlProps={{
 												fullWidth: true
 											}}
 											inputProps={{
 												type: "text",
 												multiline: true,
+												disabled: disabledPractice,
 												rows: "3"
 											}}
 										/>
@@ -740,6 +750,7 @@ const Form = ({
 				<FormObjetives
 					setData={setObjetivos}
 					data={objetivos}
+					disabledPractice={disabledPractice}
 				/>
 				<FormDetails
 					setData={setSimuladores}
@@ -747,7 +758,7 @@ const Form = ({
 					labelList="Simulador"
 					data={simuladores}
 					list={simulatorsList}
-					enabled={enabled}
+					disabledPractice={disabledPractice}
 					icon="airline_seat_flat_angled"
 				/>
 				<FormDetails
@@ -756,7 +767,7 @@ const Form = ({
 					setData={setEquipos}
 					data={equipos}
 					list={devicesList}
-					enabled={enabled}
+					disabledPractice={disabledPractice}
 					icon="video_label"
 				/>
 				<FormDetails
@@ -765,7 +776,7 @@ const Form = ({
 					setData={setInsumos}
 					data={insumos}
 					list={suppliestList}
-					enabled={enabled}
+					disabledPractice={disabledPractice}
 					icon="local_pharmacy"
 				/>
 				<GridItem xs={12} sm={12} md={12}>
@@ -795,6 +806,7 @@ const Form = ({
 											}}
 											inputProps={{
 												type: "text",
+												disabled: disabledPractice,
 												multiline: true,
 												rows: "3"
 											}}
@@ -823,13 +835,12 @@ const Form = ({
 										>
 											Evaluación
                   </InputLabel>
-										<FileUpload
+										{!disabledPractice && <FileUpload
 											defaultImage={null}
-											enabled={enabled}
 											id={'evaluacionFile'}
 											onChange={({ attachment = null }) => setEvaluationFile(attachment)}
 											multiple={false}
-										/>
+										/>}
 									</GridItem>
 									<GridItem xs={12} sm={6} lg={6}>
 										{evaluationFile
@@ -855,13 +866,13 @@ const Form = ({
 										>
 											Recursos
                   </InputLabel>
-										<FileUpload
+										{!disabledPractice && <FileUpload
 											defaultImage={null}
-											enabled={enabled}
+											disable={disabledPractice}
 											id={'recursosFile'}
 											onChange={filesHandlers.add}
 											multiple={false}
-										/>
+										/>}
 									</GridItem>
 								</GridContainer>
 							</form>
@@ -881,6 +892,7 @@ const Form = ({
 												x.extention,
 												<Button
 													color="danger"
+													disabled={disabledPractice}
 													className={classes.actionButton}
 													onClick={() => { filesHandlers.remove(x.uid) }}
 												>
@@ -904,17 +916,16 @@ const Form = ({
 				</GridItem>
 				<GridContainer>
 					<GridItem xs={12} sm={12} md={12}>
-						<div style={{ 'textAlign': 'right' }}>
+						{!disabledPractice && <div style={{ 'textAlign': 'right' }}>
 							<Button
 								color="primary"
 								onClick={() => history.goBack()}
 							>Cancelar</Button>
 							<Button
-								enabled={enabled}
 								color="danger"
 								onClick={handlres.save}
 							>Guardar</Button>
-						</div>
+						</div>}
 					</GridItem>
 				</GridContainer>
 			</GridContainer>
@@ -931,7 +942,7 @@ const mapState = state => ({
 	userId: state.auth.user.id,
 	practiceID: state.practices.data.id,
 	datos: state.practices.data,
-	enabled: state.practices.enabled,
+	disabledPractice: state.practices.disabled,
 }),
 	mapDispatch = dispatch => ({});
 
