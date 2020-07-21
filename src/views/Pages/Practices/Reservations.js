@@ -240,6 +240,9 @@ const Form = ({
 							style={{ margin: 8 }}
 							fullWidth
 							margin="normal"
+							inputProps={{
+								min: 0
+							}}
 							InputLabelProps={{
 								shrink: true,
 							}}
@@ -506,7 +509,10 @@ const AsociateToPractice = ({
 						idAprobador: _userId,
 					}, alerta.hide, IdSemester);
 				}}
-			/>)
+			/>, {
+				cancelBtnText: 'Cancelar',
+				cancel: alerta.hide
+			})
 		},
 		showChangerState(item, newEstado) {
 			alerta.show('Motivo por el cual se cierra ra reserva', {
@@ -525,20 +531,19 @@ const AsociateToPractice = ({
 			})
 		},
 		delete(item) {
-			const idSemester = semester;
 			alerta.show('¿Esta Seguro de que quiere eliminar el registro?', {
 				showCancel: true,
 				cancelBtnText: "No",
 				confirmBtnText: "Sí",
 				confirm: () => {
 					CRUD.remove(item.id, () => {
-						CRUD.list(semester, (x) => {
+						CRUD.list(IdSemester, (x) => {
 							handlers.fillData(x);
 							alerta.hide();
 						});
 					});
 				},
-				cancel: alert.hide
+				cancel: alerta.hide
 			})
 		},
 		edit(item) {
@@ -546,27 +551,31 @@ const AsociateToPractice = ({
 			handlers.showForm();
 		},
 		fillData: ({ data = [] }) =>
-			data && setReservationsList(data.map(e => ({
-				id: e.id,
-				nombreEstado: e.nombreEstado,
-				nombrePractica: (<>
-					<span
-						style={{ cursor: 'pointer' }}
-						onClick={() => handlers.showPractice(e)}>
-						<VisibilityIcon />
-					</span>
-					<div style={{ float: 'right', width: '75%' }}>
-						{e.nombrePractica}
-					</div>
-				</>),
-				cantidadEstaciones: e.cantidadEstaciones,
-				cantidadEstudiantes: e.cantidadEstudiantes,
-				fechaInicio: moement(e.fechaInicio).format("DD-MM-YYYY HH:mm"),
-				fechaFin: moement(e.fechaFin).format("DD-MM-YYYY HH:mm"),
-				observaciones: e.observaciones,
-				actions: <Actions item={e} />
-			}))),
+			data && setReservationsList(data
+				.filter(e => role === ROLES.admin ||
+					e.idUsuario === userId)
+				.map(e => ({
+					id: e.id,
+					nombreEstado: e.nombreEstado,
+					nombrePractica: (<>
+						<span
+							style={{ cursor: 'pointer' }}
+							onClick={() => handlers.showPractice(e)}>
+							<VisibilityIcon />
+						</span>
+						<div style={{ float: 'right', width: '75%' }}>
+							{e.nombrePractica}
+						</div>
+					</>),
+					cantidadEstaciones: e.cantidadEstaciones,
+					cantidadEstudiantes: e.cantidadEstudiantes,
+					fechaInicio: moement(e.fechaInicio).format("DD-MM-YYYY HH:mm"),
+					fechaFin: moement(e.fechaFin).format("DD-MM-YYYY HH:mm"),
+					observaciones: e.observaciones,
+					actions: <Actions item={e} />
+				}))),
 		hideForm() {
+			setCurrent(null);
 			setShowForm(false);
 		},
 		save(values) {

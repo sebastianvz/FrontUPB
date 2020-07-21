@@ -36,7 +36,7 @@ export default function useAlerta() {
 			}		
 			if(props.onConfirm == null) {
 				props.onConfirm = () => {};			
-			}			
+			}	
 			if(props.loading) {
 				props.type = 'custom';
 				props.customIcon = <CircularProgress />;
@@ -44,6 +44,9 @@ export default function useAlerta() {
 			setAlerta(
 				<SweetAlert
 					confirmBtnCssClass={
+						classesAlerts.button + " " + classesAlerts.default
+					}
+					cancelBtnCssClass={
 						classesAlerts.button + " " + classesAlerts.default
 					}
 					{...props}

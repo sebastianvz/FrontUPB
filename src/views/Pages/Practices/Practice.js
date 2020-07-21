@@ -124,14 +124,14 @@ const FormObjetives = ({
 									tableHead={["Objetivo", "acciones"]}
 									tableData={data.map(x => [
 										x.name,
-										<Button
+										disabledPractice ? <Button
 											color="danger"
 											className={classes.actionButton}
 											disabled={disabledPractice}
 											onClick={() => { handlres.remove(x.id) }}
 										>
 											<Close className={classes.icon} />
-										</Button>
+										</Button> : ''
 									])}
 									customCellClasses={[classes.center, classes.right]}
 									customClassesForCells={[0, 4, 5]}
@@ -363,14 +363,14 @@ const FormDetails = ({
 										x.name,
 										x.cantidad,
 										x.disponibilidad == 1 ? 'Si' : 'No',
-										<Button
+										disabledPractice ? <Button
 											color="danger"
 											disabled={disabledPractice}
 											className={classes.actionButton}
 											onClick={() => { handlres.remove(x.id) }}
 										>
 											<Close className={classes.icon} />
-										</Button>
+										</Button> : ''
 									])}
 									customCellClasses={[classes.center, classes.right, classes.right, classes.left]}
 									customClassesForCells={[0, 4, 5]}
@@ -502,7 +502,9 @@ const Form = ({
 
 			if (exit) {
 				setErrors(_errors);
-				alerta.show("¡Hay campos sin llenar!");
+				alerta.show("¡Hay campos sin llenar!", {
+					confirm: alerta.hide
+				});
 				return;
 			}
 
@@ -846,14 +848,14 @@ const Form = ({
 										{evaluationFile
 											&& <>
 												<a href={evaluationFile.url} download>{evaluationFile.name}</a>&nbsp;
-												<a
+												{disabledPractice ? <a
 													href="jabascript:void(0)"
 													style={{ color: 'red', textDecoration: 'none' }}
 													onClick={
 														() => CRUD.removeFile(evaluationFile.uid, 'Evaluacion', () => {
 															setEvaluationFile(null);
 														})
-													}>[Eliminar]</a>
+													}>[Eliminar]</a> : ''}
 											</>}
 									</GridItem>
 								</GridContainer>

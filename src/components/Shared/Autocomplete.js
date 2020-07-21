@@ -153,7 +153,7 @@ class Autocomplete extends Component {
                     onChange={onChange}
                     onKeyDown={onKeyDown}
                     name={this.props.name}
-                    value={userInput}
+                    value={userInput}                    
                     className={this.props.className}
                     style={{border: 'none', borderBottom: '1px solid #949494', width: '100%'}}
                 />
