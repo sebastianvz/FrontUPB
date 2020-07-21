@@ -82,6 +82,7 @@ const REQUIRED_FIELDS = [
 	'fechaInicio',
 	'fechaFin',
 ];
+let IdSemester = -1;
 
 const ChangerState = ({ onSaved }) => {
 	const { Alerta, alerta } = useAlerta();
@@ -89,7 +90,7 @@ const ChangerState = ({ onSaved }) => {
 		accept() {
 			onSaved({
 				idEstado: ESTADO_RESERVA.aprobada,
-				description: '',
+				descripcion: '',
 			});
 		},
 		refuse() {
@@ -101,7 +102,7 @@ const ChangerState = ({ onSaved }) => {
 				confirm: (e) => {
 					onSaved({
 						idEstado: ESTADO_RESERVA.rechazada,
-						description: e,
+						descripcion: e,
 					});
 				},
 				cancel: () => { }
@@ -468,6 +469,7 @@ const AsociateToPractice = ({
 		},
 		changeSemester: (e) => {
 			setSemester(e.target.value);
+			IdSemester = e.target.value;
 			if (INVALID_VALUES.indexOf(e.target.value) === -1) {
 				alerta.show('Cargando información...', {
 					loading: true,
@@ -480,7 +482,7 @@ const AsociateToPractice = ({
 			}
 		},
 		changeState: (item, onSucced, idSemester) => {
-			idSemester = idSemester || semester;
+			idSemester = idSemester || IdSemester;
 			onSucced && onSucced();
 
 			alerta.show('Cargando información...', {
@@ -502,7 +504,7 @@ const AsociateToPractice = ({
 						...current,
 						...item,
 						idAprobador: _userId,
-					}, alerta.hide);
+					}, alerta.hide, IdSemester);
 				}}
 			/>)
 		},

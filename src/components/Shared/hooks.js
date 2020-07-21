@@ -22,15 +22,15 @@ export default function useAlerta() {
 			}
 			if(props.confirm){
 				props.showConfirm = true;
-				props.onConfirm = () => {
-					props.confirm();
+				props.onConfirm = (e) => {
+					props.confirm(e);
 					alerta.hide()
 				}
 			}
 			if(props.cancel){
 				props.showCancel = true;
-				props.onCancel = () => {
-					props.cancel();
+				props.onCancel = (e) => {
+					props.cancel(e);
 					alerta.hide()
 				}
 			}		
