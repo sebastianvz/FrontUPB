@@ -33,8 +33,8 @@ import { useCRUD } from '../../../components/Practices';
 import styles from "../../../assets/jss/material-dashboard-pro-react/views/regularFormsStyle";
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
-import { Autocomplete } from '../../../components/Shared';
-import { useAlerta } from 'components/Shared';
+import { Autocomplete, useAlerta, Watchful } from 'components/Shared';
+import { PERMISSIONS } from 'config/constants';
 
 const useStyles = makeStyles(styles);
 
@@ -103,14 +103,18 @@ const FormObjetives = ({
 									</GridContainer>
 								</GridItem>
 								<GridItem xs={12} sm={2} lg={2}>
-									{!disabledPractice && <Button
-										color="info"
-										className={classes.actionButton}
-										disabled={disabledButton}
-										onClick={() => { setDisabledButton(true); handlres.add(); }}
-									>
-										<Plus className={classes.icon} />
-									</Button>}
+									<Watchful
+										action={[PERMISSIONS.edit, PERMISSIONS.add]}
+										menu="Practica">
+										{!disabledPractice && <Button
+											color="info"
+											className={classes.actionButton}
+											disabled={disabledButton}
+											onClick={() => { setDisabledButton(true); handlres.add(); }}
+										>
+											<Plus className={classes.icon} />
+										</Button>}
+									</Watchful>
 								</GridItem>
 							</GridContainer>
 						</form>
@@ -124,14 +128,18 @@ const FormObjetives = ({
 									tableHead={["Objetivo", "acciones"]}
 									tableData={data.map(x => [
 										x.name,
-										disabledPractice ? <Button
-											color="danger"
-											className={classes.actionButton}
-											disabled={disabledPractice}
-											onClick={() => { handlres.remove(x.id) }}
-										>
-											<Close className={classes.icon} />
-										</Button> : ''
+										<Watchful
+											action={PERMISSIONS.delete}
+											menu="Practica">
+											{disabledPractice ? <Button
+												color="danger"
+												className={classes.actionButton}
+												disabled={disabledPractice}
+												onClick={() => { handlres.remove(x.id) }}
+											>
+												<Close className={classes.icon} />
+											</Button> : ''}
+										</Watchful>
 									])}
 									customCellClasses={[classes.center, classes.right]}
 									customClassesForCells={[0, 4, 5]}
@@ -335,14 +343,18 @@ const FormDetails = ({
 									</GridContainer>
 								</GridItem>
 								<GridItem xs={12} sm={2} lg={2}>
-									<Button
-										color="info"
-										disabled={disabledPractice}
-										className={classes.actionButton}
-										onClick={handlres.add}
-									>
-										<Plus className={classes.icon} />
-									</Button>
+									<Watchful
+										action={[PERMISSIONS.edit, PERMISSIONS.add]}
+										menu="Practica">
+										<Button
+											color="info"
+											disabled={disabledPractice}
+											className={classes.actionButton}
+											onClick={handlres.add}
+										>
+											<Plus className={classes.icon} />
+										</Button>
+									</Watchful>
 								</GridItem>
 							</GridContainer>
 						</form>
@@ -363,14 +375,18 @@ const FormDetails = ({
 										x.name,
 										x.cantidad,
 										x.disponibilidad == 1 ? 'Si' : 'No',
-										disabledPractice ? <Button
-											color="danger"
-											disabled={disabledPractice}
-											className={classes.actionButton}
-											onClick={() => { handlres.remove(x.id) }}
-										>
-											<Close className={classes.icon} />
-										</Button> : ''
+										<Watchful
+											action={PERMISSIONS.delete}
+											menu="Practica">
+											{disabledPractice ? <Button
+												color="danger"
+												disabled={disabledPractice}
+												className={classes.actionButton}
+												onClick={() => { handlres.remove(x.id) }}
+											>
+												<Close className={classes.icon} />
+											</Button> : ''}
+										</Watchful>
 									])}
 									customCellClasses={[classes.center, classes.right, classes.right, classes.left]}
 									customClassesForCells={[0, 4, 5]}
@@ -918,16 +934,20 @@ const Form = ({
 				</GridItem>
 				<GridContainer>
 					<GridItem xs={12} sm={12} md={12}>
-						{!disabledPractice && <div style={{ 'textAlign': 'right' }}>
-							<Button
-								color="primary"
-								onClick={() => history.goBack()}
-							>Cancelar</Button>
-							<Button
-								color="danger"
-								onClick={handlres.save}
-							>Guardar</Button>
-						</div>}
+						<Watchful
+							action={[PERMISSIONS.add, PERMISSIONS.edit]}
+							menu="Practica">
+							{!disabledPractice && <div style={{ 'textAlign': 'right' }}>
+								<Button
+									color="primary"
+									onClick={() => history.goBack()}
+								>Cancelar</Button>
+								<Button
+									color="danger"
+									onClick={handlres.save}
+								>Guardar</Button>
+							</div>}
+						</Watchful>
 					</GridItem>
 				</GridContainer>
 			</GridContainer>

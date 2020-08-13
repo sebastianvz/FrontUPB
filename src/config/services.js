@@ -39,3 +39,9 @@ export const semester = {
     save: 'Semester',
     delete: 'Semester',
 };
+
+export const role = {
+    save: 'Role',
+    delete: 'Role',
+    list: 'Role',
+};

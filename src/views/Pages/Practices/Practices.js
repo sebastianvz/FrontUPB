@@ -31,7 +31,8 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
 
-import { useAlerta } from 'components/Shared';
+import { useAlerta, Watchful } from 'components/Shared';
+import { PERMISSIONS } from 'config/constants';
 
 const variables = new GlobalVariables();
 const baseUrl = variables.Url;
@@ -130,60 +131,70 @@ const Practices = ({
 								// we've added some custom button actions
 								<div className="actions-right">
 									{/* use this button to add a edit kind of action */}
-									<Button
-										justIcon
-										round
-										simple
-										onClick={() =>
-											setID(prop.id, () =>
-												history.push(`/practica`)
-											)
-										}
-										color="warning"
-										className="edit"
+									<Watchful
+										action={PERMISSIONS.edit}
+										menu="Practicas"
 									>
-										<Create />
-									</Button>{" "}
+										<Button
+											justIcon
+											round
+											simple
+											onClick={() =>
+												setID(prop.id, () =>
+													history.push(`/practica`)
+												)
+											}
+											color="warning"
+											className="edit"
+										>
+											<Create />
+										</Button>
+									</Watchful>{" "}
 									{/* use this button to remove the data row */}
-									<Button
-										justIcon
-										round
-										simple
-										onClick={() => {
-											const URL_DeleteUser = baseUrl + "Practics";
-											const obj = {
-												id: prop.id,
-												idUserSender: liableID
-											};
-											axios
-												.delete(URL_DeleteUser, {
-													headers: {
-														"Content-Type": "application/json",
-														Authorization: "Bearer " + auth
-													},
-													data: obj
-												})
-												.then(response => {
-													loadGrid();
-													responseConfirmAlertNext(
-														response.data.data.error.message
-													);
-													hideAlert();
-												})
-												.catch(function (error) {
-													console.log(error);
-													responseConfirmAlertNext(
-														error.data.data.error.message
-													);
-													hideAlert();
-													return;
-												});
-										}}
-										color="danger"
-										className="remove"
+									<Watchful
+										action={PERMISSIONS.delete}
+										menu="Practicas"
 									>
-										<Close />
-									</Button>{" "}
+										<Button
+											justIcon
+											round
+											simple
+											onClick={() => {
+												const URL_DeleteUser = baseUrl + "Practics";
+												const obj = {
+													id: prop.id,
+													idUserSender: liableID
+												};
+												axios
+													.delete(URL_DeleteUser, {
+														headers: {
+															"Content-Type": "application/json",
+															Authorization: "Bearer " + auth
+														},
+														data: obj
+													})
+													.then(response => {
+														loadGrid();
+														responseConfirmAlertNext(
+															response.data.data.error.message
+														);
+														hideAlert();
+													})
+													.catch(function (error) {
+														console.log(error);
+														responseConfirmAlertNext(
+															error.data.data.error.message
+														);
+														hideAlert();
+														return;
+													});
+											}}
+											color="danger"
+											className="remove"
+										>
+											<Close />
+										</Button>{" "}
+									</Watchful>
 								</div>
 							)
 						};
@@ -218,17 +229,21 @@ const Practices = ({
 							</CardIcon>
 							<h4 className={classes.cardIconTitle}>Prácticas</h4>
 							<br />
-							<Button onClick={inputAlert}>
-								<Add
-									style={{
-										marginTop: 0 + "px",
-										marginLeft: 0 + "px",
-										marginRight: 7 + "px",
-										marginBottom: 2 + "px"
-									}}
-								/>
+							<Watchful
+								action={PERMISSIONS.add}
+								menu="Practicas">
+								<Button onClick={inputAlert}>
+									<Add
+										style={{
+											marginTop: 0 + "px",
+											marginLeft: 0 + "px",
+											marginRight: 7 + "px",
+											marginBottom: 2 + "px"
+										}}
+									/>
 								Agregar Práctica
 							</Button>
+							</Watchful>
 						</CardHeader>
 						<CardBody>
 							<ReactTable

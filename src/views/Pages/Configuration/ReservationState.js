@@ -27,6 +27,9 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import { useProgram } from 'components/Masters';
 
+import { Watchful } from 'components/Shared';
+import { PERMISSIONS } from 'config/constants';
+
 const styles = {
   cardIconTitle: {
     ...cardTitle,
@@ -55,22 +58,26 @@ const Programs = ({ programList, programsCount }) => {
       });
     },
     loadList() {
-      console.log('DATA', programList);
       setData(programList.map((e, key) => ({
         key: key,
         name: e.nombrePrograma,
         actions:
           <div className="actions-right">
-            <Button
-              justIcon
-              round
-              simple
-              onClick={() => handlers.showModal(e)}
-              color="warning"
-              className="edit"
+            <Watchful
+              action={PERMISSIONS.edit}
+              menu="Programas"
             >
-              <Create />
-            </Button>
+              <Button
+                justIcon
+                round
+                simple
+                onClick={() => handlers.showModal(e)}
+                color="warning"
+                className="edit"
+              >
+                <Create />
+              </Button>
+            </Watchful>
             &nbsp;
             <Button
               justIcon

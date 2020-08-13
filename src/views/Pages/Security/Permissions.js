@@ -22,6 +22,8 @@ import {dataTable} from "variables/general.js";
 import {cardTitle} from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
+import { Watchful } from 'components/Shared';
+import { PERMISSIONS } from 'config/constants';
 
 const variables = new GlobalVariables();
 const baseUrl = variables.Url;

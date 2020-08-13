@@ -11,6 +11,8 @@ const masters = {
 		autors: null,
 		objetives: null,
 		semesters: null,
+		menues: null,
+		permissions: null,
 	},
 	reducers: {
 		setPrograms: (state, payload) => ({
@@ -46,8 +48,32 @@ const masters = {
 			...state,
 			practices: payload.data,
 		}),
+		setMenues: (state, payload) => ({
+			...state,
+			menues: payload.data,
+		}),
+		setPermissions: (state, payload) => ({
+			...state,
+			permissions: payload.data,
+		}),
 	},
 	effects: dispatch => ({
+		getMenues(onSucced) {
+			instance.get('Master/GetMenues').then(e => {
+				if(e.data) {
+					this.setMenues(e.data);
+					onSucced && onSucced();
+				}
+			});
+		},
+		getPermissions(onSucced) {
+			instance.get('Master/GetPermissions').then(e => {
+				if(e.data) {
+					this.setPermissions(e.data);
+					onSucced && onSucced();
+				}
+			});
+		},
 		getPrograms(onSucced) {
 			instance.get('Master/GetPrograms').then(e => {
 				if(e.data) {

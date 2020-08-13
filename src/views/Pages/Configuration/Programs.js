@@ -26,6 +26,8 @@ import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweet
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import { useProgram } from 'components/Masters';
+import { Watchful } from 'components/Shared';
+import { PERMISSIONS } from 'config/constants';
 
 const styles = {
   cardIconTitle: {
@@ -61,18 +63,26 @@ const Programs = ({ programList, programsCount }) => {
         name: e.nombrePrograma,
         actions:
           <div className="actions-right">
-            <Button
-              justIcon
-              round
-              simple
-              onClick={() => handlers.showModal(e)}
-              color="warning"
-              className="edit"
+            <Watchful
+              action={PERMISSIONS.edit}
+              menu="Programas"
             >
-              <Create />
-            </Button>
+              <Button
+                justIcon
+                round
+                simple
+                onClick={() => handlers.showModal(e)}
+                color="warning"
+                className="edit"
+              >
+                <Create />
+              </Button>
+            </Watchful>
             &nbsp;
-            <Button
+            <Watchful
+              action={PERMISSIONS.delete}
+              menu="Programas"
+            > <Button
               justIcon
               round
               simple
@@ -80,8 +90,9 @@ const Programs = ({ programList, programsCount }) => {
               color="danger"
               className="remove"
             >
-              <Close />
-            </Button>
+                <Close />
+              </Button>
+            </Watchful>
           </div>
       })));
     },
@@ -141,17 +152,22 @@ const Programs = ({ programList, programsCount }) => {
               </CardIcon>
               <h4 className={classes.cardIconTitle}>Programas</h4>
               <br />
-              <Button onClick={handlers.showModal}>
-                <Add
-                  style={{
-                    marginTop: 0 + "px",
-                    marginLeft: 0 + "px",
-                    marginRight: 7 + "px",
-                    marginBottom: 2 + "px"
-                  }}
-                />
+              <Watchful
+                action={PERMISSIONS.add}
+                menu="Programas"
+              >
+                <Button onClick={handlers.showModal}>
+                  <Add
+                    style={{
+                      marginTop: 0 + "px",
+                      marginLeft: 0 + "px",
+                      marginRight: 7 + "px",
+                      marginBottom: 2 + "px"
+                    }}
+                  />
 								Agregar Programa
 							</Button>
+              </Watchful>
             </CardHeader>
             <CardBody>
               <ReactTable

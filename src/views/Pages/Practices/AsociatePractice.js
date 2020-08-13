@@ -31,7 +31,8 @@ import CardIcon from "components/core/Card/CardIcon.js";
 import CardHeader from "components/core/Card/CardHeader.js";
 
 //shared Components
-import { ComboBox } from "components/Shared";
+import { ComboBox, Watchful } from "components/Shared";
+import { PERMISSIONS } from 'config/constants';
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 
@@ -110,13 +111,18 @@ const AsociateToPractice = ({
 				descripcion: e.descripcion,
 				asociated: e.asociated,
 				actions: (
-					<div style={{ textAlign: 'right' }}>
-						<Checkbox
-							onChange={handlers.changeAsociated}
-							value={e.id}
-							defaultChecked={e.asociated}
-						/>
-					</div>
+					<Watchful
+						action={PERMISSIONS.associate}
+						menu="Asociar Practicas"
+					>
+						<div style={{ textAlign: 'right' }}>
+							<Checkbox
+								onChange={handlers.changeAsociated}
+								value={e.id}
+								defaultChecked={e.asociated}
+							/>
+						</div>
+					</Watchful>
 				)
 			}))),
 		save() {
@@ -225,12 +231,17 @@ const AsociateToPractice = ({
 										className="-striped -highlight"
 									/>
 									<GridItem xs={12} sm={12} md={12}>
-										<div style={{ 'textAlign': 'right' }}>
-											<Button
-												color="danger"
-												onClick={handlers.save}
-											>Guardar</Button>
-										</div>
+										<Watchful
+											action={PERMISSIONS.edit}
+											menu="Asociar Practicas"
+										>
+											<div style={{ 'textAlign': 'right' }}>
+												<Button
+													color="danger"
+													onClick={handlers.save}
+												>Guardar</Button>
+											</div>
+										</Watchful>
 									</GridItem>
 								</>
 							}

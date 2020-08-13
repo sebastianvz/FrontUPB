@@ -39,6 +39,14 @@ export default function useMatersList() {
     });
   };
 
+  const loadRoleList = (callback) => {
+    store.dispatch.masters.getPermissions(() => {
+      store.dispatch.masters.getMenues(() => {
+        callback && callback();
+      });
+    });
+  };
+
   return {
     loadPracticesList,
     loadProgramList,
@@ -46,6 +54,7 @@ export default function useMatersList() {
     loadSemestersList,
     loadSemesterList,
     loadPractices,
+    loadRoleList,
   };
 };
 

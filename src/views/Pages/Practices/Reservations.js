@@ -45,8 +45,8 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
 import { useCRUD } from '../../../components/Reservations';
-import { useAlerta } from 'components/Shared';
-import { Autocomplete } from '../../../components/Shared';
+import { useAlerta, Autocomplete, Watchful } from 'components/Shared';
+import { PERMISSIONS } from 'config/constants';
 
 import Practica from './Practice';
 
@@ -114,14 +114,22 @@ const ChangerState = ({ onSaved }) => {
 			{Alerta}
 			<GridItem xs={12} sm={12} lg={12}>
 				<div style={{ 'textAlign': 'center' }}>
-					<Button
-						color="primary"
-						onClick={handlers.refuse}
-					>Rechazar</Button>
-					<Button
-						color="danger"
-						onClick={handlers.accept}
-					>Aprobar</Button>
+					<Watchful
+						action={PERMISSIONS.toRefuse}
+						menu="Reservas">
+						<Button
+							color="primary"
+							onClick={handlers.refuse}
+						>Rechazar</Button>
+					</Watchful>
+					<Watchful
+						action={PERMISSIONS.approve}
+						menu="Reservas">
+						<Button
+							color="danger"
+							onClick={handlers.accept}
+						>Aprobar</Button>
+					</Watchful>
 				</div>
 			</GridItem>
 		</GridContainer>
@@ -329,10 +337,14 @@ const Form = ({
 								color="primary"
 								onClick={onCancel}
 							>Cancelar</Button>
-							<Button
-								color="danger"
-								onClick={handlers.save}
-							>Guardar</Button>
+							<Watchful
+								action={PERMISSIONS.add}
+								menu="Reservas">
+								<Button
+									color="danger"
+									onClick={handlers.save}
+								>Guardar</Button>
+							</Watchful>
 						</div>
 					</GridItem>
 				</GridContainer>
@@ -392,9 +404,77 @@ const AsociateToPractice = ({
 	const Actions = ({ item }) => {
 		switch (item.idEstado) {
 			case ESTADO_RESERVA.abierta:
-				return role === ROLES.laboratorio
-					&& item.idUsuario === userId
+				return item.idUsuario === userId
 					? <>
+						<Watchful
+							action={PermissionStatus.edit}
+							menu="Reservas">
+							<Button
+								justIcon
+								round
+								simple
+								onClick={() => handlers.edit({
+									...item,
+									idEstado: ESTADO_RESERVA.abierta
+								})}
+								color="warning"
+								className="edit"
+							>
+								<Create />
+							</Button>
+						</Watchful>
+						&nbsp;
+						<Watchful
+							action={PermissionStatus.delete}
+							menu="Reservas">
+							<Button
+								justIcon
+								round
+								simple
+								onClick={() => handlers.delete(item)}
+								color="danger"
+								className="remove"
+							>
+								<Delete />
+							</Button>
+						</Watchful>
+					</>
+					: (item.idAprobador == null || item.idAprobador === userId)
+					&& <Watchful
+						action={[PERMISSIONS.toApply, PERMISSIONS.toRefuse]}
+						menu="Reservas">
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => handlers.showAcceprOrRefuse(item)}
+							color="warning"
+							className="edit"
+						>
+							<SettingsApplications />
+						</Button>
+					</Watchful>
+			case ESTADO_RESERVA.aprobada:
+				return item.idUsuario === userId
+					&& <Watchful
+						action={PERMISSIONS.toCloce}
+						menu="Reservas">
+						<Button
+							justIcon
+							round
+							simple
+							onClick={() => handlers.showChangerState(item, ESTADO_RESERVA.cerrada)}
+							color="danger"
+							className="remove"
+						>
+							<Close />
+						</Button>
+					</Watchful>
+			case ESTADO_RESERVA.rechazada:
+				return item.idUsuario === userId
+					&& <Watchful
+						action={PERMISSIONS.toApply}
+						menu="Reservas">
 						<Button
 							justIcon
 							round
@@ -407,57 +487,8 @@ const AsociateToPractice = ({
 							className="edit"
 						>
 							<Create />
-						</Button>&nbsp;
-						<Button
-							justIcon
-							round
-							simple
-							onClick={() => handlers.delete(item)}
-							color="danger"
-							className="remove"
-						>
-							<Delete />
 						</Button>
-					</>
-					: role === ROLES.admin
-					&& (item.idAprobador == null || item.idAprobador === userId)
-					&& <Button
-						justIcon
-						round
-						simple
-						onClick={() => handlers.showAcceprOrRefuse(item)}
-						color="warning"
-						className="edit"
-					>
-						<SettingsApplications />
-					</Button>
-			case ESTADO_RESERVA.aprobada:
-				return item.idUsuario === userId
-					&& <Button
-						justIcon
-						round
-						simple
-						onClick={() => handlers.showChangerState(item, ESTADO_RESERVA.cerrada)}
-						color="danger"
-						className="remove"
-					>
-						<Close />
-					</Button>
-			case ESTADO_RESERVA.rechazada:
-				return item.idUsuario === userId
-					&& <Button
-						justIcon
-						round
-						simple
-						onClick={() => handlers.edit({
-							...item,
-							idEstado: ESTADO_RESERVA.abierta
-						})}
-						color="warning"
-						className="edit"
-					>
-						<Create />
-					</Button>
+					</Watchful>
 			default:
 				return '';
 		};
@@ -527,7 +558,8 @@ const AsociateToPractice = ({
 						idEstado: newEstado,
 						description: e,
 					});
-				}
+				},
+				cancel: alerta.hide
 			})
 		},
 		delete(item) {
@@ -657,10 +689,14 @@ const AsociateToPractice = ({
 								&& <>
 									<GridItem xs={12} sm={12} md={12}>
 										<div style={{ 'textAlign': 'right' }}>
-											<Button
-												color="danger"
-												onClick={handlers.showForm}
-											>Crear Reserva</Button>
+											<Watchful
+												action={PERMISSIONS.add}
+												menu="Reservas">
+												<Button
+													color="danger"
+													onClick={handlers.showForm}
+												>Crear Reserva</Button>
+											</Watchful>
 										</div>
 									</GridItem>
 									<hr />

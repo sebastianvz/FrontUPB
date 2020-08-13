@@ -29,7 +29,8 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import { useSemester } from 'components/Masters';
 
-import { useAlerta } from 'components/Shared';
+import { useAlerta, Watchful } from 'components/Shared';
+import { PERMISSIONS } from 'config/constants';
 
 const styles = {
   cardIconTitle: {
@@ -70,34 +71,44 @@ const Semester = ({ list, programList }) => {
         programs: e.programs && e.programs.map(x => x.nombrePrograma).join(', '),
         actions:
           <div className="actions-right">
-            <Button
-              justIcon
-              round
-              simple
-              onClick={() => handlers.showModal(e)}
-              color="warning"
-              className="edit"
+            <Watchful
+              action={PERMISSIONS.edit}
+              menu="Semestres"
             >
-              <Create />
-            </Button>
+              <Button
+                justIcon
+                round
+                simple
+                onClick={() => handlers.showModal(e)}
+                color="warning"
+                className="edit"
+              >
+                <Create />
+              </Button>
+            </Watchful>
             &nbsp;
-            <Button
-              justIcon
-              round
-              simple
-              onClick={() => handlers.delete(e)}
-              color="danger"
-              className="remove"
+            <Watchful
+              action={PERMISSIONS.delete}
+              menu="Semestres"
             >
-              <Close />
-            </Button>
+              <Button
+                justIcon
+                round
+                simple
+                onClick={() => handlers.delete(e)}
+                color="danger"
+                className="remove"
+              >
+                <Close />
+              </Button>
+            </Watchful>
           </div>
       })));
       alerta.hide();
     },
     save(item) {
       if (selectedPrograms.length === 0) {
-        alerta.show('Selecione al menos un dato');        
+        alerta.show('Selecione al menos un dato');
         return;
       }
       CRUD.save({
@@ -106,7 +117,7 @@ const Semester = ({ list, programList }) => {
       }, (e) => {
         CRUD.loadList();
         handlers.cancel();
-        alerta.show('Información almacenada correctamente');        
+        alerta.show('Información almacenada correctamente');
       });
     },
     showModal: (item) => {
@@ -180,17 +191,22 @@ const Semester = ({ list, programList }) => {
               </CardIcon>
               <h4 className={classes.cardIconTitle}>Semestre/Curso</h4>
               <br />
-              <Button onClick={handlers.showModal}>
-                <Add
-                  style={{
-                    marginTop: 0 + "px",
-                    marginLeft: 0 + "px",
-                    marginRight: 7 + "px",
-                    marginBottom: 2 + "px"
-                  }}
-                />
+              <Watchful
+                action={PERMISSIONS.add}
+                menu="Semestres"
+              >
+                <Button onClick={handlers.showModal}>
+                  <Add
+                    style={{
+                      marginTop: 0 + "px",
+                      marginLeft: 0 + "px",
+                      marginRight: 7 + "px",
+                      marginBottom: 2 + "px"
+                    }}
+                  />
 								Agregar Semestre/Curso
 							</Button>
+              </Watchful>
             </CardHeader>
             <CardBody>
               <ReactTable
