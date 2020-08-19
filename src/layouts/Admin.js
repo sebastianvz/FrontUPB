@@ -33,7 +33,7 @@ const getComponent = (x) => {
   return (routes.find(e => e.path === x.path) || { component: '' }).component;
 };
 
-
+GlobalVariables.FillVaribles();
 const variables = new GlobalVariables();
 
 const useStyles = makeStyles(styles);
