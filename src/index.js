@@ -34,5 +34,5 @@ const AppSuspense = () => (
   </Suspense>
 );
 
- 
+ReactDOM.render(<AppSuspense />, document.getElementById('root'));
 registerServiceWorker.register();
