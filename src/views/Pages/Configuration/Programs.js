@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from 'react-redux';
 // react component for creating dynamic tables
-import ReactTable from "react-table";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
@@ -26,7 +25,7 @@ import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweet
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import { useProgram } from 'components/Masters';
-import { Watchful } from 'components/Shared';
+import { Watchful, Table } from 'components/Shared';
 import { PERMISSIONS } from 'config/constants';
 
 const styles = {
@@ -57,7 +56,6 @@ const Programs = ({ programList, programsCount }) => {
       });
     },
     loadList() {
-      console.log('DATA', programList);
       setData(programList.map((e, key) => ({
         key: key,
         name: e.nombrePrograma,
@@ -170,9 +168,9 @@ const Programs = ({ programList, programsCount }) => {
               </Watchful>
             </CardHeader>
             <CardBody>
-              <ReactTable
+              <Table
                 data={data}
-                filterable
+                loadTable={CRUD.loadList}
                 columns={[
                   {
                     Header: "Nombre",
@@ -185,17 +183,6 @@ const Programs = ({ programList, programsCount }) => {
                     filterable: false
                   }
                 ]}
-                defaultPageSize={10}
-                showPaginationTop
-                previousText="Anterior"
-                nextText="Siguiente"
-                loadingText="Cargando..."
-                noDataText="No se encontraron filas"
-                pageText="Página"
-                ofText="de"
-                rowsText="filas"
-                showPaginationBottom={false}
-                className="-striped -highlight"
               />
             </CardBody>
           </Card>

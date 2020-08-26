@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { connect } from 'react-redux';
 import axios from "axios";
 // react component for creating dynamic tables
-import ReactTable from "react-table";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 
@@ -31,7 +30,7 @@ import CardIcon from "components/core/Card/CardIcon.js";
 import CardHeader from "components/core/Card/CardHeader.js";
 
 //shared Components
-import { ComboBox, Watchful } from "components/Shared";
+import { ComboBox, Watchful, Table } from "components/Shared";
 import { PERMISSIONS } from 'config/constants';
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
@@ -99,9 +98,7 @@ const AsociateToPractice = ({
 		changeSemester: (e) => {
 			setSemester(e.target.value);
 			if (INVALID_VALUES.indexOf(e.target.value) === -1) {
-				CRUD.list(e.target.value, (x) => {
-					handlers.fillData(x);
-				});
+				handlers.loadTable(e.target.value);
 			}
 		},
 		fillData: ({ data = [] }) =>
@@ -125,6 +122,11 @@ const AsociateToPractice = ({
 					</Watchful>
 				)
 			}))),
+		loadTable(semesterId){
+			CRUD.list(semester || semesterId, (x) => {
+				handlers.fillData(x);
+			});
+		},
 		save() {
 			if (selectedPractices.length === 0) {
 				alert.show('Selecione al menos un dato');
@@ -199,9 +201,9 @@ const AsociateToPractice = ({
 							<hr />
 							{practicesList
 								&& <>
-									<ReactTable
+									<Table
 										data={practicesList}
-										filterable
+										loadTable={handlers.loadTable}
 										columns={[
 											{
 												Header: "Nombre",
@@ -218,17 +220,6 @@ const AsociateToPractice = ({
 												filterable: false
 											}
 										]}
-										defaultPageSize={10}
-										showPaginationTop
-										previousText="Anterior"
-										nextText="Siguiente"
-										loadingText="Cargando..."
-										noDataText="No se encontraron filas"
-										pageText="Página"
-										ofText="de"
-										rowsText="filas"
-										showPaginationBottom={false}
-										className="-striped -highlight"
 									/>
 									<GridItem xs={12} sm={12} md={12}>
 										<Watchful

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { connect } from 'react-redux';
 import axios from "axios";
 // react component for creating dynamic tables
-import ReactTable from "react-table";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 // @material-ui/core components
@@ -37,7 +36,7 @@ import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweet
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
-import { Watchful } from 'components/Shared';
+import { Watchful, Table } from 'components/Shared';
 import { PERMISSIONS } from 'config/constants';
 
 const variables = new GlobalVariables();
@@ -540,7 +539,7 @@ const Users = ({ token, userId }) => {
               <h4 className={classes.cardIconTitle}>Usuarios</h4>
               <br />
               <Watchful
-                action={PERMISSIONS.aad}
+                action={PERMISSIONS.add}
                 menu="Usuarios">
                 <Button onClick={handleOpen}>
                   <Add
@@ -1294,9 +1293,9 @@ const Users = ({ token, userId }) => {
               </Modal>
             </CardHeader>
             <CardBody>
-              <ReactTable
+              <Table
                 data={data}
-                filterable
+                loadTable={loadData}
                 columns={[
                   {
                     Header: "Nombre completo",
@@ -1317,17 +1316,6 @@ const Users = ({ token, userId }) => {
                     filterable: false
                   }
                 ]}
-                defaultPageSize={10}
-                showPaginationTop
-                previousText="Anterior"
-                nextText="Siguiente"
-                loadingText="Cargando..."
-                noDataText="No se encontraron filas"
-                pageText="Página"
-                ofText="de"
-                rowsText="filas"
-                showPaginationBottom={false}
-                className="-striped -highlight"
               />
             </CardBody>
           </Card>

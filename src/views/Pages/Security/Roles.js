@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moement from 'moment';
 // react component for creating dynamic tables
-import ReactTable from "react-table";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -48,7 +47,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import { useCRUD } from '../../../components/Role';
 //shared Components
-import { useAlerta, Autocomplete, Watchful, ComboBox } from 'components/Shared';
+import { useAlerta, Autocomplete, Watchful, ComboBox, Table as ReactTable } from 'components/Shared';
 import { PERMISSIONS } from 'config/constants';
 
 const styles = {
@@ -319,15 +318,7 @@ const Roles = ({
 	const { Alerta, alerta } = useAlerta();
 
 	useEffect(() => {
-		alerta.show('Cargando información...', {
-			loading: true,
-		});
-		CRUD.list((x) => {
-			handlers.fillData(x);
-			CRUD.loadList(() => {
-				alerta.hide();
-			});
-		});
+		handlers.loadTable();
 	}, []);
 
 	const handlers = {
@@ -395,6 +386,17 @@ const Roles = ({
 			setCurrent(null);
 			setShowForm(false);
 		},
+		loadTable() {
+			alerta.show('Cargando información...', {
+				loading: true,
+			});
+			CRUD.list((x) => {
+				handlers.fillData(x);
+				CRUD.loadList(() => {
+					alerta.hide();
+				});
+			});
+		},
 		save(values) {
 			alerta.show('Almacenando Información...', {
 				loading: true,
@@ -456,7 +458,7 @@ const Roles = ({
 									<hr />
 									<ReactTable
 										data={roleList}
-										filterable
+										loadTable={handlers.loadTable}
 										columns={[
 											{
 												Header: "Rol",
@@ -473,17 +475,6 @@ const Roles = ({
 												filterable: false
 											}
 										]}
-										defaultPageSize={10}
-										showPaginationTop
-										previousText="Anterior"
-										nextText="Siguiente"
-										loadingText="Cargando..."
-										noDataText="No se encontraron filas"
-										pageText="Página"
-										ofText="de"
-										rowsText="filas"
-										showPaginationBottom={false}
-										className="-striped -highlight"
 									/>
 								</>
 								)}

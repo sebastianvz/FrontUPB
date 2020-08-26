@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { connect } from 'react-redux';
 import axios from "axios";
 // react component for creating dynamic tables
-import ReactTable from "react-table";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 
@@ -31,7 +30,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
 
-import { useAlerta, Watchful } from 'components/Shared';
+import { useAlerta, Watchful, Table } from 'components/Shared';
 import { PERMISSIONS } from 'config/constants';
 
 const variables = new GlobalVariables();
@@ -246,9 +245,9 @@ const Practices = ({
 							</Watchful>
 						</CardHeader>
 						<CardBody>
-							<ReactTable
+							<Table
 								data={data}
-								filterable
+								loadTable={loadGrid}
 								columns={[
 									{
 										Header: "Nombre",
@@ -281,17 +280,6 @@ const Practices = ({
 										filterable: false
 									}
 								]}
-								defaultPageSize={10}
-								showPaginationTop
-								previousText="Anterior"
-								nextText="Siguiente"
-								loadingText="Cargando..."
-								noDataText="No se encontraron filas"
-								pageText="Página"
-								ofText="de"
-								rowsText="filas"
-								showPaginationBottom={false}
-								className="-striped -highlight"
 							/>
 						</CardBody>
 					</Card>

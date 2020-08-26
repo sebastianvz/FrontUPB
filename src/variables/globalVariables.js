@@ -5,7 +5,7 @@ export default class GlobalVariables {
                 this.productionURL = "http://devsebastianvz.com/SisLab/api/";
                 this.testURL = "https://localhost:44380/api/";
                 // this.Url = this.productionURL;
-                this.Url = localStorage.getItem("4rlStr1ng") || this.productionURL;
+                this.Url = localStorage.getItem("4rlStr1ng") || this.testURL;
         }
 
         static FillVaribles() {

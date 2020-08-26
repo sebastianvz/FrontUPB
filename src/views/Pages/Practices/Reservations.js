@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moement from 'moment';
 // react component for creating dynamic tables
-import ReactTable from "react-table";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -45,7 +44,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
 import { useCRUD } from '../../../components/Reservations';
-import { useAlerta, Autocomplete, Watchful } from 'components/Shared';
+import { useAlerta, Autocomplete, Watchful, Table } from 'components/Shared';
 import { PERMISSIONS } from 'config/constants';
 
 import Practica from './Practice';
@@ -505,14 +504,7 @@ const AsociateToPractice = ({
 			setSemester(e.target.value);
 			IdSemester = e.target.value;
 			if (INVALID_VALUES.indexOf(e.target.value) === -1) {
-				alerta.show('Cargando información...', {
-					loading: true,
-				});
-				CRUD.list(e.target.value, (x) => {
-					handlers.fillData(x);
-					alerta.hide();
-				});
-				CRUD.loadPracticesList(e.target.value);
+				handlers.loadTable(e.target.value);
 			}
 		},
 		changeState: (item, onSucced, idSemester) => {
@@ -610,6 +602,17 @@ const AsociateToPractice = ({
 			setCurrent(null);
 			setShowForm(false);
 		},
+		loadTable(semesterId){
+			semesterId = semesterId || IdSemester
+			alerta.show('Cargando información...', {
+				loading: true,
+			});
+			CRUD.list(semesterId, (x) => {
+				handlers.fillData(x);
+				alerta.hide();
+			});
+			CRUD.loadPracticesList(semesterId);
+		},
 		save(values) {
 			alerta.show('Almacenando Información...', {
 				loading: true,
@@ -700,9 +703,9 @@ const AsociateToPractice = ({
 										</div>
 									</GridItem>
 									<hr />
-									<ReactTable
+									<Table
 										data={reservationsList}
-										filterable
+										loadTable={handlers.loadTable}
 										columns={[
 											{
 												Header: "Práctica",
@@ -739,17 +742,6 @@ const AsociateToPractice = ({
 												filterable: false
 											}
 										]}
-										defaultPageSize={10}
-										showPaginationTop
-										previousText="Anterior"
-										nextText="Siguiente"
-										loadingText="Cargando..."
-										noDataText="No se encontraron filas"
-										pageText="Página"
-										ofText="de"
-										rowsText="filas"
-										showPaginationBottom={false}
-										className="-striped -highlight"
 									/>
 								</>
 								)}

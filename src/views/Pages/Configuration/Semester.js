@@ -29,7 +29,7 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import { useSemester } from 'components/Masters';
 
-import { useAlerta, Watchful } from 'components/Shared';
+import { useAlerta, Watchful, Table } from 'components/Shared';
 import { PERMISSIONS } from 'config/constants';
 
 const styles = {
@@ -106,6 +106,10 @@ const Semester = ({ list, programList }) => {
       })));
       alerta.hide();
     },
+    loadTable() {
+      alerta.show('Cargando Información');
+      CRUD.loadList();
+    },
     save(item) {
       if (selectedPrograms.length === 0) {
         alerta.show('Selecione al menos un dato');
@@ -172,8 +176,7 @@ const Semester = ({ list, programList }) => {
   }, [list]);
 
   useEffect(() => {
-    CRUD.loadList();
-    alerta.show('Cargando Información');
+    handlers.loadTable();
   }, []);
 
   const classesAlerts = useStylesAlerts();
@@ -209,9 +212,9 @@ const Semester = ({ list, programList }) => {
               </Watchful>
             </CardHeader>
             <CardBody>
-              <ReactTable
+              <Table
                 data={data}
-                filterable
+                loadTable={handlers.loadTable}
                 columns={[
                   {
                     Header: "Nombre",
@@ -228,17 +231,6 @@ const Semester = ({ list, programList }) => {
                     filterable: false
                   }
                 ]}
-                defaultPageSize={10}
-                showPaginationTop
-                previousText="Anterior"
-                nextText="Siguiente"
-                loadingText="Cargando..."
-                noDataText="No se encontraron filas"
-                pageText="Página"
-                ofText="de"
-                rowsText="filas"
-                showPaginationBottom={false}
-                className="-striped -highlight"
               />
             </CardBody>
           </Card>
