@@ -348,7 +348,8 @@ const Users = ({ token, userId }) => {
   };
 
   const handleOpenModified = () => {
-    setOpenModified(true);
+    setOpen(true);
+    // setOpenModified(true);
   };
   const handleCloseModified = () => {
     console.log(dataState);
@@ -450,7 +451,6 @@ const Users = ({ token, userId }) => {
                     simple
                     onClick={() => {
                       let obj = resultActive.find(o => o.username === prop.username);
-                      debugger;
                       const arrayInPutRoles = obj.role.map(x => { return (x.id) })
                       const arrayInPutPrograms = obj.programa.map(x => { return (x.id) })
                       setDataState({
@@ -843,6 +843,7 @@ const Users = ({ token, userId }) => {
                                     }
                                     setDataState({ ...dataState, id_number: event.target.value })
                                   },
+                                  defaultValue: dataState.id_number,
                                   type: "number",
                                   endAdornment:
                                     requireIdentification === "error" ? (

@@ -45,3 +45,9 @@ export const role = {
     delete: 'Role',
     list: 'Role',
 };
+
+export const parameter = {
+    save: 'Parameter',
+    delete: 'Parameter',
+    list: 'Parameter',
+};

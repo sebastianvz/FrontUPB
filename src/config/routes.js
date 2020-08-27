@@ -24,6 +24,7 @@ const AsyncReservations = lazy(() => import('../views/Pages/Practices/Reservatio
 const AsyncPrograms = lazy(() => import('../views/Pages/Configuration/Programs.js'));
 const AsyncSemesters = lazy(() => import('../views/Pages/Configuration/Semester.js'));
 const AsyncReservationState = lazy(() => import('../views/Pages/Configuration/ReservationState.js'));
+const AsyncAtributeState = lazy(() => import('../views/Pages/Configuration/Parameters.js'));
 
 export default [
 	//AUTH
@@ -48,4 +49,5 @@ export default [
 	createRoute('/programs', AsyncPrograms, LOGGED),
 	createRoute('/semesters', AsyncSemesters, LOGGED),
 	createRoute('/estadoReserva', AsyncReservationState, LOGGED),
+	createRoute('/parameters', AsyncAtributeState, LOGGED),	
 ];
