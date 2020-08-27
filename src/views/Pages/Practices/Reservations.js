@@ -406,7 +406,7 @@ const AsociateToPractice = ({
 				return item.idUsuario === userId
 					? <>
 						<Watchful
-							action={PermissionStatus.edit}
+							action={PERMISSIONS.edit}
 							menu="Reservas">
 							<Button
 								justIcon
@@ -424,7 +424,7 @@ const AsociateToPractice = ({
 						</Watchful>
 						&nbsp;
 						<Watchful
-							action={PermissionStatus.delete}
+							action={PERMISSIONS.delete}
 							menu="Reservas">
 							<Button
 								justIcon
@@ -492,6 +492,8 @@ const AsociateToPractice = ({
 				return '';
 		};
 	};
+
+	
 
 	const handlers = {
 		changeProgrm(e) {
@@ -591,6 +593,7 @@ const AsociateToPractice = ({
 							{e.nombrePractica}
 						</div>
 					</>),
+					descripcion: e.descripcion,
 					cantidadEstaciones: e.cantidadEstaciones,
 					cantidadEstudiantes: e.cantidadEstudiantes,
 					fechaInicio: moement(e.fechaInicio).format("DD-MM-YYYY HH:mm"),
@@ -714,6 +717,10 @@ const AsociateToPractice = ({
 											{
 												Header: "Estado",
 												accessor: "nombreEstado"
+											},
+											{
+												Header: "Motivo",
+												accessor: "descripcion"
 											},
 											{
 												Header: "# Estaciones",

@@ -196,7 +196,7 @@ const Users = ({ token, userId }) => {
     }, 200);
   };
 
-  const addUser = (username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular, otrosTrabajos = null, idUpb, emailPersonal = null, profesion = null, idUserSender = liableID) => {
+  const addUser = (user_id, username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, arrayRoles, arrayProgramas, celular, otrosTrabajos = null, idUpb, emailPersonal = null, profesion = null, idUserSender = liableID) => {
     if (idTipoIdentificacion <= 0) {
       responseConfirmAlertNext("Faltan campos por llenar Tipo identificacion");
     }
@@ -245,7 +245,7 @@ const Users = ({ token, userId }) => {
       let rolesArrayObject = arrayRoles.map(x => { return ({ id: x }) })
 
       let newUser = new userModel(username, contrasena, idTipoIdentificacion, numeroIdentificacion, nombreCompleto, apellidos, emailUpb, rolesArrayObject, programsArrayObject, celular, otrosTrabajos, idUpb, emailPersonal, profesion, idUserSender);
-
+      newUser.id = user_id;
       newUser = JSON.stringify(newUser);
       axios
         .post(URL_USER_POST, newUser, {
@@ -258,6 +258,7 @@ const Users = ({ token, userId }) => {
           console.log(response);
           console.log(newUser);
           setDataState({
+            id: undefined,            
             id_type: "",
             id_number: 0,
             name: "",
@@ -454,11 +455,17 @@ const Users = ({ token, userId }) => {
                       const arrayInPutRoles = obj.role.map(x => { return (x.id) })
                       const arrayInPutPrograms = obj.programa.map(x => { return (x.id) })
                       setDataState({
-                        ...dataState, name: obj.nombreCompleto, job: obj.profesion, last_name: obj.apellidos, email: obj.emailPersonal,
+                        ...dataState, ...prop, name: obj.nombreCompleto, job: obj.profesion, last_name: obj.apellidos, email: obj.emailPersonal,
                         other_job: obj.otrosTrabajos, phone: obj.celular, id_number: obj.numeroIdentificacion, email_UPB: obj.emailUpb,
                         user: obj.username, password: obj.contrasena, id_type: obj.idTipoIdentificacion, id: obj.id, idUPB: obj.idUpb, roles: arrayInPutRoles,
                         programs: arrayInPutPrograms
-                      })
+                      });
+                      console.log('DTATASET', {
+                        ...dataState, ...prop, name: obj.nombreCompleto, job: obj.profesion, last_name: obj.apellidos, email: obj.emailPersonal,
+                        other_job: obj.otrosTrabajos, phone: obj.celular, id_number: obj.numeroIdentificacion, email_UPB: obj.emailUpb,
+                        user: obj.username, password: obj.contrasena, id_type: obj.idTipoIdentificacion, id: obj.id, idUPB: obj.idUpb, roles: arrayInPutRoles,
+                        programs: arrayInPutPrograms
+                      });
                       handleOpenModified();
                     }}
                     color="warning"
@@ -880,7 +887,8 @@ const Users = ({ token, userId }) => {
                                     }
                                     setDataState({ ...dataState, name: event.target.value })
                                   },
-                                  type: "text",
+                                  type: "text",    
+                                  defaultValue: dataState.name,                              
                                   endAdornment:
                                     requireName === "error" ? (
                                       <InputAdornment position="end">
@@ -914,6 +922,7 @@ const Users = ({ token, userId }) => {
                                     }
                                     setDataState({ ...dataState, last_name: event.target.value })
                                   },
+                                  defaultValue: dataState.last_name,
                                   type: "text",
                                   endAdornment:
                                     requireLastName === "error" ? (
@@ -950,6 +959,7 @@ const Users = ({ token, userId }) => {
                                     }
                                     setDataState({ ...dataState, email: event.target.value })
                                   },
+                                  defaultValue: dataState.email,
                                   type: "email",
                                 }}
                               />
@@ -982,6 +992,7 @@ const Users = ({ token, userId }) => {
                                     setDataState({ ...dataState, email_UPB: event.target.value })
                                   },
                                   type: "email",
+                                  defaultValue: dataState.email_UPB,
                                   endAdornment:
                                     requireEmail2 === "error" ? (
                                       <InputAdornment position="end">
@@ -1018,6 +1029,7 @@ const Users = ({ token, userId }) => {
                                     setDataState({ ...dataState, phone: event.target.value })
                                   },
                                   type: "number",
+                                  defaultValue: dataState.phone,
                                   endAdornment:
                                     requireCell === "error" ? (
                                       <InputAdornment position="end">
@@ -1052,6 +1064,7 @@ const Users = ({ token, userId }) => {
                                     setDataState({ ...dataState, idUPB: event.target.value })
                                   },
                                   type: "number",
+                                  defaultValue: dataState.idUPB,
                                   endAdornment:
                                     requireIdUpb === "error" ? (
                                       <InputAdornment position="end">
@@ -1134,6 +1147,7 @@ const Users = ({ token, userId }) => {
                                     }
                                     setDataState({ ...dataState, job: event.target.value })
                                   },
+                                  defaultValue: dataState.job,
                                   type: "text",
                                 }}
                               />
@@ -1164,6 +1178,7 @@ const Users = ({ token, userId }) => {
                                     }
                                     setDataState({ ...dataState, other_job: event.target.value })
                                   },
+                                  defaultValue: dataState.other_job,
                                   type: "text",
                                 }}
                               />
@@ -1199,6 +1214,7 @@ const Users = ({ token, userId }) => {
                                     setDataState({ ...dataState, user: event.target.value })
                                   },
                                   type: "text",
+                                  defaultValue: dataState.user,
                                   endAdornment:
                                     requireUserName === "error" ? (
                                       <InputAdornment position="end">
@@ -1283,7 +1299,7 @@ const Users = ({ token, userId }) => {
                         <Watchful
                           action={PERMISSIONS.add}
                           menu="Usuarios">
-                          <Button color="danger" onClick={() => addUser(dataState.user, dataState.password, dataState.id_type, dataState.id_number, dataState.name, dataState.last_name, dataState.email_UPB, dataState.roles, dataState.programs, dataState.phone, dataState.other_job, dataState.idUPB, dataState.email, dataState.job)}>
+                          <Button color="danger" onClick={() => addUser(dataState.id, dataState.user, dataState.password, dataState.id_type, dataState.id_number, dataState.name, dataState.last_name, dataState.email_UPB, dataState.roles, dataState.programs, dataState.phone, dataState.other_job, dataState.idUPB, dataState.email, dataState.job)}>
                             Guardar
                       </Button>
                         </Watchful>
