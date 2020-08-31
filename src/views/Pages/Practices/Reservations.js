@@ -14,6 +14,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 // @material-ui/icons
 import SettingsApplications from "@material-ui/icons/SettingsApplications";
@@ -377,7 +379,8 @@ const AsociateToPractice = ({
 	const [current, setCurrent] = useState();
 	const [practica, setPractica] = useState('');
 	const [open, setOpen] = useState(false);
-
+	const [valuesRF, setValuesRF] = useState({});
+	const [errorsRF, setErrorsRF] = useState({});
 
 	const CRUD = useCRUD();
 	const { Alerta, alerta } = useAlerta();
@@ -462,7 +465,8 @@ const AsociateToPractice = ({
 							justIcon
 							round
 							simple
-							onClick={() => handlers.showChangerState(item, ESTADO_RESERVA.cerrada)}
+							onClick={() => handlers.showCloseReservation(item)}
+							// onClick={() => handlers.showChangerState(item, ESTADO_RESERVA.cerrada)}
 							color="danger"
 							className="remove"
 						>
@@ -493,7 +497,7 @@ const AsociateToPractice = ({
 		};
 	};
 
-	
+
 
 	const handlers = {
 		changeProgrm(e) {
@@ -555,6 +559,79 @@ const AsociateToPractice = ({
 				},
 				cancel: alerta.hide
 			})
+		},		
+		showCloseReservation(item) {
+			let datos = {}
+			function _change(e, prop) {				
+				if (e.target) {
+					const { name, checked, value } = e.target;					
+					datos = { ...datos, [name]: name === 'reservaRealizada' ? checked : value };
+				} 
+			}
+			alerta.show(<GridContainer style={{ padding: '13px 0px 0px 0px' }}>				
+				<GridItem xs={12} sm={12} lg={12}>
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={datos.reservaRealizada}
+								onChange={_change}
+								id="reservaRealizada"
+								name="reservaRealizada"
+							/>}
+						label="La reserva fue realizada"
+					/>
+				</GridItem>
+				<GridItem xs={12} sm={12} lg={12}>
+					<TextField
+						id="descripcion"
+						label="Motivo"
+						name="descripcion"
+						type="text"
+						value={datos.descripcion}
+						onChange={_change}
+						style={{ margin: 8 }}
+						fullWidth
+						margin="normal"
+						InputLabelProps={{
+							shrink: true,
+						}}
+					/>
+				</GridItem>
+				<GridItem xs={12} sm={12} md={12}>
+					<div style={{ 'textAlign': 'right' }}>
+						<Button
+							color="primary"
+							onClick={() => {
+								alerta.hide();
+							}}
+						>Cancelar</Button>
+						<Watchful
+							action={PERMISSIONS.add}
+							menu="Reservas">
+							<Button
+								color="danger"
+								onClick={() => {
+									const _errors = {};
+									if(INVALID_VALUES.indexOf(datos.descripcion) >= 0) {
+										_errors.descripcion = true;
+									}
+									setErrorsRF(_errors);
+									if (Object.keys(_errors).length > 0) {
+										return;
+									}
+									handlers.changeState({
+										...item,
+										...datos,
+										idEstado: ESTADO_RESERVA.cerrada
+									});
+								}}
+							>Cerrar Reserva</Button>
+						</Watchful>
+					</div>
+				</GridItem>
+			</GridContainer>, {
+				title: 'motivo por el cual se cierra la reserva'
+			})
 		},
 		delete(item) {
 			alerta.show('¿Esta Seguro de que quiere eliminar el registro?', {
@@ -605,8 +682,8 @@ const AsociateToPractice = ({
 			setCurrent(null);
 			setShowForm(false);
 		},
-		loadTable(semesterId){
-			semesterId = semesterId || IdSemester
+		loadTable(semesterId) {
+			semesterId = INVALID_VALUES.indexOf(IdSemester) === -1 ? IdSemester : semesterId;
 			alerta.show('Cargando información...', {
 				loading: true,
 			});

@@ -54,7 +54,7 @@ const styles = {
 const useStylesAlerts = makeStyles(stylesForAlerts);
 const useStyles = makeStyles(styles);
 const INVALID_VALUES = [null, '', '-1', -1, undefined];
-let selectedPractices = [];
+let selectedPractices = [], IdSemester = -1;
 
 const AsociateToPractice = ({
 	token,
@@ -97,6 +97,7 @@ const AsociateToPractice = ({
 		},
 		changeSemester: (e) => {
 			setSemester(e.target.value);
+			IdSemester = e.target.value;
 			if (INVALID_VALUES.indexOf(e.target.value) === -1) {
 				handlers.loadTable(e.target.value);
 			}
@@ -123,6 +124,7 @@ const AsociateToPractice = ({
 				)
 			}))),
 		loadTable(semesterId){
+			semesterId = INVALID_VALUES.indexOf(IdSemester) === -1 ? IdSemester : semesterId;
 			CRUD.list(semester || semesterId, (x) => {
 				handlers.fillData(x);
 			});

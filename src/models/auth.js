@@ -57,11 +57,12 @@ const auth = {
         );
 
         const data = await promise.data;
-        const { username, nombreCompleto, apellidos, token, menus, id } = data.data;
+        const { username, nombreCompleto, apellidos, token, menus, id, roleName } = data.data;
         this.setAuthenticated({
           user: {
             id,
             username,
+            role: roleName,
             fullName: `${nombreCompleto} ${apellidos}`
           },
           permisssions: getPermission(menus),
