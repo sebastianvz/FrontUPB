@@ -19,7 +19,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, ContentState, convertFromHTML, convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs'; 
+import htmlToDraft from 'html-to-draftjs';
 import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 // core components
@@ -313,19 +313,22 @@ const Atributes = ({
 									onCancel={handlers.hideForm}
 								/>
 							) : (<>
-								<GridItem xs={12} sm={12} md={12}>
-									<div style={{ 'textAlign': 'right' }}>
-										<Watchful
-											action={PERMISSIONS.add}
-											menu="Parametros">
-											<Button
-												color="danger"
-												onClick={handlers.showForm}
-											>Crear Parametro</Button>
-										</Watchful>
-									</div>
-								</GridItem>
-								<hr />
+								<Watchful
+									action={PERMISSIONS.add}
+									menu="Parametros">
+									<Button
+										color="danger"
+										onClick={handlers.showForm}
+									>
+										<Add
+											style={{
+												marginTop: 0 + "px",
+												marginLeft: 0 + "px",
+												marginRight: 7 + "px",
+												marginBottom: 2 + "px"
+											}}
+										/>Crear Parametro</Button>
+								</Watchful>
 								<Table
 									data={data}
 									loadTable={handlers.loadTable}

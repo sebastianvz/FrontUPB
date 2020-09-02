@@ -46,7 +46,14 @@ import { cardTitle } from "assets/jss/material-dashboard-pro-react.js";
 
 import GlobalVariables from "../../../variables/globalVariables.js";
 import { useCRUD } from '../../../components/Reservations';
-import { useAlerta, Autocomplete, Watchful, Table } from 'components/Shared';
+import {
+	useAlerta,
+	Autocomplete,
+	Watchful,
+	Table,
+	DoneAllIcon,
+	CheckCircleIcon
+} from 'components/Shared';
 import { PERMISSIONS } from 'config/constants';
 
 import Practica from './Practice';
@@ -453,7 +460,8 @@ const AsociateToPractice = ({
 							color="warning"
 							className="edit"
 						>
-							<SettingsApplications />
+							<CheckCircleIcon />
+							{/* <SettingsApplications /> */}
 						</Button>
 					</Watchful>
 			case ESTADO_RESERVA.aprobada:
@@ -470,7 +478,8 @@ const AsociateToPractice = ({
 							color="danger"
 							className="remove"
 						>
-							<Close />
+							<DoneAllIcon />
+							{/* <Close /> */}
 						</Button>
 					</Watchful>
 			case ESTADO_RESERVA.rechazada:
@@ -559,16 +568,16 @@ const AsociateToPractice = ({
 				},
 				cancel: alerta.hide
 			})
-		},		
+		},
 		showCloseReservation(item) {
 			let datos = {}
-			function _change(e, prop) {				
+			function _change(e, prop) {
 				if (e.target) {
-					const { name, checked, value } = e.target;					
+					const { name, checked, value } = e.target;
 					datos = { ...datos, [name]: name === 'reservaRealizada' ? checked : value };
-				} 
+				}
 			}
-			alerta.show(<GridContainer style={{ padding: '13px 0px 0px 0px' }}>				
+			alerta.show(<GridContainer style={{ padding: '13px 0px 0px 0px' }}>
 				<GridItem xs={12} sm={12} lg={12}>
 					<FormControlLabel
 						control={
@@ -612,7 +621,7 @@ const AsociateToPractice = ({
 								color="danger"
 								onClick={() => {
 									const _errors = {};
-									if(INVALID_VALUES.indexOf(datos.descripcion) >= 0) {
+									if (INVALID_VALUES.indexOf(datos.descripcion) >= 0) {
 										_errors.descripcion = true;
 									}
 									setErrorsRF(_errors);
@@ -777,8 +786,17 @@ const AsociateToPractice = ({
 												menu="Reservas">
 												<Button
 													color="danger"
-													onClick={handlers.showForm}
-												>Crear Reserva</Button>
+													onClick={handlers.showForm}>
+													<Add
+														style={{
+															marginTop: 0 + "px",
+															marginLeft: 0 + "px",
+															marginRight: 7 + "px",
+															marginBottom: 2 + "px"
+														}}
+													/>
+													Crear Reserva
+												</Button>
 											</Watchful>
 										</div>
 									</GridItem>

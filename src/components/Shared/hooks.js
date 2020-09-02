@@ -18,6 +18,7 @@ export default function useAlerta() {
 				style: { display: "block", marginTop: "-100px" },
 				showCancel: false,
 				showConfirm: false,
+				title: '',
 				..._props,
 			}
 			if(props.confirm){

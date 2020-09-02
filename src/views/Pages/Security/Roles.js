@@ -443,19 +443,22 @@ const Roles = ({
 								/>
 							) : (roleList
 								&& <>
-									<GridItem xs={12} sm={12} md={12}>
-										<div style={{ 'textAlign': 'right' }}>
-											<Watchful
-												action={PERMISSIONS.add}
-												menu="Roles">
-												<Button
-													color="danger"
-													onClick={handlers.showForm}
-												>Agregar Rol</Button>
-											</Watchful>
-										</div>
-									</GridItem>
-									<hr />
+
+									<Watchful
+										action={PERMISSIONS.add}
+										menu="Roles">
+										<Button
+											onClick={handlers.showForm}
+										>
+											<Add
+												style={{
+													marginTop: 0 + "px",
+													marginLeft: 0 + "px",
+													marginRight: 7 + "px",
+													marginBottom: 2 + "px"
+												}}
+											/>Agregar Rol</Button>
+									</Watchful>
 									<ReactTable
 										data={roleList}
 										loadTable={handlers.loadTable}
