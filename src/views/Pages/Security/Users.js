@@ -124,7 +124,7 @@ const Form = ({
       setErrors(_errors);
       if (Object.keys(_errors).length > 0) {
         alerta.show('Hay campos sin llenar!!', {
-          type: 'error',
+          type: 'warning',
           confirm: () => {},
         });
         return;
