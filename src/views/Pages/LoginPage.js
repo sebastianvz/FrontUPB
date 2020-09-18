@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
 // @material-ui/core components
@@ -7,25 +8,33 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
+import GridContainer from "components/core/Grid/GridContainer.js";
 import SweetAlert from "react-bootstrap-sweetalert";
-import GridItem from "components/Grid/GridItem.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CardFooter from "components/Card/CardFooter.js";
+import GridItem from "components/core/Grid/GridItem.js";
+import CustomInput from "components/core/CustomInput/CustomInput.js";
+import Button from "components/core/CustomButtons/Button.js";
+import Card from "components/core/Card/Card.js";
+import CardBody from "components/core/Card/CardBody.js";
+import CardHeader from "components/core/Card/CardHeader.js";
+import CardFooter from "components/core/Card/CardFooter.js";
 import axios from "axios";
 
 import stylesForAlerts from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyle.js";
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 import Logo from "assets/img/upb-logo-1422010671195.png";
 
+import GlobalVariables from "../../variables/globalVariables.js";
+
+import login from "assets/img/loginImageUPB.jpg";
+
+
 const useStyles = makeStyles(styles);
 const useStylesAlerts = makeStyles(stylesForAlerts);
 
-function LoginPage(props) {
+function LoginPage({
+  authentication,
+  ...props
+}) {
   // login form
   const [required, setrequired] = React.useState("");
   const [requiredState, setrequiredState] = React.useState("");
@@ -35,6 +44,10 @@ function LoginPage(props) {
   const [alert, setAlert] = React.useState(null);
 
   // function that verifies if a string has a given length or not
+
+  const variables = new GlobalVariables();
+  const url = variables.Url + "LoginAuth/Authenticate";
+
   const verifyLength = (value, length) => {
     if (value.length >= length) {
       return true;
@@ -63,7 +76,7 @@ function LoginPage(props) {
     setAlert(null);
   };
 
-  setTimeout(function() {
+  setTimeout(function () {
     setCardAnimation("");
   }, 700);
   const classes = useStyles();
@@ -84,73 +97,94 @@ function LoginPage(props) {
       return;
     }
 
-    const URL =
-      "http://ec2-18-189-114-244.us-east-2.compute.amazonaws.com/Sislab/api/LoginAuth/Authenticate";
-    axios
-      .post(URL, {
-        username: required,
-        contrasena: loginPassword
-      })
-      .then(function(response) {
-        localStorage.setItem("auth", response.data.data.token);
-        localStorage.setItem("id", response.data.data.id);
-        let arrayPermmisionNames = [];
+    authentication(required, loginPassword);
 
-        if (response.data.data.role !== null) {
-          for (let i = 0; i < response.data.data.role.length; i++) {
-            for (
-              let j = 0;
-              j < response.data.data.role[i].permmisionRole.length;
-              j++
-            ) {
-              arrayPermmisionNames.push(
-                response.data.data.role[i].permmisionRole[j].permmisionName
-              );
-            }
-          }
-        }
+    // axios
+    //   .post(url, {
+    //     username: required,
+    //     contrasena: loginPassword
+    //   })
+    //   .then(function(response) {
+    //     localStorage.setItem("auth", response.data.data.token);
+    //     localStorage.setItem("id", response.data.data.id);
+    //     let arrayPermmisionNames = [];
+    //     let arrayControllers = [];
 
-        let uniqueArrayPermmisionNames = new Set(arrayPermmisionNames);
-        let arrayAgainPermmisionNames = [...uniqueArrayPermmisionNames];
+    //     if (response.data.data.role !== null) {
+    //       for (let i = 0; i < response.data.data.role.length; i++) {
+    //         for (
+    //           let j = 0;
+    //           j < response.data.data.role[i].permmisionRole.length;
+    //           j++
+    //         ) {
+    //           arrayPermmisionNames.push(
+    //             response.data.data.role[i].permmisionRole[j].permmisionName
 
-        localStorage.setItem("arrayPermmision", arrayAgainPermmisionNames);
+    //           );
+    //           arrayControllers.push(
+    //             response.data.data.role[i].permmisionRole[j].controller
+    //           );
 
-        console.log(localStorage.getItem("auth"));
+    //         }
+    //       }
+    //     }
 
-        if (response.data.data.token === null) {
-          auth = JSON.parse(localStorage.getItem("auth"));
-        } else {
-          auth = localStorage.getItem("auth");
-        }
+    //     let uniqueArrayPermmisionNames = new Set(arrayPermmisionNames);
+    //     let uniqueArrayControllers = new Set(arrayControllers);
+    //     let arrayAgainPermmisionNames = [...uniqueArrayPermmisionNames];
+    //     let arrayAgainControllers = [...uniqueArrayControllers];
 
-        if (auth === null) {
-          let inputs = document.getElementsByTagName("input");
-          for (var i = 0; i < inputs.length; i++) {
-            switch (inputs[i].type) {
-              // case 'hidden':
-              case "text":
-                inputs[i].value = "";
-                break;
-              case "password":
-                inputs[i].value = "";
-                break;
-            }
-          }
-          setrequiredState("error");
-          setloginPasswordState("error");
-          ErrorLogin();
-          return;
-        } else {
-          props.history.replace("/admin");
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-        return;
-      });
+    //     localStorage.setItem("arrayPermmision", arrayAgainPermmisionNames);
+    //     localStorage.setItem("arrayControllers", arrayAgainControllers);
+
+    //     if (response.data.data.token === null) {
+    //       auth = JSON.parse(localStorage.getItem("auth"));
+    //     } else {
+    //       auth = localStorage.getItem("auth");
+    //     }
+
+    //     if (auth === null) {
+    //       let inputs = document.getElementsByTagName("input");
+    //       for (var i = 0; i < inputs.length; i++) {
+    //         switch (inputs[i].type) {
+    //           // case 'hidden':
+    //           case "text":
+    //             inputs[i].value = "";
+    //             break;
+    //           case "password":
+    //             inputs[i].value = "";
+    //             break;
+    //         }
+    //       }
+    //       setrequiredState("error");
+    //       setloginPasswordState("error");
+    //       ErrorLogin();
+    //       return;
+    //     } else {
+    //       props.history.replace("/admin");
+    //     }
+    //   })
+    //   .catch(function(error) {
+    //     console.log(error);
+    //     return;
+    //   });
   };
 
+    // ref for the wrapper div
+    const wrapper = React.createRef();
+    React.useEffect(() => {
+      document.body.style.overflow = "unset";
+      // Specify how to clean up after this effect:
+      return function cleanup() {};
+    });
+
   return (
+    <div>
+    <div className={classes.wrapper} ref={wrapper}>
+    <div
+      className={classes.fullPage}
+      style={{ backgroundImage: "url(" + login + ")" }}
+    >
     <div className={classes.container}>
       {alert}
       <GridContainer justify="center">
@@ -235,7 +269,24 @@ function LoginPage(props) {
         </GridItem>
       </GridContainer>
     </div>
-  );
+  </div>
+</div>
+</div>
+);
 }
 
-export default withRouter(LoginPage);
+const mapState = state => ({
+  loading: state.loading.effects.auth.authentication,
+});
+
+const mapDispatch = dispatch => ({
+  authentication: (username, password) =>
+    dispatch.auth.authentication({ username, password }),
+});
+
+export default connect(
+  mapState,
+  mapDispatch,
+)(LoginPage);
+
+// export default withRouter();

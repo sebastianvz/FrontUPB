@@ -13,12 +13,12 @@ import Close from "@material-ui/icons/Close";
 import Favorite from "@material-ui/icons/Favorite";
 
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
-import Pagination from "components/Pagination/Pagination.js";
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
+import GridContainer from "core/components/Grid/GridContainer.js";
+import GridItem from "core/components/Grid/GridItem.js";
+import Pagination from "core/components/Pagination/Pagination.js";
+import Button from "core/components/CustomButtons/Button.js";
+import Card from "core/components/Card/Card.js";
+import CardBody from "core/components/Card/CardBody.js";
 
 import styles from "assets/jss/material-dashboard-pro-react/views/buttonsStyle.js";
 
